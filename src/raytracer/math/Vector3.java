@@ -1,19 +1,51 @@
 package raytracer.math;
 
+
 /**
  * Created by ok on 27.10.15.
  */
 public class Vector3 {
-
+    /**
+     * x-direction of the vector.
+     */
     public final double x;
+    /**
+     * y-direction of the vector.
+     */
     public final double y;
+    /**
+     * z-direction of the vector.
+     */
     public final double z;
+    /**
+     * The magnitude of the vector.
+     */
+    public final double magnitude;
 
-    public Vector3( final double x, final double y, final double z ) {
+    /**
+     * This constructor creates a new Vector with 3 components and computes its magnitude.
+     *
+     * @param x The x-direction.
+     * @param y The y-direction.
+     * @param z The z-direction.
+     */
+    public Vector3(final double x, final double y, final double z) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.magnitude = Math.sqrt(x*x + y*y + z*z);
     }
+
+    /**
+     * This
+     * @param v
+     * @return
+     */
+    public Vector3 add(Vector3 v){
+
+        return ;
+    }
+
 
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -27,6 +59,10 @@ public class Vector3 {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public int hashCode() {
         int result;
         long temp;
