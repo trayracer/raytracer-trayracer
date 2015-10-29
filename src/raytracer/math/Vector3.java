@@ -2,12 +2,12 @@ package raytracer.math;
 
 
 /**
- * This class represents a three dimensional vector. Instances of this class are imutable.
+ * This class represents a three dimensional vector. Instances of this class are immutable.
  * Each method creates a new object containing the result.
  *
  * @author Oliver Kniejski
  */
-public class Vector3 {
+public final class Vector3 {
     /**
      * x-direction of the vector.
      */
@@ -45,7 +45,7 @@ public class Vector3 {
      * @param v The vector which is added.
      * @return The sum of the two vectors.
      */
-    public Vector3 add(Vector3 v) {
+    public Vector3 add( final Vector3 v ) {
         return new Vector3(x + v.x, y + v.y, z + v.z);
     }
 
@@ -55,7 +55,7 @@ public class Vector3 {
      * @param n The normal which is added.
      * @return The sum of vector and normal.
      */
-    public Vector3 add(Normal3 n) {
+    public Vector3 add( final Normal3 n) {
         return new Vector3(x + n.x, y + n.y, z + n.z);
     }
 
@@ -65,7 +65,7 @@ public class Vector3 {
      * @param n The normal which is subtracted.
      * @return The difference of vector and normal.
      */
-    public Vector3 sub(Normal3 n) {
+    public Vector3 sub( final Normal3 n ) {
         return new Vector3(x - n.x, y - n.y, z - n.z);
     }
 
@@ -75,7 +75,7 @@ public class Vector3 {
      * @param c The scalar.
      * @return The product of vector and scalar.
      */
-    public Vector3 mul(double c) {
+    public Vector3 mul( final double c ) {
         return new Vector3(x * c, y * c, z * c);
     }
 
@@ -85,7 +85,7 @@ public class Vector3 {
      * @param v The other vector.
      * @return The dot product of the two vectors.
      */
-    public double dot(Vector3 v) {
+    public double dot( final Vector3 v ) {
         return (x * v.x) + (y * v.y) + (z * v.z);
     }
 
@@ -95,7 +95,7 @@ public class Vector3 {
      * @param n The normal.
      * @return The dot product of vector and normal.
      */
-    public double dot(Normal3 n) {
+    public double dot( final Normal3 n ) {
         return (x * n.x) + (y * n.y) + (z * n.z);
     }
 
@@ -125,7 +125,7 @@ public class Vector3 {
      * @param n The normal.
      * @return The reflected vector of this vector.
      */
-    public Vector3 reflectedOn(Normal3 n) {
+    public Vector3 reflectedOn( final Normal3 n ) {
         return this.invert().add(n.mul(this.dot(n) * 2));
     }
 
@@ -144,8 +144,22 @@ public class Vector3 {
      * @param v The other vector.
      * @return The cross product of the two vectors.
      */
-    public Vector3 x(Vector3 v) {
+    public Vector3 x( final Vector3 v ) {
         return new Vector3((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (y * v.z) - (z * v.y));
+    }
+
+    /**
+     * This method returns a string representation of the vector.
+     *
+     * @return The string representation of the vector.
+     */
+    public String toString() {
+        return "Vector3{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", magnitude=" + magnitude +
+                '}';
     }
 
     /**
@@ -154,7 +168,7 @@ public class Vector3 {
      * @param o The object to check.
      * @return true if the given object is a vector and has the same properties as this one.
      */
-    public boolean equals(Object o) {
+    public boolean equals( final Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -163,7 +177,6 @@ public class Vector3 {
         if (Double.compare(vector3.x, x) != 0) return false;
         if (Double.compare(vector3.y, y) != 0) return false;
         return Double.compare(vector3.z, z) == 0;
-
     }
 
     /**
