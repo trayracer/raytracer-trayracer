@@ -6,7 +6,7 @@ package raytracer.math;
  *
  * @author Oliver Kniejski
  */
-public class Mat3x3 {
+public final class Mat3x3 {
     /**
      * This is the element in the first row and the first column.
      */
@@ -61,7 +61,7 @@ public class Mat3x3 {
      * @param m32 Element in third row, second column
      * @param m33 Element in third row, third column
      */
-    public Mat3x3(double m11, double m12, double m13, double m21, double m22, double m23, double m31, double m32, double m33) {
+    public Mat3x3(final double m11, final double m12, final double m13, final double m21, final double m22, final double m23, final double m31, final double m32, final double m33) {
         this.m11 = m11;
         this.m12 = m12;
         this.m13 = m13;
@@ -78,9 +78,9 @@ public class Mat3x3 {
      * This method multiplicates this matrix with the given matrix and returns the resulting matrix.
      *
      * @param m The matrix to multiplicate with.
-     * @return The resulting matrix of the matrixmultiplication.
+     * @return The resulting matrix of the matrix multiplication.
      */
-    public Mat3x3 mul( Mat3x3 m ) {
+    public Mat3x3 mul( final Mat3x3 m ) {
         return new Mat3x3(m11*m.m11 + m12*m.m21 + m13*m.m31, m11*m.m12 + m12*m.m22 + m13*m.m32, m11*m.m13 + m12*m.m23 + m13*m.m33,
                           m21*m.m11 + m22*m.m21 + m23*m.m31, m21*m.m12 + m22*m.m22 + m23*m.m32, m21*m.m13 + m22*m.m23 + m23*m.m33,
                           m31*m.m11 + m32*m.m21 + m33*m.m31, m31*m.m12 + m32*m.m22 + m33*m.m32, m31*m.m13 + m32*m.m23 + m33*m.m33);
@@ -90,9 +90,9 @@ public class Mat3x3 {
      * This method multiplicates this matrix with the given vector and returns the resulting vector.
      *
      * @param v The vector to multiply with.
-     * @return The resulting vector of the matrixmultiplication.
+     * @return The resulting vector of the matrix multiplication.
      */
-    public Vector3 mul(Vector3 v){
+    public Vector3 mul( final Vector3 v ) {
         return new Vector3(m11*v.x + m12*v.y + m13*v.z, m21*v.x + m22*v.y + m23*v.z, m31*v.x + m32*v.y + m33*v.z);
     }
 
@@ -100,9 +100,9 @@ public class Mat3x3 {
      * This method multiplicates this matrix with the given point and returns the resulting point.
      *
      * @param p The point to multiply with.
-     * @return The resulting point of the matrixmultiplication.
+     * @return The resulting point of the matrix multiplication.
      */
-    public Point3 mul(Point3 p){
+    public Point3 mul( final Point3 p) {
         return new Point3(m11*p.x + m12*p.y + m13*p.z, m21*p.x + m22*p.y + m23*p.z, m31*p.x + m32*p.y + m33*p.z);
     }
 
@@ -112,7 +112,7 @@ public class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column one.
      */
-    public Mat3x3 changeCol1( Vector3 v ) {
+    public Mat3x3 changeCol1( final Vector3 v ) {
         return new Mat3x3(v.x, m12, m13,
                           v.y, m22, m23,
                           v.z, m32, m33);
@@ -124,7 +124,7 @@ public class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column two.
      */
-    public Mat3x3 changeCol2( Vector3 v ) {
+    public Mat3x3 changeCol2( final Vector3 v ) {
         return new Mat3x3(m11, v.x, m13,
                           m21, v.y, m23,
                           m31, v.z, m33);
@@ -136,10 +136,30 @@ public class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column three.
      */
-    public Mat3x3 changeCol3( Vector3 v ) {
+    public Mat3x3 changeCol3( final Vector3 v ) {
         return new Mat3x3(m11, m12, v.x,
                           m21, m22, v.y,
                           m31, m32, v.z);
+    }
+
+    /**
+     * This method returns a string representation of this matrix.
+     *
+     * @return The string representation.
+     */
+    public String toString() {
+        return "Mat3x3{" +
+                "m11=" + m11 +
+                ", m12=" + m12 +
+                ", m13=" + m13 +
+                ", m21=" + m21 +
+                ", m22=" + m22 +
+                ", m23=" + m23 +
+                ", m31=" + m31 +
+                ", m32=" + m32 +
+                ", m33=" + m33 +
+                ", determinant=" + determinant +
+                '}';
     }
 
     /**
@@ -148,7 +168,7 @@ public class Mat3x3 {
      * @param o The object to check.
      * @return true if the given object is a Mat3x3 and has the same properties as this one.
      */
-    public boolean equals(Object o) {
+    public boolean equals( final Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
