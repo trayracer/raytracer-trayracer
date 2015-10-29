@@ -1,7 +1,10 @@
 package raytracer.math;
 
 /**
- * Created by ok on 27.10.15.
+ * This class represents a three dimensional normal. Instances of this class are imutable.
+ * Each method creates a new object containing the result.
+ *
+ * @author Marie Hennings
  */
 public class Normal3 {
 
@@ -34,18 +37,53 @@ public class Normal3 {
     }
 
     /**
-     * This method multiplies the normal with a given double.
+     * This method calculates the product of this normal and a scalar and returns the result as a normal.
      *
-     * @param n
-     * @return
+     * @param n The scalar.
+     * @return The product of vector and scalar.
      */
     public Normal3 mul(final double n) {
-        return new Normal3(this.x * n, this.y * n, this.z * n);
+        return new Normal3(x * n, y * n, z * n);
     }
 
     /**
-     * @param o
-     * @return
+     * This method calculates the sum of this normal and a normal and returns the result as a normal.
+     *
+     * @param n The normal which is added.
+     * @return The sum of the two normals.
+     */
+    public Normal3 add(final Normal3 n) {
+        return new Normal3(x + n.x, y + n.y, z + n.z);
+    }
+
+    /**
+     * This method calculates the dot product of this normal and a vector and returns the result as a double.
+     *
+     * @param v The vector.
+     * @return The dot product of normal and vector.
+     */
+    public double dot(final Vector3 v) {
+        return x * v.x + y * v.y + z * v.z;
+    }
+
+    /**
+     * This method returns a string representation of this normal.
+     *
+     * @return The string representation of this normal.
+     */
+    public String toString() {
+        return "Normal3{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
+
+    /**
+     * This method checks if the given object is a normal and has the same properties as this one.
+     *
+     * @param o The object to check.
+     * @return True if the given object is a normal and has the same properties as this one.
      */
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,7 +98,9 @@ public class Normal3 {
     }
 
     /**
-     * @return
+     * This method returns a hash value for this normal.
+     *
+     * @return An int value hash code.
      */
     public int hashCode() {
         int result;
