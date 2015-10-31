@@ -1,7 +1,10 @@
 package raytracer.math;
 
 /**
- * Created by ok on 27.10.15.
+ * this class represents a three dimensional vector. Instances of this class are immutable.
+ * Each method creates a new object containing the result.
+ *
+ * @author Steven Sobkowski
  */
 public class Point3 {
     /**
@@ -18,6 +21,7 @@ public class Point3 {
     public final double z;
 
     /**
+     *This constructor creates a new point.
      *
      * @param x the x-coordinate
      * @param y the y-coordinate
@@ -29,6 +33,40 @@ public class Point3 {
         this.z = z;
     }
 
+    /**
+     * This method calculates the difference of this point and another point and returns the result as a vector.
+     *
+     * @param p the other point
+     * @return the difference of the two points as a vector
+     */
+    public Vector3 sub(final Point3 p) {
+        return new Vector3(x-p.x,y-p.y,z-p.z);
+    }
+    /**
+     * This method calculates the difference of this point and a vector and returns the result as a point.
+     *
+     * @param v the vector
+     * @return the difference as a point
+     */
+    public Point3 sub(final Vector3 v) {
+        return new Point3(x-v.x,y-v.y,z-v.z);
+    }
+    /**
+     * This method calculates the sum of this point and a vector and returns the result as a point.
+     *
+     * @param v the vector
+     * @return the sum as a point
+     */
+    public Point3 add(final Vector3 v){
+        return new Point3(x+v.x,y+v.y,z+v.z);
+    }
+
+    /**
+     * This method checks if the given object is a point and has the same properties as this one.
+     *
+     * @param o The object to check.
+     * @return True if the given object is a point and has the same properties as this one.
+     */
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -38,9 +76,13 @@ public class Point3 {
         if (Double.compare(point3.x, x) != 0) return false;
         if (Double.compare(point3.y, y) != 0) return false;
         return Double.compare(point3.z, z) == 0;
-
     }
 
+    /**
+     * This method returns a hash value for this point.
+     *
+     * @return An int value hash code.
+     */
     public int hashCode() {
         int result;
         long temp;
@@ -53,7 +95,5 @@ public class Point3 {
         return result;
     }
 
-    public Vector3 sub(Point3 p) {
-        return new Vector3(x-p.x,y-p.y,z-p.z);
-    }
+
 }
