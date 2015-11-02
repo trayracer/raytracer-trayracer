@@ -60,6 +60,18 @@ public class Point3 {
     public Point3 add(final Vector3 v){
         return new Point3(x+v.x,y+v.y,z+v.z);
     }
+    /**
+     * This method returns a string representation of the point.
+     *
+     * @return The string representation of the point.
+     */
+    public String toString() {
+        return "Point3{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 
     /**
      * This method checks if the given object is a point and has the same properties as this one.
