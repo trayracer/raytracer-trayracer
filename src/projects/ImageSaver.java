@@ -11,7 +11,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -56,7 +55,10 @@ public class ImageSaver extends Application {
             scene.widthProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    width = newValue.intValue();
+                    int cachewidth = newValue.intValue();
+                    if (cachewidth > 0) {
+                        width = cachewidth;
+                    }
                     refreshImage();
                 }
             });
@@ -64,7 +66,10 @@ public class ImageSaver extends Application {
             scene.heightProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    height = newValue.intValue();
+                    int cacheheight = newValue.intValue();
+                    if (cacheheight > 0) {
+                        height = cacheheight;
+                    }
                     refreshImage();
                 }
             });
@@ -80,7 +85,7 @@ public class ImageSaver extends Application {
         view.setImage(image);
     }
 
-    private void saveImage(Stage stage){
+    private void saveImage(Stage stage) {
         FileChooser fileDialog = new FileChooser();
         fileDialog.setTitle("Save");
         fileDialog.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PNG Image", "*.png"),
@@ -88,11 +93,11 @@ public class ImageSaver extends Application {
 
         File file = fileDialog.showSaveDialog(stage);
 
-        if(file != null){
+        if (file != null) {
             String fileExt = fileDialog.getSelectedExtensionFilter().getExtensions().get(0);
 
             try {
-                ImageIO.write(getThinRedLine(width,height),fileExt.split("\\.")[1], file);
+                ImageIO.write(getThinRedLine(width, height), fileExt.split("\\.")[1], file);
 
             } catch (IOException e) {
                 e.printStackTrace();
