@@ -9,7 +9,7 @@
 \usepackage{tabularx} %fuer Tabellen
 \usepackage{xcolor} %fuer Farben
 \usepackage{amsmath} %fuer Mathematikmodus
-\usepackage[top=1cm]{geometry} %verringert Rand oben
+%\usepackage[top=1cm]{geometry} %verringert Rand oben
 
 \author{Trayracer: Oliver Kniejski, Steven Sobkowski, Marie Hennings}
 \title{Bericht zu den Vorbereitungen}
@@ -18,7 +18,7 @@
  
 \maketitle
 
-\section{Die Aufgabenstellung}
+\section*{Die Aufgabenstellung}
 
 Sinn der Aufgaben ist es, uns auf das Semesterprojekt vorzubereiten.
 Hierzu sollen wir uns noch einmal mit Vektor- und Matrizenrechnung auseinandersetzen und anschließend die
@@ -27,27 +27,30 @@ entsprechenden Klassen nach dem abgebildeten Klassendiagramm implementieren.
 Zusätzlich sollen noch zwei Programme umgesetzt werden.
 Ziel des ersten Programmes ist es, ein bereits vorhandenes Bild aus einem Dateidialog zu laden und in einem Fenster darzustellen, welches die gleiche Größe hat wie das geladene Bild.
 Das zweite Programm zeichnet zuerst - Pixel für Pixel - einen schwarzen Hintergrund und anschließend eine rote Linie, die diagonal von der oberen linken Ecke nach unten verläuft. 
-Bei Veränderung der Fenstergröße wird das Bild dementsprechend neu gezeichnet.
+Bei Veränderung der Fenstergröße wird das Bild den Maßen entsprechend neu gezeichnet.
 
 Um wieder warm zu werden im Umgang mit Vektoren und Matrizen, ist pro Gruppenmitglied der Rechenzettel zu lösen. 
 
-\section{Lösungsstrategien}
+\section*{Lösungsstrategien}
 Die Lösungsstrategie bestand daraus, dass die einzelnen Aufgaben und dazugehörige Klassen auf die Gruppenmitglieder  aufgeteilt wurden und jeder seinen Programmcode im Git-Repository hochlädt.
 Bei aufkommenden Problemen wurde versucht diese gemeinsam zu lösen.
 
-\section{Implementierung}
+\section*{Implementierung}
+Die vier Klassen des \texttt{\small math} Pakets wurden entsprechend des Klassendiagramms umgesetzt.
 
-\section{Besondere Probleme oder Schwierigkeiten bei der Bearbeitung}
-Es gab einige Probleme mit \textbf{Git} und der in IntelliJ enthaltenen {\small\texttt{misc.xml}}-Datei,da es bei jedem Commit zu Merge-Problemen kam. Des Weiteren bereitete die Installation und Einarbeitung in \textbf{\LaTeX{}} einige Schwierigkeiten. 
+Als UI-Bibliothek wurde das JavaFX-Framework verwendet. Für Programm 1 wurden unter anderem die Klassen \texttt{\small Image}, \texttt{\small ImageView} und \texttt{\small FileChooser} genutzt. 
+Das zweite Programm verwendet die \texttt{\small BufferedImage} und die \texttt{\small SwingFXUtils} Klassen. 
+Letztere wird zur Konvertierung des BufferedImage zu einem FXImage genutzt. 
+Zusätzlich wird ein \texttt{\small ChangeListener} verwendet, um Größenänderungen des Fensters festzustellen und das Image dementsprechend anzupassen.
 
+\section*{Besondere Probleme oder Schwierigkeiten bei der Bearbeitung}
+Es gab einige Probleme mit \textbf{Git} und der in IntelliJ enthaltenen \texttt{\small misc.xml} Datei, da es bei jedem Commit zu Merge-Problemen kam. 
+Des Weiteren bereitete die Installation und Einarbeitung in \textbf{\LaTeX{}} einige Schwierigkeiten. 
 
+Ein weiteres Problem war es, die für das zweite Programm vorgegebenen Klassen zu benutzen und sie in JavaFX einzusetzen. Was sich dadurch geklärt hat, dass diese schlussendlich doch nicht verwendet werden mussten.
 
-Ein weiteres Problem war es, die für das zweite Programm vorgegebenen Klassen zu benutzen und sie in JavaFX einzusetzen.
-
-
-
-
-\section{Zeitbedarf}
-Den \textbf{Code-Styleguide} einzuhalten.
+\section*{Zeitbedarf}
+Der Zeitaufwand war für eine Vorbereitungsaufgabe relativ hoch. Jeder einzelne verbrachte ca. 3-4 Stunden zu Hause und zusätzlich noch 3-4 Freiblöcke gemeinsam, um die Aufgabe komplett fertigzustellen. 
+Darin enthalten sind jedoch auch Einarbeitung und Konfiguration von \LaTeX{} und Git, sowie IntelliJ.
 
 \end{document}
