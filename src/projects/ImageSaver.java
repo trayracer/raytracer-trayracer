@@ -140,7 +140,7 @@ public class ImageSaver extends Application {
      * @param height the given height for the BufferedImage
      * @return the drawn image
      */
-    private BufferedImage getThinRedLine(final int width, final int height) throws IllegalArgumentException {
+    private BufferedImage getThinRedLine(final int width, final int height) {
         if (width <= 0 || height <= 0) throw new IllegalArgumentException("Parameter must be greater than 0");
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
