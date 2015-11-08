@@ -145,9 +145,8 @@ public final class Vector3 {
      * @param v The other vector.
      * @return The cross product of the two vectors.
      */
-    @SuppressWarnings("unused")
     public Vector3 x( final Vector3 v ) {
-        return new Vector3((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (y * v.z) - (z * v.y));
+        return new Vector3((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (x * v.y) - (y * v.x));
     }
 
     /**
