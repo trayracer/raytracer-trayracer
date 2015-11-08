@@ -79,6 +79,7 @@ public class Point3 {
      * @param o The object to check.
      * @return True if the given object is a point and has the same properties as this one.
      */
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

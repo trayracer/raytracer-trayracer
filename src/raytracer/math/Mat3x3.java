@@ -168,6 +168,7 @@ public final class Mat3x3 {
      * @param o The object to check.
      * @return true if the given object is a Mat3x3 and has the same properties as this one.
      */
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals( final Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -132,7 +132,7 @@ public class TestCalcs {
      *
      * @param m The matrix to print.
      */
-    public static void printMath(Mat3x3 m) {
+    private static void printMath(Mat3x3 m) {
         System.out.println("M( " + m.m11 + ", " + m.m12 + ", " + m.m13 + ",   " + m.m21 + ", " + m.m22 + ", " + m.m23 + ",   " + m.m31 + ", " + m.m32 + ", " + m.m33 + " )");
     }
 

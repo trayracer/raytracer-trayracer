@@ -113,6 +113,7 @@ public final class Vector3 {
      *
      * @return The normal of this vector.
      */
+    @SuppressWarnings("unused")
     public Normal3 asNormal() {
         Vector3 nv = this.normalized();
         return new Normal3(nv.x, nv.y, nv.z);
@@ -144,6 +145,7 @@ public final class Vector3 {
      * @param v The other vector.
      * @return The cross product of the two vectors.
      */
+    @SuppressWarnings("unused")
     public Vector3 x( final Vector3 v ) {
         return new Vector3((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (y * v.z) - (z * v.y));
     }
@@ -168,6 +170,7 @@ public final class Vector3 {
      * @param o The object to check.
      * @return true if the given object is a vector and has the same properties as this one.
      */
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals( final Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -1,8 +1,6 @@
 package projects;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -50,7 +48,7 @@ public class ImageSaver extends Application {
     }
 
     /**
-     * This method opens a window in which the ImageView and the Image is placed
+     * This method opens a window with a menu bar in which the ImageView and the Image is placed
      *
      * @param stage Main stage of the program
      */
@@ -79,33 +77,26 @@ public class ImageSaver extends Application {
             pane.setTop(menubar);
             stage.show();
 
-            scene.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                // a Listener, which observes the width of the window and sets the new value to the width-variable and then reloads the image
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    final int cachewidth = newValue.intValue();
-                    if (cachewidth > 0) {
-                        width = cachewidth;
-                    }
-                    refreshImage();
+            // a Listener, which observes the width of the window and sets the new value to the width-variable and then reloads the image
+            scene.widthProperty().addListener((observable, oldValue, newValue) -> {
+                final int cachewidth = newValue.intValue();
+                if (cachewidth > 0) {
+                    width = cachewidth;
                 }
+                refreshImage();
             });
 
-            scene.heightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                // a Listener, which observes the height of the window and sets the new value to the height-variable and then reloads the image
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    int cacheheight = newValue.intValue();
-                    if (cacheheight > 0) {
-                        height = cacheheight;
-                    }
-                    refreshImage();
+            // a Listener, which observes the height of the window and sets the new value to the height-variable and then reloads the image
+            scene.heightProperty().addListener((observable, oldValue, newValue) -> {
+                int cacheheight = newValue.intValue();
+                if (cacheheight > 0) {
+                    height = cacheheight;
                 }
+                refreshImage();
             });
-
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // Suppress exception
         }
     }
 
@@ -118,7 +109,7 @@ public class ImageSaver extends Application {
     }
 
     /**
-     * Opens a save-dialog. The image can be saved as a jpg or png-file.
+     * Opens a save-dialog which saves the current image as a jpg or png-file in the file system.
      *
      * @param stage the given stage in which the dialog is shown
      */
@@ -132,11 +123,10 @@ public class ImageSaver extends Application {
 
         if (file != null) {
             String fileExt = fileDialog.getSelectedExtensionFilter().getExtensions().get(0);
-
             try {
-                ImageIO.write(getThinRedLine(width, height), fileExt.split("\\.")[1], file);
+                ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), null), fileExt.split("\\.")[1], file);
             } catch (IOException e) {
-                e.printStackTrace();
+                // Suppress exception
             }
         }
 
@@ -158,7 +148,7 @@ public class ImageSaver extends Application {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                bufferedImage.setRGB(y, x, new Color(0, 0, 0).getRGB());
+                bufferedImage.setRGB(x, y, new Color(0, 0, 0).getRGB());
             }
         }
 
