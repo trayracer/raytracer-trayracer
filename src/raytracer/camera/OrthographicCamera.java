@@ -5,6 +5,8 @@ import raytracer.math.Ray;
 import raytracer.math.Vector3;
 
 /**
+ * This class represents
+ *
  * @author Oliver Kniejski
  */
 public class OrthographicCamera extends Camera {
@@ -16,17 +18,47 @@ public class OrthographicCamera extends Camera {
     }
 
     @Override
-    public Ray rayFor(int w, int h, int x, int y) {
-        double a = w / h;
-        Point3 o = this.e.add(this.u.mul(a * this.s * (x - ((w - 1) / 2)) / (w - 1))).add(this.v.mul(this.s * (y - ((h - 1) / 2)) / (h - 1)));
+    public Ray rayFor(int width, int height, int x, int y) {
+        double a = (double) width / (double) height;
+        Point3 o = this.e.add(this.u.mul(a * this.s * (x - ((width - 1) / 2)) / (width - 1))).add(this.v.mul(this.s * (y - ((height - 1) / 2)) / (height - 1)));
         Vector3 d = this.w.mul(-1);
         return new Ray(o, d);
     }
 
     @Override
-    public String toString() {
-        return "OrthographicCamera{" +
-                "s=" + s +
-                "} " + super.toString();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        OrthographicCamera that = (OrthographicCamera) o;
+        return Double.compare(that.s, s) == 0 && super.equals(o);
     }
+
+    @Override
+    public int hashCode() {
+        int result = e != null ? e.hashCode() : 0;
+        long temp = Double.doubleToLongBits(s);
+        result = 31 * result + (g != null ? g.hashCode() : 0);
+        result = 31 * result + (t != null ? t.hashCode() : 0);
+        result = 31 * result + (u != null ? u.hashCode() : 0);
+        result = 31 * result + (v != null ? v.hashCode() : 0);
+        result = 31 * result + (w != null ? w.hashCode() : 0);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Camera{" +
+                "e=" + e +
+                ", g=" + g +
+                ", t=" + t +
+                ", u=" + u +
+                ", v=" + v +
+                ", w=" + w +
+                ", s=" + s +
+                '}';
+    }
+
+
 }
