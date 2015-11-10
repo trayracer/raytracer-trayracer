@@ -21,7 +21,7 @@ public class OrthographicCamera extends Camera {
     public Ray rayFor(int width, int height, int x, int y) {
         double a = (double) width / (double) height;
         Point3 o = this.e.add(this.u.mul(a * this.s * (x - ((width - 1) / 2)) / (width - 1))).add(this.v.mul(this.s * (y - ((height - 1) / 2)) / (height - 1)));
-        Vector3 d = this.w.mul(-1);
+        Vector3 d = this.w.invert();
         return new Ray(o, d);
     }
 

@@ -135,7 +135,7 @@ public final class Vector3 {
      *
      * @return The inverted vector.
      */
-    private Vector3 invert() {
+    public Vector3 invert() {
         return new Vector3(-x, -y, -z);
     }
 
