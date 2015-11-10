@@ -1,4 +1,4 @@
-package texture;
+package raytracer.texture;
 
 /**
  * This class represents a color in RGB color model.
