@@ -1,11 +1,14 @@
 package raytracer.geometry;
 
+import raytracer.texture.Color;
+import raytracer.math.Ray;
+
 /**
  * Created by Steve-O on 10.11.2015.
  */
 public abstract class Geometry {
 
-    Color color;
+    final Color color;
 
     public Geometry(Color color){
         this.color = color;
