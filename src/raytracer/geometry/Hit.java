@@ -1,5 +1,7 @@
 package raytracer.geometry;
 
+import raytracer.math.Ray;
+
 /**
  * This class represents a hit of a ray with a geometry.
  * @author Marie Hennings
