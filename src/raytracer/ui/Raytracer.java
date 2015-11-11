@@ -54,12 +54,11 @@ public class Raytracer extends Application {
         final Pane pane = new Pane();
 
         //planeScene();
-        //sphereScene();
+        sphereScene();
         //boxScene();
         //triangleScene();
         //twoSpheresPerspective();
         //twoSpheresOrthographic();
-        olliScene();
 
         Image image = SwingFXUtils.toFXImage(drawWorld(), null);
         ImageView view = new ImageView();
@@ -109,7 +108,7 @@ public class Raytracer extends Application {
     private void sphereScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0));
-        world.addGeometry(new Sphere(new Point3(0, 0, -1), 0.5, new Color(1, 0, 0)));
+        world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new Color(1, 0, 0)));
     }
 
     /**
@@ -150,27 +149,5 @@ public class Raytracer extends Application {
         world.addGeometry(new Sphere(new Point3(-1, 0, -3), 0.5, new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(1, 0, -6), 0.5, new Color(1, 0, 0)));
     }
-
-    //for testing
-
-    private void olliScene(){
-        cam = new OrthographicCamera(new Point3(0, 0, 0), new Vector3(1, 1, 0), new Vector3(0, 0, 1), 20);
-        //cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(1, 1, 0), new Vector3(0, 0, 1), 40);
-        world = new World(new Color(0,0,0));
-        Geometry kugelRot = new Sphere(new Point3(6, 2, 0), 2, new raytracer.texture.Color(1, 0, 0));
-        world.addGeometry(kugelRot);
-        Geometry kugelGruen = new Sphere(new Point3(4, 4, 0), 2, new raytracer.texture.Color(0, 1, 0));
-        world.addGeometry(kugelGruen);
-        Geometry kugelBlau = new Sphere(new Point3(2, 6, 0), 2, new raytracer.texture.Color(0, 0, 1));
-        world.addGeometry(kugelBlau);
-        world.addGeometry(new Triangle(new Point3(8, 0, 1), new Point3(0, 8, 1), new Point3(4, 4, 7), new Color(1, 1, 0)));
-        world.addGeometry(new Triangle(new Point3(8, 0, -1), new Point3(0, 8, -1), new Point3(4, 4, -7), new Color(1, 0, 1)));
-        world.addGeometry(new Triangle(new Point3(10, 0, 0), new Point3(0, 10, 0), new Point3(10, 10, 0), new Color(0, 1, 1)));
-
-        for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
-    }
-
-    private Sphere randomSphere(){
-        return new Sphere(new Point3(10 + Math.random()*100, 10 + Math.random()*100, 20 - Math.random()*40), Math.random()*3, new Color(Math.random(),Math.random(),Math.random()));
-    }
+    
 }
