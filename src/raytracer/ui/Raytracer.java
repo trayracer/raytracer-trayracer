@@ -190,7 +190,7 @@ public class Raytracer extends Application {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Hit hit = world.hit(cam.rayFor(width, height, x, y));
+                Hit hit = world.hit(cam.rayFor(width, height, x, height-y));
 
                 //TODO Color
                 if (hit != null) {
