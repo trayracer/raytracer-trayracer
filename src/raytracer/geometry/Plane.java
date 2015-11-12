@@ -37,6 +37,9 @@ public class Plane extends Geometry{
      */
     public Hit hit(final Ray r){
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
-        return new Hit(t, r, this);
+        if (t>0) {
+            return new Hit(t, r, this);
+        }
+        return null;
     }
 }
