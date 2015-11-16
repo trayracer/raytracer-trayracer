@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import raytracer.camera.Camera;
 import raytracer.camera.OrthographicCamera;
 import raytracer.camera.PerspectiveCamera;
+import raytracer.camera.StereoCamera;
 import raytracer.geometry.*;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
@@ -66,7 +67,7 @@ public class Raytracer extends Application {
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
-        axes();
+        testArt();
         generate();
 
         final Scene scene = new Scene(pane, width, height);
@@ -178,18 +179,49 @@ public class Raytracer extends Application {
 
     }
 
-    private void axes(){
+    private void cylinder(){
         cam = new PerspectiveCamera(new Point3(5, 5, 5), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0.2, 0.2 ,0.2));
+        world.addGeometry(new ZAxisAlignedCylinder(new Point3(0, -3, 0), -5, 1, new Color(0, 1, 0)));
+        addAxes();
+    }
+
+    private void testArt() {
+        width = width*2;
+        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0),4,0, Math.PI / 4);
+//        cam = new PerspectiveCamera(new Point3(15, 15, 15), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
+//        cam = new OrthographicCamera(new Point3(25, 25, 25), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), 15);
+        world = new World(new Color(0.3, 0.3, 0.3));
+        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new Color(1, 1, 1)));
+        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new Color(1, 0, 0)));
+        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new Color(0, 1, 0)));
+        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new Color(0, 0, 1)));
+        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new Color(1, 1, 0)));
+        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new Color(1, 0, 1)));
+        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new Color(0, 1, 1)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new Color(0, 0.2, 0.2)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new Color(0.2, 0, 0.2)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new Color(0.2, 0.2, 0)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new Color(0, 0.4, 0.4)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new Color(0.4, 0, 0.4)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new Color(0.4, 0.4, 0)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new Color(0, 0.6, 0.6)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new Color(0.6, 0, 0.6)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new Color(0.6, 0.6, 0)));
+        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new Color(1, 0, 0)));
+        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new Color(0, 1, 0)));
+        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new Color(0, 0, 1)));
+
+        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new Color(1, 1, 1)));
+    }
+
+    private void addAxes(){
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new Color(1, 0, 0)));
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new Color(1, 0, 0)));
         world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new Color(0, 1, 0)));
         world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new Color(0, 1, 0)));
         world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new Color(0, 0, 1)));
         world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new Color(0, 0, 1)));
-
-
-        world.addGeometry(new ZAxisAlignedCylinder(new Point3(0, -3, 0), -5, 1, new Color(0, 1, 0)));
     }
 
     /**
@@ -275,6 +307,16 @@ public class Raytracer extends Application {
             testScene(2);
             generate();
         });
+        final MenuItem cylinder = new MenuItem("cylinder");
+        cylinder.setOnAction(e -> {
+            cylinder();
+            generate();
+        });
+        final MenuItem testArt = new MenuItem("testArt");
+        testArt.setOnAction(e -> {
+            testArt();
+            generate();
+        });
         scenemenu.getItems().add(plane);
         scenemenu.getItems().add(sphere);
         scenemenu.getItems().add(box);
@@ -283,6 +325,8 @@ public class Raytracer extends Application {
         scenemenu.getItems().add(twoSpheresOrthographic);
         scenemenu.getItems().add(test1);
         scenemenu.getItems().add(test2);
+        scenemenu.getItems().add(cylinder);
+        scenemenu.getItems().add(testArt);
 
         final Menu dimensionsMenu = new Menu("Dimensions");
         final MenuItem d640 = new MenuItem("640 x 480");
