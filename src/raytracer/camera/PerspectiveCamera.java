@@ -6,20 +6,39 @@ import raytracer.math.Vector3;
 
 /**
  * Created by Steven Sobkowski on 08.11.15.
+ *
+ * this class represents a perspective camera
  */
 public class PerspectiveCamera extends Camera {
 
+    /**
+     * the angle of the camera
+     */
     public final double angle;
 
-    public PerspectiveCamera(Point3 e, Vector3 g, Vector3 t, double angle) {
+    /**
+     * this constructor creates a persepctive camera with the given parameters
+     * @param e point for the position
+     * @param g for the gaze direction
+     * @param t for the up-vector
+     * @param angle for the angle
+     */
+    public PerspectiveCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle) {
         super(e,g,t);
         this.angle = angle;
 
     }
 
-
+    /**
+     *
+     * @param width of the picture
+     * @param height of the picture
+     * @param x x-position of a pixel
+     * @param y y-position of a pixel
+     * @return a Ray for the pixel
+     */
     @Override
-    public Ray rayFor(int width, int height, int x, int y) {
+    public Ray rayFor(final int width, final int height, final int x, final int y) {
         Point3 o = e;
         Vector3 r = this.w.invert().mul((height/2)/Math.tan(angle)).add(u.mul(x-((width-1)/2))).add(v.mul(y-((height-1)/2)));
         Vector3 d = r.mul(1/r.magnitude);

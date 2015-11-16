@@ -5,13 +5,27 @@ import raytracer.math.Ray;
 import raytracer.texture.Color;
 
 /**
- * Created by Steve-O on 10.11.2015.
+ * Created by Steven Sobkowski on 10.11.2015.
+ *
+ * This class represents a sphere
  */
 public class Sphere extends Geometry {
-
+    /**
+     * the middle point of the sphere
+     */
     public final Point3 c;
+
+    /**
+     * the radius of the sphere represented by a double
+     */
     public final double radius;
 
+    /**
+     * this constructor creates a sphere with a point a double and a color
+     * @param c represents the center of the sphere
+     * @param radius represents the radius
+     * @param color represents the color, the sphere is supposed to have
+     */
     public Sphere(final Point3 c, final double radius, final Color color){
         super(color);
         this.c = c;
@@ -19,6 +33,11 @@ public class Sphere extends Geometry {
 
     }
 
+    /**
+     * This method creates and returns the hit of this sphere and a ray.
+     * @param r The ray.
+     * @return The hit of the ray and the geometry.
+     */
     public final Hit hit(Ray r){
         double a = r.d.dot(r.d);
         double b = r.d.dot((r.o.sub(c)).mul(2));

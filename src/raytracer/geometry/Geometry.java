@@ -4,16 +4,24 @@ import raytracer.texture.Color;
 import raytracer.math.Ray;
 
 /**
- * Created by Steve-O on 10.11.2015.
+ * Created by Steven Sobkowski on 10.11.2015.
+ * an abstract class which represents a geometry
  */
 public abstract class Geometry {
-
+    /**
+     * the color of the geometry
+     */
     final public Color color;
 
     public Geometry(Color color){
         this.color = color;
     }
 
+    /**
+     * an abstract method to calculate a hit between a ray and a geometry
+     * @param r the ray
+     * @return the hit of the geometry and the ray
+     */
     public abstract Hit hit(Ray r);
 
     @Override
