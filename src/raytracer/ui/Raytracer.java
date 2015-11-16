@@ -67,7 +67,7 @@ public class Raytracer extends Application {
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
-        testArt();
+        boxScene();
         generate();
 
         final Scene scene = new Scene(pane, width, height);
@@ -129,7 +129,7 @@ public class Raytracer extends Application {
         cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0));
         //TODO AxisAlignedBox
-        //world.addGeometry();
+        world.addGeometry(new AxisAlignedBox(new Point3(-0.5,0,-0.5),new Point3(0.5,1,0.5), new Color(0,0,1)));
     }
 
     /**
@@ -192,6 +192,7 @@ public class Raytracer extends Application {
 //        cam = new PerspectiveCamera(new Point3(15, 15, 15), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
 //        cam = new OrthographicCamera(new Point3(25, 25, 25), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), 15);
         world = new World(new Color(0.3, 0.3, 0.3));
+
         world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new Color(1, 1, 1)));
         world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new Color(0, 1, 0)));
@@ -211,7 +212,6 @@ public class Raytracer extends Application {
         world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new Color(0, 1, 0)));
         world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new Color(0, 0, 1)));
-
         world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new Color(1, 1, 1)));
     }
 
