@@ -1,8 +1,4 @@
-package raytracer.ui;/**
- * Created on 10.11.2015.
- *
- * @author Marie Hennings
- */
+package raytracer.ui;
 
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -29,6 +25,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Created on 10.11.2015.
+ *
+ * @author Marie Hennings
+ */
 public class Raytracer extends Application {
     /**
      * Width of the image and window content
@@ -67,13 +68,14 @@ public class Raytracer extends Application {
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
-        boxScene();
+        planeScene();
         generate();
 
         final Scene scene = new Scene(pane, width, height);
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
+        primaryStage.setTitle("Tray Racer v0.10");
         primaryStage.show();
     }
 
@@ -128,8 +130,7 @@ public class Raytracer extends Application {
     private void boxScene() {
         cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0));
-        //TODO AxisAlignedBox
-        world.addGeometry(new AxisAlignedBox(new Point3(-0.5,0,-0.5),new Point3(0.5,1,0.5), new Color(0,0,1)));
+        world.addGeometry(new AxisAlignedBox(new Point3(-0.5,0,-0.5), new Point3(0.5,1,0.5), new Color(0,0,1)));
     }
 
     /**
@@ -163,22 +164,24 @@ public class Raytracer extends Application {
 
     /**
      * This is a method for additional testing
-     * @param test number of testcase. unchecked. use with uttermost caution ;)
+     * @param test testcase
      */
 
-    private void testScene(int test){
-        if (test == 1){
+    private void testScene(boolean test){
+        if (test){
             cam = new OrthographicCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 100);
         }
-        if (test == 2){
+        if (!test){
             cam = new PerspectiveCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         }
         world = new World(new Color(0,0,0));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
         for (int i = 0; i < 100; i++) world.addGeometry(randomTriangle());
-
     }
 
+    /**
+     * This method creates a test scene with a cylinder.
+     */
     private void cylinder(){
         cam = new PerspectiveCamera(new Point3(5, 5, 5), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0.2, 0.2 ,0.2));
@@ -186,11 +189,13 @@ public class Raytracer extends Application {
         addAxes();
     }
 
-    private void testArt() {
-        width = width*2;
-        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0),4,0, Math.PI / 4);
-//        cam = new PerspectiveCamera(new Point3(15, 15, 15), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-//        cam = new OrthographicCamera(new Point3(25, 25, 25), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), 15);
+    /**
+     * This method creates a test scene for the stereoscopic camera.
+     */
+    private void stereoTest() {
+        width = 500;
+        height = 250;
+        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
         world = new World(new Color(0.3, 0.3, 0.3));
 
         world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new Color(1, 1, 1)));
@@ -215,6 +220,9 @@ public class Raytracer extends Application {
         world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new Color(1, 1, 1)));
     }
 
+    /**
+     * This method adds 6 colored Triangles representing the coordinate systems axes on the 0-Point to the world.
+     */
     private void addAxes(){
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new Color(1, 0, 0)));
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new Color(1, 0, 0)));
@@ -232,13 +240,17 @@ public class Raytracer extends Application {
         return new Sphere(new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50), Math.random()*10, new Color(Math.random(),Math.random(),Math.random()));
     }
 
+    /**
+     * This method generates a rather random triangle. testing purposes only, see inside for details.
+     * @return a random triangle
+     */
     private Triangle randomTriangle(){
         return new Triangle(new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50),new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50),new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50), new Color(Math.random(),Math.random(),Math.random()));
     }
 
     /**
      *  This method saves the current image as a png or jpg.
-     * @param stage
+     * @param stage The stage.
      */
     private void saveImage(final Stage stage) {
         FileChooser fileDialog = new FileChooser();
@@ -256,9 +268,13 @@ public class Raytracer extends Application {
                 // Suppress exception
             }
         }
-
     }
 
+    /**
+     * This method creates a menu-bar and it's functionality for the raytracer.
+     * @param primaryStage The primary stage.
+     * @return The MenuBar.
+     */
     private MenuBar createMenuBar(Stage primaryStage){
         final MenuBar menubar = new MenuBar();
         final Menu filemenu = new Menu("File");
@@ -299,12 +315,12 @@ public class Raytracer extends Application {
         });
         final MenuItem test1 = new MenuItem("orthographic test");
         test1.setOnAction(e -> {
-            testScene(1);
+            testScene(true);
             generate();
         });
         final MenuItem test2 = new MenuItem("perspective test");
         test2.setOnAction(e -> {
-            testScene(2);
+            testScene(false);
             generate();
         });
         final MenuItem cylinder = new MenuItem("cylinder");
@@ -312,10 +328,13 @@ public class Raytracer extends Application {
             cylinder();
             generate();
         });
-        final MenuItem testArt = new MenuItem("testArt");
+        final MenuItem testArt = new MenuItem("stereoTest");
         testArt.setOnAction(e -> {
-            testArt();
+            stereoTest();
+
             generate();
+            primaryStage.setWidth(width);
+            primaryStage.setHeight(height);
         });
         scenemenu.getItems().add(plane);
         scenemenu.getItems().add(sphere);

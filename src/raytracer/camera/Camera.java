@@ -6,16 +6,42 @@ import raytracer.math.Vector3;
 
 /**
  * @author Oliver Kniejski
+ *
+ * This abstract class represents a Camera.
  */
 public abstract class Camera {
+    /**
+     * The eye position.
+     */
     public final Point3 e;
+    /**
+     * The gaze direction.
+     */
     public final Vector3 g;
+    /**
+     * The up-vector.
+     */
     public final Vector3 t;
+    /**
+     * Vector u for the camera coordinate system.
+     */
     public final Vector3 u;
+    /**
+     * Vector v for the camera coordinate system.
+     */
     public final Vector3 v;
+    /**
+     * Vector w for the camera coordinate system.
+     */
     public final Vector3 w;
 
-    public Camera(Point3 e, Vector3 g, Vector3 t) {
+    /**
+     * This constructor computes the vectors for the camera coordinate system and creates a new camera.
+     * @param e The eye position.
+     * @param g The gaze direction.
+     * @param t The up-vector.
+     */
+    public Camera(final Point3 e, final Vector3 g, final Vector3 t) {
         this.e = e;
         this.g = g;
         this.t = t;
@@ -24,7 +50,15 @@ public abstract class Camera {
         this.v = w.x(u);
     }
 
-    public abstract Ray rayFor(int w, int h, int x, int y);
+    /**
+     * This method calculates a Ray for this camera with the given dimensions of the image-plane and the given pixel.
+     * @param w The width of the image-plane in pixels.
+     * @param h The height of the image-plane in pixels.
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
+     * @return The Ray for the given Parameters.
+     */
+    public abstract Ray rayFor(final int w, final int h, final int x, final int y);
 
     @Override
     public boolean equals(Object o) {
@@ -39,7 +73,6 @@ public abstract class Camera {
         if (u != null ? !u.equals(camera.u) : camera.u != null) return false;
         if (v != null ? !v.equals(camera.v) : camera.v != null) return false;
         return !(w != null ? !w.equals(camera.w) : camera.w != null);
-
     }
 
     @Override
