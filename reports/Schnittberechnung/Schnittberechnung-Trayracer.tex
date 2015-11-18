@@ -20,7 +20,21 @@
 
 \section*{Die Aufgabenstellung}
 
+Die aktuelle Aufgabe ist es einen ersten Raytracer zu programmieren.
+Dieser soll übergebene Szenen, also Welten mit einem oder mehren Objekten, darstellen können.
+Zur Realisierung der Aufgabe müssen folgende Klassen geschrieben werden:
+\begin{itemize}
+\item Die abstrakte Kamera Klasse, die von perspektivischer und orthographischer Kamera Klasse implementiert wird. 
+\item Die Ray Klasse, die einen bestimmten Strahl darstellt.
+\item Die abstrakte Klasse Geometry, die von folgenden Geometrien implementiert wird: Plane, Sphere, Triangle und Axis Aligned Box.
+\item Die Hit Klasse, die den Schnittpunkt eines Strahls mit einer Geometrie abbildet.
+\item Die Color Klasse, die eine RGB-Farbe darstellt und die einzelnen Farbanteile durch eine Zahl zwischen 0 und 1 angibt.
+\item Die World Klasse, zu der man Geometrien hinzufügen kann
+\item Die ausführbare Raytracer Klasse, die pixelweise die ausgewählte Welt mit ihren Objekten in ein vorgegebenes Fenster zeichnet.
+\end{itemize}
+
 \section*{Lösungsstrategien}
+Vor Beginn der Bearbeitung der Aufgabe haben wurden alle Klassen auf die einzelnen Teammitglieder aufgeteilt.
 
 \section*{Implementierung}
 
