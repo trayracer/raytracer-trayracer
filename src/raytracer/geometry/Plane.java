@@ -29,6 +29,9 @@ public class Plane extends Geometry {
      */
     public Plane(final Point3 a, final Normal3 n, final Color color) {
         super(color);
+        if (n.x == 0 || n.y == 0 || n.z == 0){
+            throw new IllegalArgumentException("Magnitude of the normal of the plane must not be zero.");
+        }
         this.a = a;
         this.n = n;
     }
