@@ -20,15 +20,16 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Created on 10.11.2015.
+ * This class represents the raytracer application.
  *
- * @author Marie Hennings
+ * @author Marie Hennings & Oliver Kniejski
  */
 public class Raytracer extends Application {
     /**
@@ -49,9 +50,9 @@ public class Raytracer extends Application {
     private Camera cam;
 
     /**
-     *
+     * ImageView shows the Image
      */
-    private ImageView view = new ImageView();
+    private final ImageView view = new ImageView();
 
     /**
      * Main method calling javafx-application main
@@ -68,6 +69,7 @@ public class Raytracer extends Application {
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
+        //starts with the plane scene
         planeScene();
         generate();
 
@@ -79,6 +81,9 @@ public class Raytracer extends Application {
         primaryStage.show();
     }
 
+    /**
+     * This method calls the drawWorld method and converts the BufferedImage to a FXImage which will be placed in the ImageView.
+     */
     private void generate() {
         Image image = SwingFXUtils.toFXImage(drawWorld(), null);
         view.setImage(image);
@@ -86,6 +91,7 @@ public class Raytracer extends Application {
 
     /**
      * This method draws the world for the perspective of the given camera and saves it in a bufferedimage.
+     *
      * @return The BufferedImage the world is drawn in.
      */
     private BufferedImage drawWorld() {
@@ -93,9 +99,8 @@ public class Raytracer extends Application {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Hit hit = world.hit(cam.rayFor(width, height, x, height-y));
+                Hit hit = world.hit(cam.rayFor(width, height, x, height - y));
 
-                //TODO Color
                 if (hit != null) {
                     bufferedImage.setRGB(x, y, hit.geo.color.getRGB());
                 } else {
@@ -130,7 +135,7 @@ public class Raytracer extends Application {
     private void boxScene() {
         cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0));
-        world.addGeometry(new AxisAlignedBox(new Point3(-0.5,0,-0.5), new Point3(0.5,1,0.5), new Color(0,0,1)));
+        world.addGeometry(new AxisAlignedBox(new Point3(-0.5, 0, -0.5), new Point3(0.5, 1, 0.5), new Color(0, 0, 1)));
     }
 
     /**
@@ -164,17 +169,17 @@ public class Raytracer extends Application {
 
     /**
      * This is a method for additional testing
+     *
      * @param test testcase
      */
-
-    private void testScene(boolean test){
-        if (test){
+    private void testScene(final boolean test) {
+        if (test) {
             cam = new OrthographicCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 100);
         }
-        if (!test){
+        if (!test) {
             cam = new PerspectiveCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         }
-        world = new World(new Color(0,0,0));
+        world = new World(new Color(0, 0, 0));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
         for (int i = 0; i < 100; i++) world.addGeometry(randomTriangle());
     }
@@ -182,9 +187,9 @@ public class Raytracer extends Application {
     /**
      * This method creates a test scene with a cylinder.
      */
-    private void cylinder(){
+    private void cylinder() {
         cam = new PerspectiveCamera(new Point3(5, 5, 5), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0.2, 0.2 ,0.2));
+        world = new World(new Color(0.2, 0.2, 0.2));
         world.addGeometry(new ZAxisAlignedCylinder(new Point3(0, -3, 0), -5, 1, new Color(0, 1, 0)));
         addAxes();
     }
@@ -223,7 +228,7 @@ public class Raytracer extends Application {
     /**
      * This method adds 6 colored Triangles representing the coordinate systems axes on the 0-Point to the world.
      */
-    private void addAxes(){
+    private void addAxes() {
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new Color(1, 0, 0)));
         world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new Color(1, 0, 0)));
         world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new Color(0, 1, 0)));
@@ -234,22 +239,25 @@ public class Raytracer extends Application {
 
     /**
      * This method generates a rather random sphere. testing purposes only, see inside for details.
+     *
      * @return a random sphere
      */
-    private Sphere randomSphere(){
-        return new Sphere(new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50), Math.random()*10, new Color(Math.random(),Math.random(),Math.random()));
+    private Sphere randomSphere() {
+        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new Color(Math.random(), Math.random(), Math.random()));
     }
 
     /**
      * This method generates a rather random triangle. testing purposes only, see inside for details.
+     *
      * @return a random triangle
      */
-    private Triangle randomTriangle(){
-        return new Triangle(new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50),new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50),new Point3(50-Math.random()*100,50-Math.random()*100,-Math.random()*50), new Color(Math.random(),Math.random(),Math.random()));
+    private Triangle randomTriangle() {
+        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Color(Math.random(), Math.random(), Math.random()));
     }
 
     /**
-     *  This method saves the current image as a png or jpg.
+     * This method saves the current image as a png or jpg.
+     *
      * @param stage The stage.
      */
     private void saveImage(final Stage stage) {
@@ -272,10 +280,11 @@ public class Raytracer extends Application {
 
     /**
      * This method creates a menu-bar and it's functionality for the raytracer.
+     *
      * @param primaryStage The primary stage.
      * @return The MenuBar.
      */
-    private MenuBar createMenuBar(Stage primaryStage){
+    private MenuBar createMenuBar(Stage primaryStage) {
         final MenuBar menubar = new MenuBar();
         final Menu filemenu = new Menu("File");
         final MenuItem save = new MenuItem("Save...");
@@ -372,7 +381,7 @@ public class Raytracer extends Application {
             primaryStage.setWidth(width);
             primaryStage.setHeight(height);
         });
-        final MenuItem d1280= new MenuItem("1280 x 960");
+        final MenuItem d1280 = new MenuItem("1280 x 960");
         d1280.setOnAction(e -> {
             width = 1280;
             height = 960;
