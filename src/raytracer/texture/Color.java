@@ -49,6 +49,7 @@ public class Color {
      * @return The sum of the two colors.
      */
     public Color add(final Color c) {
+        if (c == null) throw new NullPointerException("Color must not be null.");
         return new Color(r + c.r, g + c.g, b + c.b);
     }
 
@@ -59,6 +60,7 @@ public class Color {
      * @return The result of the difference.
      */
     public Color sub(final Color c) {
+        if (c == null) throw new NullPointerException("Color must not be null.");
         return new Color(r - c.r, g - c.g, b - c.b);
     }
 
@@ -69,6 +71,7 @@ public class Color {
      * @return The result of the multiplication.
      */
     public Color mul(final Color c) {
+        if (c == null) throw new NullPointerException("Color must not be null.");
         return new Color(r * c.r, g * c.g, b * c.b);
     }
 

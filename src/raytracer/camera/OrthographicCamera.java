@@ -20,10 +20,11 @@ public class OrthographicCamera extends Camera {
      * @param e The eye position.
      * @param g The gaze direction.
      * @param t The up-vector.
-     * @param s The scaling factor for the image plane.
+     * @param s The scaling factor for the image plane. Must be larger than zero.
      */
     public OrthographicCamera(final Point3 e, final Vector3 g, final Vector3 t, final double s) {
         super(e, g, t);
+        if (s <= 0) throw new IllegalArgumentException("The scaling factor must be larger than zero.");
         this.s = s;
     }
 

@@ -37,10 +37,12 @@ public class StereoCamera extends Camera{
      * @param g The gaze direction.
      * @param t The up-vector.
      * @param cameraSeparation The separation between the two eye points.
-     * @param angle The angle for the two perspective cameras.
+     * @param angle The angle for the two perspective cameras. Must be larger than zero.
      */
     public StereoCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle, final int cameraSeparation, final boolean transverse) {
         super(e, g, t);
+        if (angle <= 0) throw new IllegalArgumentException("Angle must be larger than zero.");
+        if (e == null || g == null || t == null) throw new NullPointerException("Parameters must not be null.");
         this.cameraSepatation = cameraSeparation;
         this.angle = angle;
         this.transverse= transverse;

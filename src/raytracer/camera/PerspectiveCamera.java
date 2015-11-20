@@ -22,15 +22,12 @@ public class PerspectiveCamera extends Camera {
      * @param e     point for the position
      * @param g     for the gaze direction
      * @param t     for the up-vector
-     * @param angle for the angle
+     * @param angle for the angle. must be larger than zero.
      */
     public PerspectiveCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle) {
         super(e, g, t);
-        if(angle <= 0){
-            throw new IllegalArgumentException("Angle must be greater than zero.");
-        }
+        if(angle <= 0) throw new IllegalArgumentException("Angle must be greater than zero.");
         this.angle = angle;
-
     }
 
     /**

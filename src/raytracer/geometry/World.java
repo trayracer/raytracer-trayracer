@@ -27,6 +27,7 @@ public class World {
      * @param backgroundColor The background Color.
      */
     public World(final Color backgroundColor) {
+        if (backgroundColor == null) throw new NullPointerException("Color must not be null.");
         this.backgroundColor = backgroundColor;
     }
 
@@ -38,6 +39,7 @@ public class World {
      * @return The Hit with the smallest positive t or null if no geometry is hit.
      */
     public Hit hit(final Ray ray) {
+        if (ray == null) throw new NullPointerException("Ray must not be null.");
         if (geometries.size() == 0) return null;
         List<Hit> hits = new LinkedList<>();
         //noinspection Convert2streamapi
@@ -64,6 +66,7 @@ public class World {
      * @param geo The Geometry to add.
      */
     public void addGeometry(final Geometry geo) {
+        if (geo == null) throw new NullPointerException("Geometrie must not be null.");
         this.geometries.add(geo);
     }
 

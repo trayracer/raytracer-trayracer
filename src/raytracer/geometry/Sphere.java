@@ -29,9 +29,8 @@ public class Sphere extends Geometry {
      */
     public Sphere(final Point3 c, final double radius, final Color color) {
         super(color);
-        if (radius <= 0 ){
-            throw new IllegalArgumentException("Radius must be greater than zero.");
-        }
+        if (radius <= 0 ) throw new IllegalArgumentException("Radius must be greater than zero.");
+        if (c == null) throw new NullPointerException("Sphere center must not be null.");
         this.c = c;
         this.radius = radius;
     }
@@ -43,31 +42,22 @@ public class Sphere extends Geometry {
      * @return The hit of the ray and the geometry.
      */
     public final Hit hit(final Ray r) {
-
+        if (r == null) throw new NullPointerException("Ray must not be null.");
         double a = r.d.dot(r.d);
         double b = r.d.dot((r.o.sub(c)).mul(2));
         double c = ((r.o.sub(this.c)).dot(r.o.sub(this.c))) - Math.pow(radius, 2);
         double d = Math.pow(b, 2) - 4 * (a * c);
 
-        if (d < 0) {
-            return null;
-        }
+        if (d < 0) return null;
         if (d == 0) {
             double t = (-b) / (2 * a);
-
-            if (t < 0) return null;
-
-            return new Hit(t, r, this);
+            if (t > 0) return new Hit(t, r, this);
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            if (t1 < t2 && t1 > 0) {
-                return new Hit(t1, r, this);
-            }
-            if (t2 > 0) {
-                return new Hit(t2, r, this);
-            }
+            if (t1 < t2 && t1 > 0) return new Hit(t1, r, this);
+            if (t2 > 0) return new Hit(t2, r, this);
         }
         return null;
     }
@@ -77,11 +67,8 @@ public class Sphere extends Geometry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-
         Sphere sphere = (Sphere) o;
-
         return Double.compare(sphere.radius, radius) == 0 && c.equals(sphere.c);
-
     }
 
     @Override
