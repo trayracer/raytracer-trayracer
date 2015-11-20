@@ -4,6 +4,7 @@ import raytracer.math.Ray;
 
 /**
  * This class represents a hit of a ray with a geometry.
+ *
  * @author Marie Hennings
  */
 public class Hit {
@@ -23,7 +24,7 @@ public class Hit {
     /**
      * This constructor creates a new hit of a ray with a geometry at a given t.
      *
-     * @param t The t.
+     * @param t   The t.
      * @param ray The hit.
      * @param geo The geometry.
      */
@@ -34,7 +35,7 @@ public class Hit {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
