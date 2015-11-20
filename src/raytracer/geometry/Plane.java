@@ -24,7 +24,7 @@ public class Plane extends Geometry {
      * This constructor creates a plane of a point and the normal.
      *
      * @param a     A Point.
-     * @param n     The normal.
+     * @param n     The normal. The magnitude of the normal must not be zero.
      * @param color The color.
      */
     public Plane(final Point3 a, final Normal3 n, final Color color) {
@@ -43,6 +43,9 @@ public class Plane extends Geometry {
      * @return The hit of the ray and the geometry.
      */
     public Hit hit(final Ray r) {
+        if ( r == null) {
+            throw new IllegalArgumentException("Ray must not be null.");
+        }
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
         if (t > 0) {
             return new Hit(t, r, this);

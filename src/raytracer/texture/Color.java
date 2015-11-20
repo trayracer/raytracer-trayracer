@@ -82,6 +82,10 @@ public class Color {
         return new Color(r * v, g * b, b * v);
     }
 
+    /**
+     * This method returns the RGB value representing this color.
+     * @return The int representing the RGB color.
+     */
     public int getRGB(){
         return new java.awt.Color((int)(r*255),(int)(g*255),(int)(b*255)).getRGB();
     }
