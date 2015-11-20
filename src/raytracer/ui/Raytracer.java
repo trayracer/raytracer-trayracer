@@ -101,7 +101,7 @@ public class Raytracer extends Application {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Hit hit = world.hit(cam.rayFor(width, height, x, height - y));
+                Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
 
                 if (hit != null) {
                     bufferedImage.setRGB(x, y, hit.geo.color.getRGB());
@@ -128,6 +128,7 @@ public class Raytracer extends Application {
     private void sphereScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0));
+        world.addGeometry(null);
         world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new Color(1, 0, 0)));
     }
 
