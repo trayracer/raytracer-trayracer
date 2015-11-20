@@ -5,48 +5,56 @@ import raytracer.math.Ray;
 import raytracer.math.Vector3;
 
 /**
- * Created by Steven Sobkowski on 08.11.15.
+ * This class represents a perspective camera.
  *
- * this class represents a perspective camera
+ * @author Steven Sobkowski
  */
 public class PerspectiveCamera extends Camera {
 
     /**
-     * the angle of the camera
+     * The angle of the camera.
      */
     public final double angle;
 
     /**
-     * this constructor creates a persepctive camera with the given parameters
-     * @param e point for the position
-     * @param g for the gaze direction
-     * @param t for the up-vector
+     * This constructor creates a perspective camera with the given parameters.
+     *
+     * @param e     point for the position
+     * @param g     for the gaze direction
+     * @param t     for the up-vector
      * @param angle for the angle
      */
     public PerspectiveCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle) {
-        super(e,g,t);
+        super(e, g, t);
+        if(angle <= 0){
+            throw new IllegalArgumentException("Angle must be greater than zero.");
+        }
         this.angle = angle;
 
     }
 
     /**
-     *
-     * @param width of the picture
-     * @param height of the picture
-     * @param x x-position of a pixel
-     * @param y y-position of a pixel
-     * @return a Ray for the pixel
+     * @param width  of the picture.
+     * @param height of the picture.
+     * @param x      x-position of a pixel.
+     * @param y      y-position of a pixel.
+     * @return a Ray for the pixel.
      */
     @Override
     public Ray rayFor(final int width, final int height, final int x, final int y) {
-        Point3 o = e;
-        Vector3 r = this.w.invert().mul((height/2)/Math.tan(angle/2)).add(u.mul(x-((width-1)/2))).add(v.mul(y-((height-1)/2)));
-        Vector3 d = r.mul(1/r.magnitude);
-        return new Ray(o,d);
+        if(width <= 0 || height <= 0){
+            throw new IllegalArgumentException("Width or height must be greater than zero.");
+        }
+        if(x < 0 || x >= width || y < 0 || y >= height){
+            throw new IllegalArgumentException("Parameters must greater than zero and smaller than width or height respectively");
+        }
+        Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x - ((width - 1) / 2))).add(v.mul(y - ((height - 1) / 2)));
+        Vector3 d = r.mul(1 / r.magnitude);
+        return new Ray(e, d);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;

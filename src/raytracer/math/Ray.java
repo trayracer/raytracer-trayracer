@@ -1,23 +1,24 @@
 package raytracer.math;
 
 /**
- * Created by Steven Sobkowski on 10.11.2015.
+ * This class represents a ray.
  *
- * this class represents a ray
+ * @author Steven Sobkowski
  */
 public class Ray {
     /**
-     * the origin point of the ray
+     * The origin point of the ray.
      */
-   public final Point3 o;
+    public final Point3 o;
 
     /**
-     * the vector of the ray
+     * the vector of the ray.
      */
     public final Vector3 d;
 
     /**
-     * this constructor creates a ray with the given point and vector
+     * This constructor creates a ray with the given point and vector.
+     *
      * @param o the point
      * @param d the vector
      */
@@ -27,34 +28,33 @@ public class Ray {
     }
 
     /**
-     * this method takes the factor t and calculates it's point on the ray
+     * This method takes the factor t and calculates it's point on the ray.
+     *
      * @param t the factor
      * @return the point on the ray
      */
-    public final Point3 at(final double t){
-        Point3 at = o.add(d.mul(t));
-        return at;
+    public final Point3 at(final double t) {
+        return o.add(d.mul(t));
     }
 
     /**
-     * this method takes a point and calculates its factor
+     * This method takes a point and calculates its factor.
+     *
      * @param p the point on the ray
      * @return the factor to reach the point on the ray
      */
-    public final double tOf(final Point3 p){
-        final double t = (o.sub(p).magnitude / d.magnitude);
-        return t;
+    public final double tOf(final Point3 p) {
+        return o.sub(p).magnitude / d.magnitude;
     }
 
     @Override
-    public boolean equals(Object o1) {
+    public boolean equals(final Object o1) {
         if (this == o1) return true;
         if (o1 == null || getClass() != o1.getClass()) return false;
 
         Ray ray = (Ray) o1;
 
-        if (!o.equals(ray.o)) return false;
-        return d.equals(ray.d);
+        return o.equals(ray.o) && d.equals(ray.d);
 
     }
 
