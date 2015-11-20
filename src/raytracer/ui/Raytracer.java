@@ -27,7 +27,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This class represents the raytracer application.
+ * This class is a FX Ray Tracer application. It has a menu bar with several options for displaying different scenes
+ * and selecting several image dimensions and the option to save the generated image.
  *
  * @author Marie Hennings & Oliver Kniejski
  */
@@ -82,7 +83,8 @@ public class Raytracer extends Application {
     }
 
     /**
-     * This method calls the drawWorld method and converts the BufferedImage to a FXImage which will be placed in the ImageView.
+     * This method calls the drawWorld method and converts the BufferedImage to a FXImage
+     * which will be placed in the ImageView.
      */
     private void generate() {
         Image image = SwingFXUtils.toFXImage(drawWorld(), null);

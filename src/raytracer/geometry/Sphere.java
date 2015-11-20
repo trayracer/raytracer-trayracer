@@ -5,33 +5,35 @@ import raytracer.math.Ray;
 import raytracer.texture.Color;
 
 /**
- * Created by Steven Sobkowski on 10.11.2015.
- * <p>
- * This class represents a sphere
+ * This class represents a sphere.
+ *
+ * @author Steven Sobkowski
  */
 public class Sphere extends Geometry {
     /**
-     * the middle point of the sphere
+     * The middle point of the sphere.
      */
     public final Point3 c;
 
     /**
-     * the radius of the sphere represented by a double
+     * The radius of the sphere represented by a double.
      */
     public final double radius;
 
     /**
-     * this constructor creates a sphere with a point a double and a color
+     * This constructor creates a sphere with a point a double and a color.
      *
-     * @param c      represents the center of the sphere
-     * @param radius represents the radius
-     * @param color  represents the color, the sphere is supposed to have
+     * @param c      Represents the center of the sphere.
+     * @param radius Represents the radius.
+     * @param color  Represents the color, the sphere is supposed to have.
      */
     public Sphere(final Point3 c, final double radius, final Color color) {
         super(color);
+        if (radius <= 0 ){
+            throw new IllegalArgumentException("Radius must be greater than zero.");
+        }
         this.c = c;
         this.radius = radius;
-
     }
 
     /**
@@ -40,7 +42,8 @@ public class Sphere extends Geometry {
      * @param r The ray.
      * @return The hit of the ray and the geometry.
      */
-    public final Hit hit(Ray r) {
+    public final Hit hit(final Ray r) {
+
         double a = r.d.dot(r.d);
         double b = r.d.dot((r.o.sub(c)).mul(2));
         double c = ((r.o.sub(this.c)).dot(r.o.sub(this.c))) - Math.pow(radius, 2);
@@ -51,34 +54,33 @@ public class Sphere extends Geometry {
         }
         if (d == 0) {
             double t = (-b) / (2 * a);
+
+            if (t < 0) return null;
+
             return new Hit(t, r, this);
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            if (t1 < t2) {
+            if (t1 < t2 && t1 > 0) {
                 return new Hit(t1, r, this);
             }
-            return new Hit(t2, r, this);
+            if (t2 > 0) {
+                return new Hit(t2, r, this);
+            }
         }
         return null;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Sphere sphere = (Sphere) o;
 
-        return (Double.compare(sphere.radius, radius) == 0) && c.equals(sphere.c);
+        return Double.compare(sphere.radius, radius) == 0 && c.equals(sphere.c);
 
     }
 
