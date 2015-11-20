@@ -23,14 +23,17 @@ public class World {
 
     /**
      * This constructor creates an empty world with the given background Color.
+     *
      * @param backgroundColor The background Color.
      */
-    public World(Color backgroundColor) {
+    public World(final Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
     /**
-     * This method checks if a ray hits any geometry in this world and returns the Hit with the smallest positive t or null if no geometry is hit.
+     * This method checks if a ray hits any geometry in this world and returns the Hit with the
+     * smallest positive t or null if no geometry is hit.
+     *
      * @param ray The ray.
      * @return The Hit with the smallest positive t or null if no geometry is hit.
      */
@@ -45,7 +48,7 @@ public class World {
         }
         if (hits.size() == 0) return null;
         Hit smallestHit = hits.get(0);
-        if (hits.size()>1) {
+        if (hits.size() > 1) {
             for (int i = 1; i < hits.size(); i++) {
                 if (hits.get(i).t < smallestHit.t) {
                     smallestHit = hits.get(i);
@@ -57,6 +60,7 @@ public class World {
 
     /**
      * This method adds a Geometry to this world.
+     *
      * @param geo The Geometry to add.
      */
     public void addGeometry(final Geometry geo) {
@@ -65,7 +69,7 @@ public class World {
 
     @SuppressWarnings("SimplifiableIfStatement")
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
