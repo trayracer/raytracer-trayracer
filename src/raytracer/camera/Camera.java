@@ -42,6 +42,7 @@ public abstract class Camera {
      * @param t The up-vector.
      */
     public Camera(final Point3 e, final Vector3 g, final Vector3 t) {
+        if (e == null || g == null || t == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.e = e;
         this.g = g;
         this.t = t;

@@ -15,7 +15,7 @@ public abstract class Geometry {
     final public Color color;
 
     public Geometry(final Color color){
-        if (color == null) throw new NullPointerException("Color must not be null.");
+        if (color == null) throw new IllegalArgumentException("Color must not be null.");
         this.color = color;
     }
 

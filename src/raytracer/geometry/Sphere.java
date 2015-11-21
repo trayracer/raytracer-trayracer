@@ -30,7 +30,7 @@ public class Sphere extends Geometry {
     public Sphere(final Point3 c, final double radius, final Color color) {
         super(color);
         if (radius <= 0 ) throw new IllegalArgumentException("Radius must be greater than zero.");
-        if (c == null) throw new NullPointerException("Sphere center must not be null.");
+        if (c == null) throw new IllegalArgumentException("Sphere center must not be null.");
         this.c = c;
         this.radius = radius;
     }
@@ -42,7 +42,7 @@ public class Sphere extends Geometry {
      * @return The hit of the ray and the geometry.
      */
     public final Hit hit(final Ray r) {
-        if (r == null) throw new NullPointerException("Ray must not be null.");
+        if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double a = r.d.dot(r.d);
         double b = r.d.dot((r.o.sub(c)).mul(2));
         double c = ((r.o.sub(this.c)).dot(r.o.sub(this.c))) - Math.pow(radius, 2);

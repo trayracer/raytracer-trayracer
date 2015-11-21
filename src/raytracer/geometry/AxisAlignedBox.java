@@ -38,7 +38,7 @@ public class AxisAlignedBox extends Geometry {
         super(color);
         if (lbf.x >= run.x || lbf.y >= run.y || lbf.z >= run.z)
             throw new IllegalArgumentException("Each value of the Point lbf has to be smaller than the corresponding value of the Point run.");
-        if (lbf == null || run == null) throw new NullPointerException("Parameters must not be null.");
+        if (lbf == null || run == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.lbf = lbf;
         this.run = run;
         planes[0] = new Plane(lbf, new Normal3(0, 0, -1), color);
@@ -56,7 +56,7 @@ public class AxisAlignedBox extends Geometry {
      * @return Hit for ray and box or null if there is no visible intersection.
      */
     public Hit hit(final Ray ray) {
-        if (ray == null) throw new NullPointerException("Ray must not be null.");
+        if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         for (Plane plane : planes) {
             if (Math.acos(plane.n.dot(ray.d) / ray.d.magnitude) >= Math.PI / 2) {
                 double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);

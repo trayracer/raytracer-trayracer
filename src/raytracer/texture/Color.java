@@ -49,7 +49,7 @@ public class Color {
      * @return The sum of the two colors.
      */
     public Color add(final Color c) {
-        if (c == null) throw new NullPointerException("Color must not be null.");
+        if (c == null) throw new IllegalArgumentException("Color must not be null.");
         return new Color(r + c.r, g + c.g, b + c.b);
     }
 
@@ -60,7 +60,7 @@ public class Color {
      * @return The result of the difference.
      */
     public Color sub(final Color c) {
-        if (c == null) throw new NullPointerException("Color must not be null.");
+        if (c == null) throw new IllegalArgumentException("Color must not be null.");
         return new Color(r - c.r, g - c.g, b - c.b);
     }
 
@@ -71,7 +71,7 @@ public class Color {
      * @return The result of the multiplication.
      */
     public Color mul(final Color c) {
-        if (c == null) throw new NullPointerException("Color must not be null.");
+        if (c == null) throw new IllegalArgumentException("Color must not be null.");
         return new Color(r * c.r, g * c.g, b * c.b);
     }
 
@@ -82,15 +82,17 @@ public class Color {
      * @return The result of the multiplication.
      */
     public Color mul(final double v) {
+        if (v < 0) throw new IllegalArgumentException("Scalar must be greater than zero.");
         return new Color(r * v, g * b, b * v);
     }
 
     /**
      * This method returns the RGB value representing this color.
+     *
      * @return The int representing the RGB color.
      */
-    public int getRGB(){
-        return new java.awt.Color((int)(r*255),(int)(g*255),(int)(b*255)).getRGB();
+    public int getRGB() {
+        return new java.awt.Color((int) (r * 255), (int) (g * 255), (int) (b * 255)).getRGB();
     }
 
     @Override

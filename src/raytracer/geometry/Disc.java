@@ -33,7 +33,7 @@ public class Disc extends Geometry {
      */
     public Disc(final Point3 c, final Normal3 n, final double radius, final Color color) {
         super(color);
-        if (c == null || n == null) throw new NullPointerException("Parameters must not be null.");
+        if (c == null || n == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.radius = radius;
         this.c = c;
         this.n = n;
@@ -41,7 +41,7 @@ public class Disc extends Geometry {
 
     @Override
     public Hit hit(final Ray ray) {
-        if (ray == null) throw new NullPointerException("Ray must not be null.");
+        if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t>0 && ray.at(t).sub(c).dot(ray.at(t).sub(c))<= radius*radius) {
             return new Hit(t, ray, this);

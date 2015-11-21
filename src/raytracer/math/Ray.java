@@ -23,7 +23,7 @@ public class Ray {
      * @param d the vector
      */
     public Ray(final Point3 o, final Vector3 d) {
-        if (o == null || d == null) throw new NullPointerException("Parameters must not be null.");
+        if (o == null || d == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.o = o;
         this.d = d;
     }
@@ -45,7 +45,7 @@ public class Ray {
      * @return the factor to reach the point on the ray
      */
     public final double tOf(final Point3 p) {
-        if (p == null) throw new NullPointerException("p must not be null.");
+        if (p == null) throw new IllegalArgumentException("p must not be null.");
         return o.sub(p).magnitude / d.magnitude;
     }
 

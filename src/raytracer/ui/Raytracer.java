@@ -294,52 +294,52 @@ public class Raytracer extends Application {
         filemenu.getItems().add(save);
 
         final Menu scenemenu = new Menu("Scene");
-        final MenuItem plane = new MenuItem("plane");
+        final MenuItem plane = new MenuItem("Plane");
         plane.setOnAction(e -> {
             planeScene();
             generate();
         });
-        final MenuItem sphere = new MenuItem("sphere");
+        final MenuItem sphere = new MenuItem("Sphere");
         sphere.setOnAction(e -> {
             sphereScene();
             generate();
         });
-        final MenuItem box = new MenuItem("box");
+        final MenuItem box = new MenuItem("Box");
         box.setOnAction(e -> {
             boxScene();
             generate();
         });
-        final MenuItem triangle = new MenuItem("triangle");
+        final MenuItem triangle = new MenuItem("Triangle");
         triangle.setOnAction(e -> {
             triangleScene();
             generate();
         });
-        final MenuItem twoSpheresPerspective = new MenuItem("twoSpheresPerspective");
+        final MenuItem twoSpheresPerspective = new MenuItem("Two Spheres Perspective");
         twoSpheresPerspective.setOnAction(e -> {
             twoSpheresPerspective();
             generate();
         });
-        final MenuItem twoSpheresOrthographic = new MenuItem("twoSpheresOrthographic");
+        final MenuItem twoSpheresOrthographic = new MenuItem("Two Spheres Orthographic");
         twoSpheresOrthographic.setOnAction(e -> {
             twoSpheresOrthographic();
             generate();
         });
-        final MenuItem test1 = new MenuItem("orthographic test");
+        final MenuItem test1 = new MenuItem("Orthographic Test");
         test1.setOnAction(e -> {
             testScene(true);
             generate();
         });
-        final MenuItem test2 = new MenuItem("perspective test");
+        final MenuItem test2 = new MenuItem("Perspective Test");
         test2.setOnAction(e -> {
             testScene(false);
             generate();
         });
-        final MenuItem cylinder = new MenuItem("cylinder");
+        final MenuItem cylinder = new MenuItem("Cylinder");
         cylinder.setOnAction(e -> {
             cylinder();
             generate();
         });
-        final MenuItem testArt = new MenuItem("stereoTest");
+        final MenuItem testArt = new MenuItem("Stereo Test");
         testArt.setOnAction(e -> {
             stereoTest();
 

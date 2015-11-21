@@ -29,7 +29,7 @@ public class Hit {
      * @param geo The geometry.
      */
     public Hit(final double t, final Ray ray, final Geometry geo) {
-        if (ray == null) throw new NullPointerException("Ray must not be null.");
+        if (ray == null || geo == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
         this.ray = ray;
         this.geo = geo;

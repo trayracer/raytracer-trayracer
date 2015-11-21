@@ -32,7 +32,7 @@ public class ZAxisAlignedCylinder extends Geometry{
      */
     public ZAxisAlignedCylinder(final Point3 m, final double h, final double radius, final Color color) {
         super(color);
-        if (m == null) throw new NullPointerException("Basepoint must not be null.");
+        if (m == null) throw new IllegalArgumentException("Basepoint must not be null.");
         this.m = m;
         this.h = h;
         this.radius = radius;
@@ -41,7 +41,7 @@ public class ZAxisAlignedCylinder extends Geometry{
     //TODO: Covers for top and bottom
     @Override
     public Hit hit(final Ray r ) {
-        if (r == null) throw new NullPointerException("Ray must not be null.");
+        if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double a = Math.pow(r.d.x,2) + Math.pow(r.d.y,2);
         double b = 2 * (r.o.x - m.x) * r.d.x + 2 * (r.o.y - m.y) * r.d.y;
         double c = Math.pow(r.o.x - m.x, 2) + Math.pow(r.o.y - m.y, 2) - Math.pow(radius,2);
