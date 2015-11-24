@@ -1,9 +1,9 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
-import raytracer.texture.Color;
 
 import java.util.Arrays;
 
@@ -32,21 +32,21 @@ public class AxisAlignedBox extends Geometry {
      *
      * @param lbf   The left-bottom-far Point of the Box.
      * @param run   The right-up-near Point of the Box.
-     * @param color The color of the Box.
+     * @param material The material of the Box.
      */
-    public AxisAlignedBox(final Point3 lbf, final Point3 run, final Color color) {
-        super(color);
+    public AxisAlignedBox(final Point3 lbf, final Point3 run, final Material material) {
+        super(material);
         if (lbf.x >= run.x || lbf.y >= run.y || lbf.z >= run.z)
             throw new IllegalArgumentException("Each value of the Point lbf has to be smaller than the corresponding value of the Point run.");
         if (lbf == null || run == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.lbf = lbf;
         this.run = run;
-        planes[0] = new Plane(lbf, new Normal3(0, 0, -1), color);
-        planes[1] = new Plane(run, new Normal3(0, 0, 1), color);
-        planes[2] = new Plane(lbf, new Normal3(-1, 0, 0), color);
-        planes[3] = new Plane(run, new Normal3(1, 0, 0), color);
-        planes[4] = new Plane(lbf, new Normal3(0, -1, 0), color);
-        planes[5] = new Plane(run, new Normal3(0, 1, 0), color);
+        planes[0] = new Plane(lbf, new Normal3(0, 0, -1), material);
+        planes[1] = new Plane(run, new Normal3(0, 0, 1), material);
+        planes[2] = new Plane(lbf, new Normal3(-1, 0, 0), material);
+        planes[3] = new Plane(run, new Normal3(1, 0, 0), material);
+        planes[4] = new Plane(lbf, new Normal3(0, -1, 0), material);
+        planes[5] = new Plane(run, new Normal3(0, 1, 0), material);
     }
 
     /**
@@ -64,7 +64,7 @@ public class AxisAlignedBox extends Geometry {
                 Point3 hitPoint = ray.at(t);
                 double small = 0.0000000000001; // smoothen the bounds for rounding errors
                 if (lbf.x - small <= hitPoint.x && hitPoint.x <= run.x + small && lbf.y - small <= hitPoint.y && hitPoint.y <= run.y + small && lbf.z - small <= hitPoint.z && hitPoint.z <= run.z + small) {
-                    return new Hit(t, ray, plane);
+                    return new Hit(t, ray, plane, plane.n);
                 }
             }
         }
