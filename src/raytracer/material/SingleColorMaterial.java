@@ -27,4 +27,27 @@ public class SingleColorMaterial extends Material {
     public Color colorFor(final Hit hit, final World world) {
         return color;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SingleColorMaterial that = (SingleColorMaterial) o;
+
+        return color.equals(that.color);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return color.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "SingleColorMaterial{" +
+                "color=" + color +
+                '}';
+    }
 }
