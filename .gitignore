@@ -5,6 +5,8 @@ out/
 
 +.class
 
+*.DS_Store
+
 #latex files
 *.aux
 *.glo

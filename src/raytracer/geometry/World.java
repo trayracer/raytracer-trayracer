@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.light.Light;
 import raytracer.math.Ray;
 import raytracer.texture.Color;
 
@@ -17,18 +18,28 @@ public class World {
      */
     public final Color backgroundColor;
     /**
+     * The color of the ambient light.
+     */
+    public final Color ambientColor;
+    /**
      * The Geometries in this world.
      */
     private List<Geometry> geometries = new LinkedList<>();
+    /**
+     * The Lights in this world.
+     */
+    private List<Light> lights = new LinkedList<>();
 
     /**
-     * This constructor creates an empty world with the given background Color.
+     * This constructor creates an empty world with the given background color and ambient light color.
      *
      * @param backgroundColor The background Color.
+     * @param ambientColor The Color of the ambient Light.
      */
-    public World(final Color backgroundColor) {
-        if (backgroundColor == null) throw new IllegalArgumentException("Color must not be null.");
+    public World(final Color backgroundColor,  final Color ambientColor) {
+        if (backgroundColor == null || ambientColor == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.backgroundColor = backgroundColor;
+        this.ambientColor = ambientColor;
     }
 
     /**
@@ -69,6 +80,17 @@ public class World {
         if (geo == null) throw new IllegalArgumentException("Geometrie must not be null.");
         this.geometries.add(geo);
     }
+
+    /**
+     * This method adds a Light to this world.
+     * @param
+     */
+    public void addLight(final Light light){
+        if (light == null) throw new IllegalArgumentException("Light must not be null.");
+        this.lights.add(light);
+    }
+
+
 
     @SuppressWarnings("SimplifiableIfStatement")
     @Override

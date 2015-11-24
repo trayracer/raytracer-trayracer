@@ -118,7 +118,7 @@ public class Raytracer extends Application {
      */
     private void planeScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Plane(new Point3(0, -1, 0), new Normal3(0, 1, 0), new Color(0, 1, 0)));
     }
 
@@ -127,7 +127,7 @@ public class Raytracer extends Application {
      */
     private void sphereScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new Color(1, 0, 0)));
     }
 
@@ -136,7 +136,7 @@ public class Raytracer extends Application {
      */
     private void boxScene() {
         cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new AxisAlignedBox(new Point3(-0.5, 0, -0.5), new Point3(0.5, 1, 0.5), new Color(0, 0, 1)));
     }
 
@@ -145,7 +145,7 @@ public class Raytracer extends Application {
      */
     private void triangleScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Triangle(new Point3(-0.5, 0.5, -3), new Point3(0.5, 0.5, -3), new Point3(0.5, -0.5, -3), new Color(1, 0, 1)));
     }
 
@@ -154,7 +154,7 @@ public class Raytracer extends Application {
      */
     private void twoSpheresPerspective() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Sphere(new Point3(-1, 0, -3), 0.5, new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(1, 0, -6), 0.5, new Color(1, 0, 0)));
     }
@@ -164,7 +164,7 @@ public class Raytracer extends Application {
      */
     private void twoSpheresOrthographic() {
         cam = new OrthographicCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 3);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Sphere(new Point3(-1, 0, -3), 0.5, new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(1, 0, -6), 0.5, new Color(1, 0, 0)));
     }
@@ -181,7 +181,7 @@ public class Raytracer extends Application {
         if (!test) {
             cam = new PerspectiveCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         }
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
         for (int i = 0; i < 100; i++) world.addGeometry(randomTriangle());
     }
@@ -191,7 +191,7 @@ public class Raytracer extends Application {
      */
     private void cylinder() {
         cam = new PerspectiveCamera(new Point3(5, 5, 5), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0.2, 0.2, 0.2));
+        world = new World(new Color(0.2, 0.2, 0.2), new Color(1, 1, 1));
         world.addGeometry(new ZAxisAlignedCylinder(new Point3(0, -3, 0), -5, 1, new Color(0, 1, 0)));
         addAxes();
     }
@@ -203,7 +203,7 @@ public class Raytracer extends Application {
         width = 500;
         height = 250;
         cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
-        world = new World(new Color(0.3, 0.3, 0.3));
+        world = new World(new Color(0.3, 0.3, 0.3), new Color(1, 1, 1));
 
         world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new Color(1, 1, 1)));
         world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new Color(1, 0, 0)));
@@ -244,7 +244,7 @@ public class Raytracer extends Application {
      */
     private void demo3(){
         cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0));
+        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new Color(1, 0, 0)));
         world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new Color(0, 1, 0)));
         world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new Color(0, 0, 1)));
