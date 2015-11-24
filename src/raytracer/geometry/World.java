@@ -90,6 +90,15 @@ public class World {
         this.lights.add(light);
     }
 
+    /**
+     * This method returns a LinkedList containing all Lights in this world.
+     *
+     * @return LinkedList containing all Lights in this world.
+     */
+    public List<Light> getLights(){
+        return lights;
+    }
+
 
 
     @SuppressWarnings("SimplifiableIfStatement")
