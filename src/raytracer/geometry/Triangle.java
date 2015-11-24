@@ -10,7 +10,7 @@ import java.util.Vector;
  *
  * @author Oliver Kniejski & Marie Hennings
  */
-public class Triangle extends Geometry{
+public class Triangle extends Geometry {
     /**
      * The point a.
      */
@@ -36,28 +36,70 @@ public class Triangle extends Geometry{
      */
     public final Normal3 nc;
 
-
     /**
      * This constructor creates a triangle with 3 Points.
      *
-     * @param a The point a of the triangle.
-     * @param b The point b of the triangle.
-     * @param c The point c of the triangle.
+     * @param a     The point a of the triangle.
+     * @param b     The point b of the triangle.
+     * @param c     The point c of the triangle.
      * @param color The color of the triangle.
      */
     public Triangle(final Point3 a, final Point3 b, final Point3 c, final Color color) {
         super(color);
-        if (a == null || b == null || c == null) throw new IllegalArgumentException("Triangle points must not be null.");
-        if (a.equals(b) || a.equals(c) || b.equals(c)) throw new IllegalArgumentException("The triangle needs three unique points.");
+        if (a == null || b == null || c == null)
+            throw new IllegalArgumentException("Triangle points must not be null.");
+        if (a.equals(b) || a.equals(c) || b.equals(c))
+            throw new IllegalArgumentException("The triangle needs three unique points.");
         this.a = a;
         this.b = b;
         this.c = c;
-        Vector3 xa = (b.sub(a)).x(c.sub(a));
-        this.na = xa.asNormal();
-        Vector3 xb = (a.sub(b)).x(c.sub(b));
-        this.nb = xb.asNormal();
-        Vector3 xc = (a.sub(c)).x(b.sub(c));
-        this.nc = xc.asNormal();
+        this.na = (b.sub(a)).x(c.sub(a)).asNormal();
+        this.nb = this.na;
+        this.nc = this.na;
+    }
+
+    /**
+     * This constructor creates a triangle with 3 Points.
+     *
+     * @param a     The point a of the triangle.
+     * @param b     The point b of the triangle.
+     * @param c     The point c of the triangle.
+     * @param na    The normal at point a.
+     * @param nb    The normal at point b.
+     * @param nc    The normal at point c.
+     * @param color The color of the triangle.
+     */
+    public Triangle(final Point3 a, final Point3 b, final Point3 c, final Normal3 na, final Normal3 nb, final Normal3 nc, final Color color) {
+        super(color);
+        if (a == null || b == null || c == null || na == null || nb == null || nc == null)
+            throw new IllegalArgumentException("Triangle points must not be null.");
+        if (a.equals(b) || a.equals(c) || b.equals(c))
+            throw new IllegalArgumentException("The triangle needs three unique points.");
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.na = na;
+        this.nb = nb;
+        this.nc = nc;
+    }
+
+    /**
+     * This method return the normal for a given point.
+     *
+     * @param point The point where the normal is calculated.
+     * @return The normal at the point.
+     */
+    public Normal3 normalAt(Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
+        double area = (b.sub(a)).x(c.sub(a)).magnitude;
+        double beta = (b.sub(a)).x(point.sub(a)).magnitude / area;
+        double gamma = (c.sub(a)).x(point.sub(a)).magnitude / area;
+        double alpha = 1 - beta - gamma;
+
+        if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1 || gamma < 0 || gamma > 0 || alpha + beta + gamma > 1)
+            throw new IllegalArgumentException("Point must be in triangle.");
+
+        return (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
     }
 
     /**
@@ -66,14 +108,14 @@ public class Triangle extends Geometry{
      * @param ray The ray.
      * @return The hit of the ray and the triangle or null if the triangle is not hit.
      */
-    public Hit hit(final Ray ray){
+    public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         Mat3x3 matA = new Mat3x3(a.x - b.x, a.x - c.x, ray.d.x, a.y - b.y, a.y - c.y, ray.d.y, a.z - b.z, a.z - c.z, ray.d.z);
         Vector3 right = new Vector3(a.x - ray.o.x, a.y - ray.o.y, a.z - ray.o.z);
         double beta = matA.changeCol1(right).determinant / matA.determinant;
         double gamma = matA.changeCol2(right).determinant / matA.determinant;
         double t = matA.changeCol3(right).determinant / matA.determinant;
-        if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta+gamma<=1){
+        if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
             return new Hit(t, ray, this);
         }
         return null;
