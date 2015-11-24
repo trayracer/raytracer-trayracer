@@ -71,7 +71,7 @@ public class Raytracer extends Application {
         pane.setCenter(view);
 
         //starts with the plane scene
-        planeScene();
+        demo3();
         generate();
 
         final Scene scene = new Scene(pane, width, height);
@@ -240,6 +240,19 @@ public class Raytracer extends Application {
     }
 
     /**
+     * This method implements the demo scene from exercise 3.
+     */
+    private void demo3(){
+        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        world = new World(new Color(0, 0, 0));
+        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new Color(1, 0, 0)));
+        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new Color(0, 1, 0)));
+        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new Color(0, 0, 1)));
+        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new Color(1, 1, 0)));
+
+    }
+
+    /**
      * This method generates a rather random sphere. testing purposes only, see inside for details.
      *
      * @return a random sphere
@@ -324,6 +337,12 @@ public class Raytracer extends Application {
             twoSpheresOrthographic();
             generate();
         });
+        final MenuItem demo3 = new MenuItem("Demo Ex3");
+        demo3.setOnAction(e -> {
+            demo3();
+            generate();
+        });
+
         final MenuItem test1 = new MenuItem("Orthographic Test");
         test1.setOnAction(e -> {
             testScene(true);
@@ -353,6 +372,7 @@ public class Raytracer extends Application {
         scenemenu.getItems().add(triangle);
         scenemenu.getItems().add(twoSpheresPerspective);
         scenemenu.getItems().add(twoSpheresOrthographic);
+        scenemenu.getItems().add(demo3);
         scenemenu.getItems().add(test1);
         scenemenu.getItems().add(test2);
         scenemenu.getItems().add(cylinder);
