@@ -1,7 +1,52 @@
 package raytracer.light;
 
+import raytracer.math.Point3;
+import raytracer.math.Vector3;
+import raytracer.texture.Color;
+
 /**
- * Created on 24.11.15.
+ * @author Steven Sobkowski
  */
-public class PointLight {
+public class PointLight extends Light {
+
+    public final Point3 position;
+
+    public PointLight(final Color color, final Point3 position){
+        super(color);
+        if(color == null || position == null) throw new IllegalArgumentException("Parameters must not be null!");
+        this.position = position;
+    }
+
+    @Override
+    public boolean illuminates(Point3 point) {
+        return true;
+    }
+
+    @Override
+    public Vector3 directionFrom(final Point3 point) {
+        return position.sub(point);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PointLight that = (PointLight) o;
+
+        return position.equals(that.position);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return position.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "PointLight{" +
+                "position=" + position +
+                '}';
+    }
 }
