@@ -1,6 +1,6 @@
 package raytracer.geometry;
 
-import raytracer.texture.Color;
+import raytracer.material.Material;
 import raytracer.math.Ray;
 
 /**
@@ -10,13 +10,18 @@ import raytracer.math.Ray;
  */
 public abstract class Geometry {
     /**
-     * The color of the geometry.
+     * The material of the geometry.
      */
-    final public Color color;
+    final public Material material;
 
-    public Geometry(final Color color){
-        if (color == null) throw new IllegalArgumentException("Color must not be null.");
-        this.color = color;
+    /**
+     * The constructor for the geometry.
+     *
+     * @param material
+     */
+    public Geometry(final Material material){
+        if (material == null) throw new IllegalArgumentException("Material must not be null.");
+        this.material = material;
     }
 
     /**
@@ -33,19 +38,19 @@ public abstract class Geometry {
 
         Geometry geometry = (Geometry) o;
 
-        return !(color != null ? !color.equals(geometry.color) : geometry.color != null);
+        return !(material != null ? !material.equals(geometry.material) : geometry.material != null);
 
     }
 
     @Override
     public int hashCode() {
-        return color != null ? color.hashCode() : 0;
+        return material != null ? material.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Geometry{" +
-                "color=" + color +
+                "material=" + material +
                 '}';
     }
 }
