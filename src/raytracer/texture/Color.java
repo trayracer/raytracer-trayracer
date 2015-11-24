@@ -92,7 +92,7 @@ public class Color {
      * @return The int representing the RGB color.
      */
     public int getRGB() {
-        return new java.awt.Color((int) (r * 255), (int) (g * 255), (int) (b * 255)).getRGB();
+        return new java.awt.Color((int) (Math.min(255, r * 255)), (int) (Math.min(255, g * 255)), (int) (Math.min(255, b * 255))).getRGB();
     }
 
     @Override

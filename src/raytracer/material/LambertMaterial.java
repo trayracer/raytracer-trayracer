@@ -33,7 +33,9 @@ public class LambertMaterial extends Material{
         List<Light> lights = world.getLights();
         Color c = color.mul(world.ambientColor);
         for (Light l : lights){
-            c = c.add(color.mul(l.color).mul(Math.max(0, l.directionFrom(hit.ray.at(hit.t)).dot(hit.normal))));
+            if (l.illuminates(hit.ray.at(hit.t))) {
+                c = c.add(color.mul(l.color).mul(Math.max(0, l.directionFrom(hit.ray.at(hit.t)).dot(hit.normal))));
+            }
         }
         return c;
     }
