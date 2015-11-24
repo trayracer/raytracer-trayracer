@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
 import raytracer.math.*;
 import raytracer.texture.Color;
 
@@ -42,10 +43,10 @@ public class Triangle extends Geometry {
      * @param a     The point a of the triangle.
      * @param b     The point b of the triangle.
      * @param c     The point c of the triangle.
-     * @param color The color of the triangle.
+     * @param material The material of the triangle.
      */
-    public Triangle(final Point3 a, final Point3 b, final Point3 c, final Color color) {
-        super(color);
+    public Triangle(final Point3 a, final Point3 b, final Point3 c, final Material material) {
+        super(material);
         if (a == null || b == null || c == null)
             throw new IllegalArgumentException("Triangle points must not be null.");
         if (a.equals(b) || a.equals(c) || b.equals(c))
@@ -67,10 +68,10 @@ public class Triangle extends Geometry {
      * @param na    The normal at point a.
      * @param nb    The normal at point b.
      * @param nc    The normal at point c.
-     * @param color The color of the triangle.
+     * @param material The material of the triangle.
      */
-    public Triangle(final Point3 a, final Point3 b, final Point3 c, final Normal3 na, final Normal3 nb, final Normal3 nc, final Color color) {
-        super(color);
+    public Triangle(final Point3 a, final Point3 b, final Point3 c, final Normal3 na, final Normal3 nb, final Normal3 nc, final Material material) {
+        super(material);
         if (a == null || b == null || c == null || na == null || nb == null || nc == null)
             throw new IllegalArgumentException("Triangle points must not be null.");
         if (a.equals(b) || a.equals(c) || b.equals(c))
@@ -112,11 +113,13 @@ public class Triangle extends Geometry {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         Mat3x3 matA = new Mat3x3(a.x - b.x, a.x - c.x, ray.d.x, a.y - b.y, a.y - c.y, ray.d.y, a.z - b.z, a.z - c.z, ray.d.z);
         Vector3 right = new Vector3(a.x - ray.o.x, a.y - ray.o.y, a.z - ray.o.z);
-        double beta = matA.changeCol1(right).determinant / matA.determinant;
-        double gamma = matA.changeCol2(right).determinant / matA.determinant;
-        double t = matA.changeCol3(right).determinant / matA.determinant;
+        double detA = matA.determinant;
+        if (detA == 0) return null;
+        double beta = matA.changeCol1(right).determinant / detA;
+        double gamma = matA.changeCol2(right).determinant / detA;
+        double t = matA.changeCol3(right).determinant / detA;
         if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
-            return new Hit(t, ray, this);
+            return new Hit(t, ray, this, normalAt(ray.at(t)));
         }
         return null;
     }
