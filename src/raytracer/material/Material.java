@@ -1,7 +1,20 @@
 package raytracer.material;
 
+import raytracer.geometry.Hit;
+import raytracer.geometry.World;
+
 /**
- * Created on 24.11.15.
+ *
+ * 
+ * @author Marie Hennings
  */
-public class Material {
+public abstract class Material {
+
+    /**
+     *
+     * @param hit
+     * @param world
+     * @return
+     */
+    public abstract World colorFor(Hit hit, World world);
 }
