@@ -1,9 +1,6 @@
 package raytracer.geometry;
 
-import raytracer.math.Mat3x3;
-import raytracer.math.Point3;
-import raytracer.math.Ray;
-import raytracer.math.Vector3;
+import raytracer.math.*;
 import raytracer.texture.Color;
 
 import java.util.Vector;
@@ -11,13 +8,34 @@ import java.util.Vector;
 /**
  * This class represents a triangle.
  *
- * @author Oliver Kniejski
+ * @author Oliver Kniejski & Marie Hennings
  */
 public class Triangle extends Geometry{
-
+    /**
+     * The point a.
+     */
     public final Point3 a;
+    /**
+     * The point b.
+     */
     public final Point3 b;
+    /**
+     * The point c.
+     */
     public final Point3 c;
+    /**
+     * The normal at point a.
+     */
+    public final Normal3 na;
+    /**
+     * The normal at point b.
+     */
+    public final Normal3 nb;
+    /**
+     * The normal at point c.
+     */
+    public final Normal3 nc;
+
 
     /**
      * This constructor creates a triangle with 3 Points.
@@ -34,6 +52,12 @@ public class Triangle extends Geometry{
         this.a = a;
         this.b = b;
         this.c = c;
+        Vector3 xa = (b.sub(a)).x(c.sub(a));
+        this.na = xa.asNormal();
+        Vector3 xb = (a.sub(b)).x(c.sub(b));
+        this.nb = xb.asNormal();
+        Vector3 xc = (a.sub(c)).x(b.sub(c));
+        this.nc = xc.asNormal();
     }
 
     /**
