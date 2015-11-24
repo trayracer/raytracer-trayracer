@@ -90,7 +90,7 @@ public class Triangle extends Geometry {
      * @param point The point where the normal is calculated.
      * @return The normal at the point.
      */
-    public Normal3 normalAt(Point3 point) {
+    public Normal3 normalAt(final Point3 point) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
         double area = (b.sub(a)).x(c.sub(a)).magnitude;
         double beta = (b.sub(a)).x(point.sub(a)).magnitude / area;
