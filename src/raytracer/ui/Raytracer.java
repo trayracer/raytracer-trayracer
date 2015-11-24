@@ -134,6 +134,7 @@ public class Raytracer extends Application {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
         world.addLight(new DirectionalLight(new Color(0.5, 0.5, 0.5), new Vector3(0, -1, -1)));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(3, 3, 4)));
         world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new LambertMaterial(new Color(1, 0, 0))));
     }
 
@@ -211,28 +212,29 @@ public class Raytracer extends Application {
         width = 500;
         height = 250;
         cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
-        world = new World(new Color(0.3, 0.3, 0.3), new Color(1, 1, 1));
+        world = new World(new Color(0.3, 0.3, 0.3), new Color(0.2, 0.2, 0.2));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(20, 25, 40)));
 
-        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new SingleColorMaterial(new Color(1, 1, 1))));
-        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new SingleColorMaterial(new Color(1, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new SingleColorMaterial(new Color(1, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new SingleColorMaterial(new Color(0, 1, 1))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new SingleColorMaterial(new Color(0, 0.2, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new SingleColorMaterial(new Color(0.2, 0, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new SingleColorMaterial(new Color(0.2, 0.2, 0))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new SingleColorMaterial(new Color(0, 0.4, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new SingleColorMaterial(new Color(0.4, 0, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new SingleColorMaterial(new Color(0.4, 0.4, 0))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new SingleColorMaterial(new Color(0, 0.6, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new SingleColorMaterial(new Color(0.6, 0, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new SingleColorMaterial(new Color(0.6, 0.6, 0))));
-        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new SingleColorMaterial(new Color(1, 1, 1))));
+        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new LambertMaterial(new Color(1, 1, 1))));
+        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
+        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
+        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new LambertMaterial(new Color(0, 0, 1))));
+        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new LambertMaterial(new Color(1, 1, 0))));
+        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new LambertMaterial(new Color(1, 0, 1))));
+        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new LambertMaterial(new Color(0, 1, 1))));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0, 0.2, 0.2))));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0.2, 0, 0.2))));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new LambertMaterial(new Color(0.2, 0.2, 0))));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0, 0.4, 0.4))));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0.4, 0, 0.4))));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new LambertMaterial(new Color(0.4, 0.4, 0))));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0, 0.6, 0.6))));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0.6, 0, 0.6))));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new LambertMaterial(new Color(0.6, 0.6, 0))));
+        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
+        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
+        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new LambertMaterial(new Color(0, 0, 1))));
+        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new LambertMaterial(new Color(1, 1, 1))));
     }
 
     /**

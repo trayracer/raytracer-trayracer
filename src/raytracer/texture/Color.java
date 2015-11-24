@@ -83,7 +83,7 @@ public class Color {
      */
     public Color mul(final double v) {
         if (v < 0) throw new IllegalArgumentException("Scalar must be greater than zero.");
-        return new Color(r * v, g * b, b * v);
+        return new Color(r * v, g * v, b * v);
     }
 
     /**
