@@ -32,6 +32,7 @@ public class Hit {
      * @param t   The t.
      * @param ray The hit.
      * @param geo The geometry.
+     * @param normal The normal.
      */
     public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal) {
         if (ray == null || geo == null) throw new IllegalArgumentException("Parameters must not be null.");

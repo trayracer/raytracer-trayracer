@@ -20,6 +20,7 @@ import raytracer.light.DirectionalLight;
 import raytracer.light.PointLight;
 import raytracer.light.SpotLight;
 import raytracer.material.LambertMaterial;
+import raytracer.material.PhongMaterial;
 import raytracer.material.SingleColorMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
@@ -263,6 +264,17 @@ public class Raytracer extends Application {
 
     }
 
+    private void demo4(){
+        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
+        world.addLight(new PointLight(new Color(1, 1, 1), new Point3(4, 4, 4)));
+        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new PhongMaterial(new Color(1, 0, 0),new Color(1,1,1),64)));
+        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new PhongMaterial(new Color(0, 1, 0),new Color(1,1,1),64)));
+        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new PhongMaterial(new Color(0, 0, 1),new Color(1,1,1),64)));
+        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new PhongMaterial(new Color(1, 1, 0),new Color(1,1,1),64)));
+
+    }
+
     /**
      * This method generates a rather random sphere. testing purposes only, see inside for details.
      *
@@ -353,6 +365,11 @@ public class Raytracer extends Application {
             demo3();
             generate();
         });
+        final MenuItem demo4 = new MenuItem("Demo Ex4");
+        demo4.setOnAction(e -> {
+            demo4();
+            generate();
+        });
 
         final MenuItem test1 = new MenuItem("Orthographic Test");
         test1.setOnAction(e -> {
@@ -384,6 +401,7 @@ public class Raytracer extends Application {
         scenemenu.getItems().add(twoSpheresPerspective);
         scenemenu.getItems().add(twoSpheresOrthographic);
         scenemenu.getItems().add(demo3);
+        scenemenu.getItems().add(demo4);
         scenemenu.getItems().add(test1);
         scenemenu.getItems().add(test2);
         scenemenu.getItems().add(cylinder);

@@ -5,12 +5,22 @@ import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
+ * This class represents a PointLight
+ *
  * @author Steven Sobkowski
  */
 public class PointLight extends Light {
-
+    /**
+     * The position of the Light
+     */
     public final Point3 position;
 
+    /**
+     * This constructor creates a PointLight with the given parameters.
+     *
+     * @param color the given color
+     * @param position the given position
+     */
     public PointLight(final Color color, final Point3 position){
         super(color);
         if(color == null || position == null) throw new IllegalArgumentException("Parameters must not be null!");
