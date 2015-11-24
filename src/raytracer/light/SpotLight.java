@@ -35,12 +35,44 @@ public class SpotLight extends Light {
     }
 
     @Override
-    public boolean illuminates(Point3 point) {
+    public boolean illuminates(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
         return Math.acos(directionFrom(point).invert().dot(direction) / (directionFrom(point).invert().magnitude * direction.magnitude)) <= halfAngle;
     }
 
     @Override
-    public Vector3 directionFrom(Point3 point) {
+    public Vector3 directionFrom(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
         return position.sub(point);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SpotLight spotLight = (SpotLight) o;
+
+        return Double.compare(spotLight.halfAngle, halfAngle) == 0 && !(position != null ? !position.equals(spotLight.position) : spotLight.position != null) && !(direction != null ? !direction.equals(spotLight.direction) : spotLight.direction != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = position != null ? position.hashCode() : 0;
+        result = 31 * result + (direction != null ? direction.hashCode() : 0);
+        temp = Double.doubleToLongBits(halfAngle);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "SpotLight{" +
+                "position=" + position +
+                ", direction=" + direction +
+                ", halfAngle=" + halfAngle +
+                "} " + super.toString();
     }
 }

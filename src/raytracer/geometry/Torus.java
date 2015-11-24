@@ -1,5 +1,7 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
+import raytracer.math.Normal3;
 import raytracer.math.Solvers;
 import raytracer.math.Ray;
 import raytracer.texture.Color;
@@ -21,12 +23,12 @@ public class Torus extends Geometry {
 
     /**
      * This constructor creates a new Torus.
-     * @param radius
-     * @param diameter
-     * @param color
+     * @param radius The radius.
+     * @param diameter The diameter.
+     * @param material The material.
      */
-    public Torus(final double radius, final double diameter, final Color color) {
-        super(color);
+    public Torus(final double radius, final double diameter, final Material material) {
+        super(material);
         this.radius = radius;
         this.diameter = diameter;
     }
@@ -47,7 +49,7 @@ public class Torus extends Geometry {
             for (int x = 0; x < roots.length; x++) {
                 if (roots[x] > 0 && roots[x]< t) t = roots[x];
             }
-            return new Hit(t, r, this);
+            return new Hit(t, r, this, new Normal3(1,0,0)); //TODO: normal
         }
         return null;
     }

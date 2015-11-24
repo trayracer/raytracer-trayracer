@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
@@ -29,10 +30,10 @@ public class Disc extends Geometry {
      * @param c The center.
      * @param n The normal.
      * @param radius The radius.
-     * @param color The color.
+     * @param material The material.
      */
-    public Disc(final Point3 c, final Normal3 n, final double radius, final Color color) {
-        super(color);
+    public Disc(final Point3 c, final Normal3 n, final double radius, final Material material) {
+        super(material);
         if (c == null || n == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.radius = radius;
         this.c = c;
@@ -44,7 +45,7 @@ public class Disc extends Geometry {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t>0 && ray.at(t).sub(c).dot(ray.at(t).sub(c))<= radius*radius) {
-            return new Hit(t, ray, this);
+            return new Hit(t, ray, this, n);
         }
         return null;
     }

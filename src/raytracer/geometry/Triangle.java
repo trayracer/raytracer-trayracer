@@ -90,15 +90,16 @@ public class Triangle extends Geometry {
      * @param point The point where the normal is calculated.
      * @return The normal at the point.
      */
-    public Normal3 normalAt(Point3 point) {
+    public Normal3 normalAt(final Point3 point) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        double area = (b.sub(a)).x(c.sub(a)).magnitude;
-        double beta = (b.sub(a)).x(point.sub(a)).magnitude / area;
-        double gamma = (c.sub(a)).x(point.sub(a)).magnitude / area;
-        double alpha = 1 - beta - gamma;
+        double area = (b.sub(a)).x((c.sub(a))).magnitude;
+        double beta = (b.sub(a)).x((point.sub(a))).magnitude / area;
+        double gamma = (c.sub(a)).x((point.sub(a))).magnitude / area;
+        double alpha = 1.0 - beta - gamma;
 
-        if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1 || gamma < 0 || gamma > 0 || alpha + beta + gamma > 1)
+        if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1 || gamma < 0 || gamma > 1 || alpha + beta + gamma > 1) {
             throw new IllegalArgumentException("Point must be in triangle.");
+        }
 
         return (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
     }
