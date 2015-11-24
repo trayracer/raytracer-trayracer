@@ -19,16 +19,45 @@
 \maketitle
 
 \section*{Die Aufgabenstellung}
+In der aktuellen Aufgabe geht es um die Beleuchtung der Raytracerszene.
+Zuerst sollen verschiedene Lichtquellen implementiert werden, die alle eine abstrakte Lichtklasse erweitern.
+Die folgenden zu implementierenden Klassen sind:
+\begin{itemize}
+\item Punktlicht
+\item Direktionales Licht
+\item Spotlight
+\end{itemize}
 
+Des weiteren werden verschiedene Materialien implementiert, die wiederum die abstrakte Materialklasse erweitern:
+\begin{itemize}
+\item einfarbiges Material
+\item Lambert Material
+\item Phong Material
+\end{itemize}
+
+Infolgedessen müssen mehrere Klassen aus der vorherigen Aufgabe geändert oder ergänzt werden:
+\begin{itemize}
+\item Hit muss um eine Normale ergänzt werden
+\item Geometry erhält statt dem Color-Attribut ein Material-Attribut
+\item World wird um eine Liste für die Lichtguellen erweitert und bekommt ein weiteres Attribut für das ambiente Licht
+\end{itemize}
+
+Anschließend sollen zwei Szenen zur Überprüfung der neu implementierten Klassen erstellt werden.
 
 \section*{Lösungsstrategien}
 
+Vor Beginn der Bearbeitung der Aufgabe wurden alle Klassen auf die einzelnen Teammitglieder
+aufgeteilt. Dabei wurde darauf geachtet, dass jeder etwa gleich komplexe Aufgaben erhält.
+Anschließend wurden alle Klassen gemeinsam überprüft und mögliche Fehler und Probleme
+zusammen gelöst.
 
 \section*{Implementierung}
 
+Die Klassen wurden anhand der in der Aufgabe vorgegebenen Klassendiagramme implementiert.
+Die Hitmethoden der Geometrie-Klassen wurden um die Berechnung der Normalen erweitert.
 
 \section*{Besondere Probleme oder Schwierigkeiten bei der Bearbeitung}
-
+Keine :)
 
 \section*{Zeitbedarf}
 
