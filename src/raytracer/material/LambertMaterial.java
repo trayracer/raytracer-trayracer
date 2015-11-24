@@ -8,7 +8,7 @@ import raytracer.texture.Color;
 import java.util.List;
 
 /**
- * This class represents a Lambert material.
+ * This class represents a Lambert material with perfect diffuse reflection.
  *
  * @author Oliver Kniejski
  */
@@ -36,5 +36,28 @@ public class LambertMaterial extends Material{
             c = c.add(color.mul(l.color).mul(Math.max(0, l.directionFrom(hit.ray.at(hit.t)).dot(hit.normal))));
         }
         return c;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LambertMaterial that = (LambertMaterial) o;
+
+        return color.equals(that.color);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return color.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "LambertMaterial{" +
+                "color=" + color +
+                "} " + super.toString();
     }
 }
