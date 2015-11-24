@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
@@ -25,10 +26,10 @@ public class Plane extends Geometry {
      *
      * @param a     A Point.
      * @param n     The normal. The magnitude of the normal must not be zero.
-     * @param color The color.
+     * @param material The material.
      */
-    public Plane(final Point3 a, final Normal3 n, final Color color) {
-        super(color);
+    public Plane(final Point3 a, final Normal3 n, final Material material) {
+        super(material);
         if (a == null || n == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (n.x == 0 && n.y == 0 && n.z == 0) {
             throw new IllegalArgumentException("Magnitude of the normal of the plane must not be zero.");
@@ -47,7 +48,7 @@ public class Plane extends Geometry {
         if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
         if (t > 0) {
-            return new Hit(t, r, this);
+            return new Hit(t, r, this, n);
         }
         return null;
     }
