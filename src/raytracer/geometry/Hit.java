@@ -21,7 +21,9 @@ public class Hit {
      * The geometry.
      */
     public final Geometry geo;
-
+    /**
+     * The normal.
+     */
     public final Normal3 normal;
 
     /**
@@ -40,7 +42,7 @@ public class Hit {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -48,7 +50,8 @@ public class Hit {
 
         if (Double.compare(hit.t, t) != 0) return false;
         if (!ray.equals(hit.ray)) return false;
-        return geo.equals(hit.geo);
+        if (!geo.equals(hit.geo)) return false;
+        return normal.equals(hit.normal);
 
     }
 
@@ -60,6 +63,7 @@ public class Hit {
         result = (int) (temp ^ (temp >>> 32));
         result = 31 * result + ray.hashCode();
         result = 31 * result + geo.hashCode();
+        result = 31 * result + normal.hashCode();
         return result;
     }
 
@@ -69,6 +73,7 @@ public class Hit {
                 "t=" + t +
                 ", ray=" + ray +
                 ", geo=" + geo +
+                ", normal=" + normal +
                 '}';
     }
 }
