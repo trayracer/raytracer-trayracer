@@ -12,7 +12,7 @@ import raytracer.texture.Color;
 public abstract class Material {
 
     /**
-     * This method
+     * This method returns the color of a hit in the world.
      *
      * @param hit The hit.
      * @param world The world with the lights.
