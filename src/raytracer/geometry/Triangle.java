@@ -96,8 +96,8 @@ public class Triangle extends Geometry {
         double beta = (b.sub(a)).x((point.sub(a))).magnitude / area;
         double gamma = (c.sub(a)).x((point.sub(a))).magnitude / area;
         double alpha = 1.0 - beta - gamma;
-
-        if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1 || gamma < 0 || gamma > 1 || alpha + beta + gamma > 1) {
+        double small = 0.0000001;
+        if (alpha < 0 - small || alpha > 1 + small || beta < 0 - small || beta > 1 + small || gamma < 0 - small || gamma > 1 + small || alpha + beta + gamma > 1 + small) {
             throw new IllegalArgumentException("Point must be in triangle.");
         }
 
