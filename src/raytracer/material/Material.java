@@ -1,7 +1,22 @@
 package raytracer.material;
 
+import raytracer.geometry.Hit;
+import raytracer.geometry.World;
+import raytracer.texture.Color;
+
 /**
- * Created on 24.11.15.
+ * An abstract class which represents a material.
+ *
+ * @author Marie Hennings
  */
-public class Material {
+public abstract class Material {
+
+    /**
+     * This method
+     *
+     * @param hit The hit.
+     * @param world The world with the lights.
+     * @return Color of the Point of the Hit.
+     */
+    public abstract Color colorFor(final Hit hit, final World world);
 }
