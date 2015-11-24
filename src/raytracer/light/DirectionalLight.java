@@ -1,7 +1,40 @@
 package raytracer.light;
 
+import raytracer.math.Point3;
+import raytracer.math.Vector3;
+import raytracer.texture.Color;
+
 /**
- * Created on 24.11.15.
+ * This class represents a directional light.
+ *
+ * @author Marie Hennings
  */
-public class DirectionalLight {
+public class DirectionalLight extends Light{
+    /**
+     * The direction of the light.
+     */
+    public final Vector3 direction;
+
+    /**
+     * The constructor.
+     * @param color The color of the light.
+     * @param direction The direction of the light.
+     */
+    public DirectionalLight(final Color color, final Vector3 direction){
+        super(color);
+        if (color == null || direction == null ) throw new IllegalArgumentException("Parameters must not be null.");
+        this.direction = direction;
+    }
+
+    @Override
+    public boolean illuminates(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not ne null.");
+        return true;
+    }
+
+    @Override
+    public Vector3 directionFrom(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
+        return direction.invert();
+    }
 }
