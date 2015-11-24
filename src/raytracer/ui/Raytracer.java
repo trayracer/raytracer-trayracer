@@ -17,6 +17,7 @@ import raytracer.camera.PerspectiveCamera;
 import raytracer.camera.StereoCamera;
 import raytracer.geometry.*;
 import raytracer.light.DirectionalLight;
+import raytracer.light.PointLight;
 import raytracer.light.SpotLight;
 import raytracer.material.LambertMaterial;
 import raytracer.material.SingleColorMaterial;
@@ -75,7 +76,7 @@ public class Raytracer extends Application {
         pane.setCenter(view);
 
         //starts with the plane scene
-        sphereScene();
+        demo3();
         generate();
 
         final Scene scene = new Scene(pane, width, height);
@@ -131,8 +132,8 @@ public class Raytracer extends Application {
      */
     private void sphereScene() {
         cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0.3, 0.3, 0.3));
-        world.addLight(new DirectionalLight(new Color(0.5, 0.5, 0.5), new Vector3(0, -1, 0)));
+        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
+        world.addLight(new DirectionalLight(new Color(0.5, 0.5, 0.5), new Vector3(0, -1, -1)));
         world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new LambertMaterial(new Color(1, 0, 0))));
     }
 
@@ -141,9 +142,9 @@ public class Raytracer extends Application {
      */
     private void boxScene() {
         cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0.3, 0.3, 0.3));
-        world.addLight(new DirectionalLight(new Color(0.5, 0.5, 0.5), new Vector3(0, -1, 0)));
-        world.addLight(new SpotLight(new Color(0.5, 0.5, 0.5), new Point3(3, 3, 4), new Vector3(-3, -3, -3), Math.PI / 8));
+        world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
+        world.addLight(new DirectionalLight(new Color(0.3, 0.3, 0.3), new Vector3(0, -1, -2)));
+        world.addLight(new SpotLight(new Color(0.5, 0.5, 0.5), new Point3(3, 3, 4), new Vector3(-3, -3, -3), 0.2));
         world.addGeometry(new AxisAlignedBox(new Point3(-0.5, 0, -0.5), new Point3(0.5, 1, 0.5), new LambertMaterial(new Color(0, 0, 1))));
     }
 
@@ -251,11 +252,12 @@ public class Raytracer extends Application {
      */
     private void demo3(){
         cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new SingleColorMaterial(new Color(1, 1, 0))));
+        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
+        world.addLight(new PointLight(new Color(1, 1, 1), new Point3(4, 4, 4)));
+        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new LambertMaterial(new Color(1, 0, 0))));
+        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new LambertMaterial(new Color(0, 1, 0))));
+        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new LambertMaterial(new Color(0, 0, 1))));
+        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new LambertMaterial(new Color(1, 1, 0))));
 
     }
 
