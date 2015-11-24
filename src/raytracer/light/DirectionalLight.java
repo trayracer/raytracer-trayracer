@@ -37,4 +37,27 @@ public class DirectionalLight extends Light{
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
         return direction.invert();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DirectionalLight that = (DirectionalLight) o;
+
+        return direction.equals(that.direction);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return direction.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "DirectionalLight{" +
+                "direction=" + direction +
+                '}';
+    }
 }
