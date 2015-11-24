@@ -189,11 +189,12 @@ public class Raytracer extends Application {
             cam = new OrthographicCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 100);
         }
         if (!test) {
-            cam = new PerspectiveCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
+            cam = new PerspectiveCamera(new Point3(0, 0, 160), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         }
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
+        world = new World(new Color(0, 0, 0), new Color(0.5, 0.5, 0.5));
+        world.addLight(new PointLight(new Color(0.8, 0.8, 0.8), new Point3(0, 0, 0)));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
-        for (int i = 0; i < 100; i++) world.addGeometry(randomTriangle());
+        for (int i = 0; i < 10; i++) world.addGeometry(randomTriangle());
     }
 
     /**
@@ -210,32 +211,32 @@ public class Raytracer extends Application {
      * This method creates a test scene for the stereoscopic camera.
      */
     private void stereoTest() {
-        width = 500;
-        height = 250;
+        width = 800;
+        height = 400;
         cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
-        world = new World(new Color(0.3, 0.3, 0.3), new Color(0.2, 0.2, 0.2));
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(20, 25, 40)));
+        world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
+        world.addLight(new PointLight(new Color(0.6, 0.6, 0.6), new Point3(20, 40, 40)));
 
-        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new LambertMaterial(new Color(1, 1, 1))));
-        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new LambertMaterial(new Color(1, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new LambertMaterial(new Color(1, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new LambertMaterial(new Color(0, 1, 1))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0, 0.2, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0.2, 0, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new LambertMaterial(new Color(0.2, 0.2, 0))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0, 0.4, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0.4, 0, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new LambertMaterial(new Color(0.4, 0.4, 0))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0, 0.6, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0.6, 0, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new LambertMaterial(new Color(0.6, 0.6, 0))));
-        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new LambertMaterial(new Color(1, 1, 1))));
+        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new PhongMaterial(new Color(1, 1, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new PhongMaterial(new Color(0, 1, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new PhongMaterial(new Color(0, 0, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new PhongMaterial(new Color(1, 1, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new PhongMaterial(new Color(1, 0, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new PhongMaterial(new Color(0, 1, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new PhongMaterial(new Color(0, 0.6, 0.6), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new PhongMaterial(new Color(0.6, 0, 0.6), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new PhongMaterial(new Color(0.6, 0.6, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new PhongMaterial(new Color(0, 0.8, 0.8), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new PhongMaterial(new Color(0.8, 0, 0.8), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new PhongMaterial(new Color(0.8, 0.8, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new PhongMaterial(new Color(0, 1, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new PhongMaterial(new Color(1, 0, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new PhongMaterial(new Color(1, 1, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new PhongMaterial(new Color(0, 1, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new PhongMaterial(new Color(0, 0, 1), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new PhongMaterial(new Color(1, 1, 1), new Color(1, 1, 1), 64)));
     }
 
     /**
@@ -281,7 +282,7 @@ public class Raytracer extends Application {
      * @return a random sphere
      */
     private Sphere randomSphere() {
-        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new SingleColorMaterial(new Color(Math.random(), Math.random(), Math.random())));
+        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new PhongMaterial(new Color(Math.random(), Math.random(), Math.random()), new Color(1, 1, 1), 64));
     }
 
     /**
@@ -290,7 +291,7 @@ public class Raytracer extends Application {
      * @return a random triangle
      */
     private Triangle randomTriangle() {
-        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new SingleColorMaterial(new Color(Math.random(), Math.random(), Math.random())));
+        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new PhongMaterial(new Color(Math.random(), Math.random(), Math.random()), new Color(1, 1, 1), 64));
     }
 
     /**
