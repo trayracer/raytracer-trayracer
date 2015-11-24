@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.math.Normal3;
 import raytracer.math.Ray;
 
 /**
@@ -21,6 +22,8 @@ public class Hit {
      */
     public final Geometry geo;
 
+    public final Normal3 normal;
+
     /**
      * This constructor creates a new hit of a ray with a geometry at a given t.
      *
@@ -28,11 +31,12 @@ public class Hit {
      * @param ray The hit.
      * @param geo The geometry.
      */
-    public Hit(final double t, final Ray ray, final Geometry geo) {
+    public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal) {
         if (ray == null || geo == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
         this.ray = ray;
         this.geo = geo;
+        this.normal = normal;
     }
 
     @Override
