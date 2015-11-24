@@ -1,7 +1,10 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
+import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
+import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
@@ -25,10 +28,10 @@ public class Sphere extends Geometry {
      *
      * @param c      Represents the center of the sphere.
      * @param radius Represents the radius.
-     * @param color  Represents the color, the sphere is supposed to have.
+     * @param material  Represents the color, the sphere is supposed to have.
      */
-    public Sphere(final Point3 c, final double radius, final Color color) {
-        super(color);
+    public Sphere(final Point3 c, final double radius, final Material material) {
+        super(material);
         if (radius <= 0 ) throw new IllegalArgumentException("Radius must be greater than zero.");
         if (c == null) throw new IllegalArgumentException("Sphere center must not be null.");
         this.c = c;
@@ -51,15 +54,35 @@ public class Sphere extends Geometry {
         if (d < 0) return null;
         if (d == 0) {
             double t = (-b) / (2 * a);
-            if (t > 0) return new Hit(t, r, this);
+            if (t > 0){
+                return new Hit(t, r, this, normalAt(r,t));
+            }
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            if (t1 < t2 && t1 > 0) return new Hit(t1, r, this);
-            if (t2 > 0) return new Hit(t2, r, this);
+            if (t1 < t2 && t1 > 0){
+
+                return new Hit(t1, r, this, normalAt(r,t1));
+            }
+            if (t2 > 0){
+                return new Hit(t2, r, this, normalAt(r,t2));
+            }
         }
         return null;
+    }
+
+    /**
+     * This method takes a ray and a double t and calculates the hitpoint and returns the normal of that point
+     *
+     * @param r the ray
+     * @param t the double
+     * @return the normal of the hitpoint.
+     */
+    public Normal3 normalAt(final Ray r, final double t){
+        final Point3 hitpoint = r.at(t);
+        final Vector3 hitvector = hitpoint.sub(this.c);
+        return hitvector.asNormal();
     }
 
     @Override
