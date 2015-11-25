@@ -60,10 +60,9 @@ public class AxisAlignedBox extends Geometry {
         for (Plane plane : planes) {
             if (Math.acos(plane.n.dot(ray.d) / ray.d.magnitude) >= Math.PI / 2) {
                 double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);
-                if (t <= 0) break;
                 Point3 hitPoint = ray.at(t);
                 double small = 0.0000000000001; // smoothen the bounds for rounding errors
-                if (lbf.x - small <= hitPoint.x && hitPoint.x <= run.x + small && lbf.y - small <= hitPoint.y && hitPoint.y <= run.y + small && lbf.z - small <= hitPoint.z && hitPoint.z <= run.z + small) {
+                if (t > 0 && lbf.x - small <= hitPoint.x && hitPoint.x <= run.x + small && lbf.y - small <= hitPoint.y && hitPoint.y <= run.y + small && lbf.z - small <= hitPoint.z && hitPoint.z <= run.z + small) {
                     return new Hit(t, ray, plane, plane.n);
                 }
             }
