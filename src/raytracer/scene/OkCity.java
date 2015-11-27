@@ -6,21 +6,24 @@ import raytracer.geometry.Sphere;
 import raytracer.geometry.World;
 import raytracer.light.DirectionalLight;
 import raytracer.light.PointLight;
+import raytracer.light.SpotLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
- * Created by ok on 26.11.15.
+ * This is a test scene with 400 evenly distributed boxes with ordered base height and random top height and a sphere.
+ *
+ * @author Oliver Kniejski
  */
 public class OkCity extends RtScene {
     public OkCity() {
-        cam = new PerspectiveCamera(new Point3(-10, -10, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4);
+        cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4);
         world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
         world.addLight(new DirectionalLight(new Color(0.1, 0.1, 0.1), new Vector3(-1,2,-7)));
         world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12)));
-        world.addLight(new PointLight(new Color(0.2, 0, 0), new Point3(-0.25, -0.25, 0)));
+        world.addLight(new SpotLight(new Color(0.3, 0, 0), new Point3(-0.25, -0.25, 0), new Vector3(0, 0, 1), Math.PI / 4));
 
         world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
 

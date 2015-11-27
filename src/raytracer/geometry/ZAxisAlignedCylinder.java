@@ -4,7 +4,7 @@ import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
-import raytracer.texture.Color;
+import raytracer.math.Vector3;
 
 /**
  * @author Oliver Kniejski
@@ -28,19 +28,20 @@ public class ZAxisAlignedCylinder extends Geometry{
     /**
      * This constructor creates a new Cylinder
      * @param m The basepoint in the center.
-     * @param h The height.
+     * @param h The height. Must be larger than 0.
      * @param radius The radius.
      * @param material The material.
      */
     public ZAxisAlignedCylinder(final Point3 m, final double h, final double radius, final Material material) {
         super(material);
-        if (m == null) throw new IllegalArgumentException("Basepoint must not be null.");
+        if (m == null || material == null) throw new IllegalArgumentException("Parameters must not be null.");
+        if (h <= 0) throw new IllegalArgumentException("Height must be larger than 0.");
         this.m = m;
         this.h = h;
         this.radius = radius;
     }
 
-    //TODO: Covers for top and bottom
+    //TODO: Optional covers for top and bottom ?!
     @Override
     public Hit hit(final Ray r ) {
         if (r == null) throw new IllegalArgumentException("Ray must not be null.");
@@ -49,32 +50,51 @@ public class ZAxisAlignedCylinder extends Geometry{
         double c = Math.pow(r.o.x - m.x, 2) + Math.pow(r.o.y - m.y, 2) - Math.pow(radius,2);
         double d = Math.pow(b,2) - 4*(a*c);
 
-        double zMin = Math.min(m.z, m.z + h);
-        double zMax = Math.max(m.z, m.z + h);
-
         if(d < 0) {
             return null;
         }
-        if(d == 0 && zMin<r.at((-b)/(2 * a)).z && r.at((-b)/(2 * a)).z<zMax){
+        if(d == 0 && m.z<r.at((-b)/(2 * a)).z && r.at((-b)/(2 * a)).z<(m.z + h)){
             double t = (-b)/(2 * a);
-            if (t > 0) return new Hit(t,r,this, new Normal3(1,0,0)); //TODO: normal
+            if (t > 0) return new Hit(t,r,this, normalAt(r, t));
         }
         if(d > 0) {
-            //TODO: t has to be positive
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            if (zMin<=r.at(t1).z && r.at(t1).z<=zMax && zMin<=r.at(t2).z && r.at(t2).z<=zMax) {
-                if (t1 < t2) return new Hit(t1, r, this, new Normal3(1,0,0)); //TODO: normal
-                else return new Hit(t2, r, this, new Normal3(1,0,0)); //TODO: normal
+
+
+            if (m.z<=r.at(t1).z && r.at(t1).z<=(m.z + h) && m.z<=r.at(t2).z && r.at(t2).z<=(m.z + h)) {
+                if (t1 < t2 && t1 > 0) return new Hit(t1, r, this, normalAt(r, t1));
+                else if (t1 < t2 && t1 <= 0){
+                    if (t2 > 0) return new Hit(t2, r, this, normalAt(r, t2));
+                    else return null;
+                }
+                else if (t2 < t1 && t2 > 0) return new Hit(t2, r, this, normalAt(r, t2));
+                else if (t2 < t1 && t2 <= 0){
+                    if (t1 > 0) return new Hit(t1, r, this, normalAt(r, t1));
+                    else return null;
+                }
             }
-            if ((zMin>r.at(t1).z ||r.at(t1).z>zMax ) && zMin<=r.at(t2).z && r.at(t2).z<=zMax) {
-                return new Hit(t2, r, this, new Normal3(1,0,0)); //TODO: normal
+            if (t2>0 && (m.z>r.at(t1).z || r.at(t1).z>(m.z + h) ) && m.z<=r.at(t2).z && r.at(t2).z<=(m.z + h)) {
+                return new Hit(t2, r, this, normalAt(r, t2));
             }
-            if (zMin<=r.at(t1).z && r.at(t1).z<=zMax && ( zMin>r.at(t2).z || r.at(t2).z>zMax)) {
-                return new Hit(t1, r, this, new Normal3(1,0,0)); //TODO: normal
+            if (t1>0 && m.z<=r.at(t1).z && r.at(t1).z<=(m.z + h) && (m.z>r.at(t2).z || r.at(t2).z>(m.z + h))) {
+                return new Hit(t1, r, this, normalAt(r, t1));
             }
         }
         return null;
+    }
+
+    /**
+     * This method takes a ray and a double t and calculates the hitpoint and returns the normal of that point
+     *
+     * @param r the ray
+     * @param t the double
+     * @return the normal of the hitpoint.
+     */
+    public Normal3 normalAt(final Ray r, final double t){
+        final Point3 hitpoint = r.at(t);
+        final Vector3 hitvector = hitpoint.sub(new Point3(this.m.x, this.m.y, hitpoint.z));
+        return hitvector.asNormal();
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

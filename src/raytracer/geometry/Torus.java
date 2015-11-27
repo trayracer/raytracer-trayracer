@@ -1,10 +1,10 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
-import raytracer.math.Normal3;
-import raytracer.math.Solvers;
-import raytracer.math.Ray;
+import raytracer.math.*;
 import raytracer.texture.Color;
+
+import java.awt.*;
 
 /**
  * @author Oliver Kniejski
@@ -49,10 +49,15 @@ public class Torus extends Geometry {
             for (int x = 0; x < roots.length; x++) {
                 if (roots[x] > 0 && roots[x]< t) t = roots[x];
             }
-            return new Hit(t, r, this, new Normal3(1,0,0)); //TODO: normal
+            return new Hit(t, r, this, normalAt(r, t)); //TODO: normal
         }
         return null;
     }
 
-
+    public Normal3 normalAt(final Ray r, final double t){
+        final Point3 hitpoint = r.at(t);
+        final Vector3 m = new Vector3(hitpoint.x, hitpoint.y, 0).normalized().mul(radius);
+        final Vector3 hitvector = m.sub(new Normal3(hitpoint.x, hitpoint.y, hitpoint.z).mul(-1));
+        return hitvector.asNormal();
+    }
 }
