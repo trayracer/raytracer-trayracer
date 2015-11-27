@@ -25,6 +25,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.scene.*;
+import raytracer.scene.Torus;
 import raytracer.texture.Color;
 
 import javax.imageio.ImageIO;
@@ -77,7 +78,9 @@ public class Raytracer extends Application {
         pane.setCenter(view);
 
         //starts with chosen Scene
-        loadScene(new Ex2Box());
+//        width = 800;
+//        height = 400;
+        loadScene(new Torus());
 //        addAxes();
 
         final Scene scene = new Scene(pane, width, height);
@@ -213,6 +216,10 @@ public class Raytracer extends Application {
         cylinder.setOnAction(e -> loadScene(new Cylinder()));
         scenemenu.getItems().add(cylinder);
 
+        final MenuItem torus = new MenuItem("Torus");
+        torus.setOnAction(e -> loadScene(new Torus()));
+        scenemenu.getItems().add(torus);
+
         final MenuItem stereoTest = new MenuItem("Stereo Test");
         stereoTest.setOnAction(e -> {
             setDimensions(primaryStage, 800, 400);
@@ -244,6 +251,10 @@ public class Raytracer extends Application {
         final MenuItem d1280 = new MenuItem("1280 x 960");
         d1280.setOnAction(e -> setDimensions(primaryStage, 1280, 960));
         dimensionsMenu.getItems().add(d1280);
+
+        final MenuItem d1440 = new MenuItem("1440 x 900 (Olli's Monitor)");
+        d1440.setOnAction(e -> setDimensions(primaryStage, 1440, 900));
+        dimensionsMenu.getItems().add(d1440);
 
         menubar.getMenus().add(dimensionsMenu);
 

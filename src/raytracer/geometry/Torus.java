@@ -43,21 +43,21 @@ public class Torus extends Geometry {
         double f = Math.pow(r.o.x,2)+Math.pow(r.o.y,2)+Math.pow(r.o.z,2)+Math.pow(radius,2)-Math.pow(diameter,2);
         double[] roots = Solvers.solveQuartic(Math.pow(d,2), 2*d*e, 2*d*f+Math.pow(e,2)-a, 2*e*f-b, Math.pow(f,2)-c);
 
-        double t = 0;
-
-        if (roots != null) {
-            for (int x = 0; x < roots.length; x++) {
-                if (roots[x] > 0 && roots[x]< t) t = roots[x];
-            }
-            return new Hit(t, r, this, normalAt(r, t)); //TODO: normal
-        }
+        if (roots != null) return new Hit(roots[0], r, this, normalAt(r, roots[0]));
         return null;
     }
 
+    /**
+     * This method takes a ray and a double t and calculates the hitpoint and returns the normal of that point
+     *
+     * @param r the ray
+     * @param t the double
+     * @return the normal of the hitpoint.
+     */
     public Normal3 normalAt(final Ray r, final double t){
-        final Point3 hitpoint = r.at(t);
-        final Vector3 m = new Vector3(hitpoint.x, hitpoint.y, 0).normalized().mul(radius);
-        final Vector3 hitvector = m.sub(new Normal3(hitpoint.x, hitpoint.y, hitpoint.z).mul(-1));
-        return hitvector.asNormal();
+        final Point3 p = r.at(t);
+        final Vector3 m = new Vector3(p.x, p.y, 0).normalized().mul(radius);
+        final Vector3 hitvector = m.sub(new Normal3(p.x, p.y, p.z));
+        return hitvector.invert().asNormal();
     }
 }
