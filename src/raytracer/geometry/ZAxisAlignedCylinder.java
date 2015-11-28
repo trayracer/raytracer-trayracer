@@ -9,7 +9,7 @@ import raytracer.math.Vector3;
 /**
  * @author Oliver Kniejski
  *
- *  This class represents a cylinder.
+ *  This class represents a z-axis aligned cylinder.
  */
 public class ZAxisAlignedCylinder extends Geometry{
     /**
@@ -39,47 +39,28 @@ public class ZAxisAlignedCylinder extends Geometry{
         this.m = m;
         this.h = h;
         this.radius = radius;
+        //TODO: Optional covers for top and bottom ?!
     }
 
-    //TODO: Optional covers for top and bottom ?!
     @Override
-    public Hit hit(final Ray r ) {
+    public Hit hit(final Ray r) {
         if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double a = Math.pow(r.d.x,2) + Math.pow(r.d.y,2);
         double b = 2 * (r.o.x - m.x) * r.d.x + 2 * (r.o.y - m.y) * r.d.y;
         double c = Math.pow(r.o.x - m.x, 2) + Math.pow(r.o.y - m.y, 2) - Math.pow(radius,2);
         double d = Math.pow(b,2) - 4*(a*c);
 
-        if(d < 0) {
-            return null;
-        }
-        if(d == 0 && m.z<r.at((-b)/(2 * a)).z && r.at((-b)/(2 * a)).z<(m.z + h)){
+        if(d == 0){
             double t = (-b)/(2 * a);
-            if (t > 0) return new Hit(t,r,this, normalAt(r, t));
+            if (t > 0 && m.z<r.at(t).z && r.at(t).z<(m.z + h)) return new Hit(t,r,this, normalAt(r, t));
         }
         if(d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-
-
-            if (m.z<=r.at(t1).z && r.at(t1).z<=(m.z + h) && m.z<=r.at(t2).z && r.at(t2).z<=(m.z + h)) {
-                if (t1 < t2 && t1 > 0) return new Hit(t1, r, this, normalAt(r, t1));
-                else if (t1 < t2 && t1 <= 0){
-                    if (t2 > 0) return new Hit(t2, r, this, normalAt(r, t2));
-                    else return null;
-                }
-                else if (t2 < t1 && t2 > 0) return new Hit(t2, r, this, normalAt(r, t2));
-                else if (t2 < t1 && t2 <= 0){
-                    if (t1 > 0) return new Hit(t1, r, this, normalAt(r, t1));
-                    else return null;
-                }
-            }
-            if (t2>0 && (m.z>r.at(t1).z || r.at(t1).z>(m.z + h) ) && m.z<=r.at(t2).z && r.at(t2).z<=(m.z + h)) {
-                return new Hit(t2, r, this, normalAt(r, t2));
-            }
-            if (t1>0 && m.z<=r.at(t1).z && r.at(t1).z<=(m.z + h) && (m.z>r.at(t2).z || r.at(t2).z>(m.z + h))) {
-                return new Hit(t1, r, this, normalAt(r, t1));
-            }
+            boolean b1 = t1 > 0 && m.z<=r.at(t1).z && r.at(t1).z<=(m.z + h);
+            boolean b2 = t2 > 0 && m.z<=r.at(t2).z && r.at(t2).z<=(m.z + h);
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1));
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2));
         }
         return null;
     }
@@ -92,9 +73,10 @@ public class ZAxisAlignedCylinder extends Geometry{
      * @return the normal of the hitpoint.
      */
     public Normal3 normalAt(final Ray r, final double t){
-        final Point3 hitpoint = r.at(t);
-        final Vector3 hitvector = hitpoint.sub(new Point3(this.m.x, this.m.y, hitpoint.z));
-        return hitvector.asNormal();
+        if (r == null) throw new IllegalArgumentException("Ray must not be null.");
+        final Point3 p = r.at(t);
+        final Vector3 v = p.sub(new Point3(this.m.x, this.m.y, p.z));
+        return v.asNormal();
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

@@ -12,18 +12,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import raytracer.camera.Camera;
-import raytracer.camera.OrthographicCamera;
-import raytracer.camera.PerspectiveCamera;
-import raytracer.camera.StereoCamera;
 import raytracer.geometry.*;
-import raytracer.light.DirectionalLight;
-import raytracer.light.PointLight;
-import raytracer.material.LambertMaterial;
-import raytracer.material.PhongMaterial;
 import raytracer.material.SingleColorMaterial;
-import raytracer.math.Normal3;
 import raytracer.math.Point3;
-import raytracer.math.Vector3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
@@ -80,8 +71,8 @@ public class Raytracer extends Application {
         //starts with chosen Scene
 //        width = 800;
 //        height = 400;
-        loadScene(new Torus());
-//        addAxes();
+        loadScene(new Ex3v3());
+//        addAxes(new Point3(0, 0, 0), 1);
 
         final Scene scene = new Scene(pane, width, height);
         primaryStage.setScene(scene);
@@ -120,18 +111,6 @@ public class Raytracer extends Application {
             }
         }
         return bufferedImage;
-    }
-
-    /**
-     * This method adds 6 colored Triangles representing the coordinate systems axes on the 0-Point to the world.
-     */
-    private void addAxes() {
-        world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new SingleColorMaterial(new Color(0, 0, 1))));
     }
 
     /**
@@ -208,17 +187,37 @@ public class Raytracer extends Application {
         ex3v2.setOnAction(e -> loadScene(new Ex3v2()));
         scenemenu.getItems().add(ex3v2);
 
+        final MenuItem ex3v3 = new MenuItem("Ex3 v3");
+        ex3v3.setOnAction(e -> loadScene(new Ex3v3()));
+        scenemenu.getItems().add(ex3v3);
+
+        final MenuItem ex3v4 = new MenuItem("Ex3 v4");
+        ex3v4.setOnAction(e -> loadScene(new Ex3v4()));
+        scenemenu.getItems().add(ex3v4);
+
+        final MenuItem ex3v5 = new MenuItem("Ex3 v5");
+        ex3v5.setOnAction(e -> loadScene(new Ex3v5()));
+        scenemenu.getItems().add(ex3v5);
+
+        final MenuItem ex3v6 = new MenuItem("Ex3 v6");
+        ex3v6.setOnAction(e -> loadScene(new Ex3v6()));
+        scenemenu.getItems().add(ex3v6);
+
         final MenuItem okArt = new MenuItem("Abstrakte Kunst");
         okArt.setOnAction(e -> loadScene(new OkAbstractArt()));
         scenemenu.getItems().add(okArt);
 
-        final MenuItem cylinder = new MenuItem("Cylinder");
+        final MenuItem cylinder = new MenuItem("Cylinder (1min!)");
         cylinder.setOnAction(e -> loadScene(new Cylinder()));
         scenemenu.getItems().add(cylinder);
 
         final MenuItem torus = new MenuItem("Torus");
         torus.setOnAction(e -> loadScene(new Torus()));
         scenemenu.getItems().add(torus);
+
+        final MenuItem cone = new MenuItem("Cone");
+        cone.setOnAction(e -> loadScene(new Cone()));
+        scenemenu.getItems().add(cone);
 
         final MenuItem stereoTest = new MenuItem("Stereo Test");
         stereoTest.setOnAction(e -> {
@@ -227,7 +226,7 @@ public class Raytracer extends Application {
         });
         scenemenu.getItems().add(stereoTest);
 
-        final MenuItem okCity = new MenuItem("Stadt mit Invasor");
+        final MenuItem okCity = new MenuItem("Stadt mit Invasor (3min!)");
         okCity.setOnAction(e -> loadScene(new OkCity()));
         scenemenu.getItems().add(okCity);
 
@@ -261,17 +260,42 @@ public class Raytracer extends Application {
         return menubar;
     }
 
+    /**
+     * This method loads a RayTracer scene.
+     * @param scene The scene to load.
+     */
     private void loadScene(RtScene scene){
         cam = scene.getCam();
         world = scene.getWorld();
         generate();
     }
 
+    /**
+     * This method sets the image and stage size.
+     * @param stage The stage.
+     * @param width The width.
+     * @param height The height.
+     */
     private void setDimensions(Stage stage, int width, int height){
         this.width = width;
         this.height = height;
         generate();
         stage.setWidth(width);
         stage.setHeight(height);
+    }
+
+    /**
+     * This method adds 6 colored Triangles representing the positive coordinate systems directions
+     * on the Point p with the length f to the world. Red indicating x, green indicating y, blue indicating z.
+     */
+    private void addAxes(final Point3 p, final double f) {
+        double b = f / 10;
+        world.addGeometry(new Triangle(new Point3(p.x + f, p.y, p.z), new Point3(p.x, p.y + b, p.z), new Point3(p.x, p.y - b, p.z), new SingleColorMaterial(new Color(1, 0, 0))));
+        world.addGeometry(new Triangle(new Point3(p.x + f, p.y, p.z), new Point3(p.x, p.y, p.z + b), new Point3(p.x, p.y, p.z - b), new SingleColorMaterial(new Color(1, 0, 0))));
+        world.addGeometry(new Triangle(new Point3(p.x, p.y + f, p.z), new Point3(p.x + b, p.y, p.z), new Point3(p.x - b, p.y, p.z), new SingleColorMaterial(new Color(0, 1, 0))));
+        world.addGeometry(new Triangle(new Point3(p.x, p.y + f, p.z), new Point3(p.x, p.y, p.z + b), new Point3(p.x, p.y, p.z - b), new SingleColorMaterial(new Color(0, 1, 0))));
+        world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x + b, p.y, p.z), new Point3(p.x - b, p.y, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
+        world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x, p.y + b, p.z), new Point3(p.x, p.y - b, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
+        generate();
     }
 }
