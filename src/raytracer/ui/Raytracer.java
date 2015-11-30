@@ -71,7 +71,7 @@ public class Raytracer extends Application {
         //starts with chosen Scene
 //        width = 800;
 //        height = 400;
-        loadScene(new Ex3v3());
+        loadScene(new Primitives());
 //        addAxes(new Point3(0, 0, 0), 1);
 
         final Scene scene = new Scene(pane, width, height);
