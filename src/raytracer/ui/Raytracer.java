@@ -23,6 +23,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.*;
 
 /**
  * This class is a FX Ray Tracer application. It has a menu bar with several options for displaying different scenes
@@ -53,6 +54,8 @@ public class Raytracer extends Application {
      */
     private final ImageView view = new ImageView();
 
+    private final static int CORES = Runtime.getRuntime().availableProcessors();
+
     /**
      * Main method calling javafx-application main
      *
@@ -64,6 +67,7 @@ public class Raytracer extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
+
         final BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
@@ -71,7 +75,7 @@ public class Raytracer extends Application {
         //starts with chosen Scene
 //        width = 800;
 //        height = 400;
-        loadScene(new Primitives());
+
 //        addAxes(new Point3(0, 0, 0), 1);
 
         final Scene scene = new Scene(pane, width, height);
@@ -80,37 +84,53 @@ public class Raytracer extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("Tray Racer v0.20");
         primaryStage.show();
+
+        loadScene(new Primitives());
     }
 
     /**
-     * This method calls the drawWorld method and converts the BufferedImage to a FXImage
+     * The raytracer.
+     * This method draws the world for the perspective of the given camera and saves it in a bufferedimage and converts the BufferedImage to a FXImage
      * which will be placed in the ImageView.
      */
-    private void generate() {
-        Image image = SwingFXUtils.toFXImage(drawWorld(), null);
+    private void raytrace() {
+        BufferedImage rImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        ExecutorService renderers = Executors.newFixedThreadPool(CORES);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                renderers.execute(pixelRenderer(x, y, rImage));
+            }
+        }
+        renderers.shutdown();
+        try {
+            renderers.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException ignore) {
+        }
+
+        Image image = SwingFXUtils.toFXImage(rImage, null);
         view.setImage(image);
     }
 
     /**
-     * This method draws the world for the perspective of the given camera and saves it in a bufferedimage.
-     *
-     * @return The BufferedImage the world is drawn in.
+     * This method creates a Runnable for the renderer which calculates the specified pixel of the image
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
+     * @param rImage The buffered image.
+     * @return The Runnable.
      */
-    private BufferedImage drawWorld() {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
-
-                if (hit != null) {
-                    bufferedImage.setRGB(x, y, hit.geo.material.colorFor(hit, world).getRGB());
-                } else {
-                    bufferedImage.setRGB(x, y, world.backgroundColor.getRGB());
-                }
+    private Runnable pixelRenderer(final int x, final int y, BufferedImage rImage) {
+        return () -> {
+            Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
+            Color c;
+            if (hit != null) {
+                c = hit.geo.material.colorFor(hit, world);
+            } else {
+                c = world.backgroundColor;
             }
-        }
-        return bufferedImage;
+            rImage.setRGB(x, y, c.getRGB());
+        };
     }
 
     /**
@@ -262,24 +282,27 @@ public class Raytracer extends Application {
 
     /**
      * This method loads a RayTracer scene.
+     *
      * @param scene The scene to load.
      */
-    private void loadScene(RtScene scene){
+    private void loadScene(RtScene scene) {
         cam = scene.getCam();
         world = scene.getWorld();
-        generate();
+        raytrace();
+
     }
 
     /**
      * This method sets the image and stage size.
-     * @param stage The stage.
-     * @param width The width.
+     *
+     * @param stage  The stage.
+     * @param width  The width.
      * @param height The height.
      */
-    private void setDimensions(Stage stage, int width, int height){
+    private void setDimensions(Stage stage, int width, int height) {
         this.width = width;
         this.height = height;
-        generate();
+        raytrace();
         stage.setWidth(width);
         stage.setHeight(height);
     }
@@ -296,6 +319,5 @@ public class Raytracer extends Application {
         world.addGeometry(new Triangle(new Point3(p.x, p.y + f, p.z), new Point3(p.x, p.y, p.z + b), new Point3(p.x, p.y, p.z - b), new SingleColorMaterial(new Color(0, 1, 0))));
         world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x + b, p.y, p.z), new Point3(p.x - b, p.y, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
         world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x, p.y + b, p.z), new Point3(p.x, p.y - b, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
-        generate();
     }
 }
