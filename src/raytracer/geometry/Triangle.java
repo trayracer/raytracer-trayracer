@@ -82,25 +82,6 @@ public class Triangle extends Geometry {
     }
 
     /**
-     * This method return the normal for a given point.
-     *
-     * @param point The point where the normal is calculated.
-     * @return The normal at the point.
-     */
-    public Normal3 normalAt(final Point3 point) {
-        if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        double area = (b.sub(a)).x((c.sub(a))).magnitude;
-        double beta = (b.sub(a)).x((point.sub(a))).magnitude / area;
-        double gamma = (c.sub(a)).x((point.sub(a))).magnitude / area;
-        double alpha = 1.0 - beta - gamma;
-        double small = 0.0000001;
-        if (alpha < 0 - small || alpha > 1 + small || beta < 0 - small || beta > 1 + small || gamma < 0 - small || gamma > 1 + small || alpha + beta + gamma > 1 + small) {
-            throw new IllegalArgumentException("Point must be in triangle.");
-        }
-        return (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
-    }
-
-    /**
      * This method creates and returns the hit of this triangle and a ray.
      *
      * @param ray The ray.
@@ -116,7 +97,12 @@ public class Triangle extends Geometry {
         double gamma = matA.changeCol2(right).determinant / detA;
         double t = matA.changeCol3(right).determinant / detA;
         if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
-            return new Hit(t, ray, this, normalAt(ray.at(t)));
+            //create normal and normalize
+            double alpha = 1.0 - beta - gamma;
+            Normal3 normal = (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
+            normal = normal.mul(1/(Math.sqrt(normal.x*normal.x + normal.y * normal.y + normal.z * normal.z)));
+
+            return new Hit(t, ray, this, normal);
         }
         return null;
     }

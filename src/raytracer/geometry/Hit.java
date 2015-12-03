@@ -35,7 +35,7 @@ public class Hit {
      * @param normal The normal.
      */
     public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal) {
-        if (ray == null || geo == null) throw new IllegalArgumentException("Parameters must not be null.");
+        if (ray == null || geo == null || normal == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
         this.ray = ray;
         this.geo = geo;
