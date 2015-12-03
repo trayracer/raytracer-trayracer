@@ -9,7 +9,7 @@ import raytracer.texture.Color;
  *
  * @author Marie Hennings
  */
-public class DirectionalLight extends Light{
+public class DirectionalLight extends Light {
     /**
      * The direction of the light.
      */
@@ -17,12 +17,13 @@ public class DirectionalLight extends Light{
 
     /**
      * The constructor.
-     * @param color The color of the light.
+     *
+     * @param color     The color of the light.
      * @param direction The direction of the light.
      */
-    public DirectionalLight(final Color color, final Vector3 direction){
+    public DirectionalLight(final Color color, final Vector3 direction) {
         super(color);
-        if (color == null || direction == null ) throw new IllegalArgumentException("Parameters must not be null.");
+        if (color == null || direction == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.direction = direction;
     }
 
