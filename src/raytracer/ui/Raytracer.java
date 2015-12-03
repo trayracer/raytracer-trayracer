@@ -1,6 +1,7 @@
 package raytracer.ui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -13,8 +14,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import raytracer.camera.Camera;
 import raytracer.geometry.*;
-import raytracer.material.SingleColorMaterial;
-import raytracer.math.Point3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
@@ -54,7 +53,19 @@ public class Raytracer extends Application {
      */
     private final ImageView view = new ImageView();
 
-    private final static int CORES = Runtime.getRuntime().availableProcessors();
+    /**
+     * Pixels currently to render. Render helper.
+     */
+    private int pixels;
+    /**
+     * Pixels already rendered. Render helper.
+     */
+    private int counter = 0;
+    /**
+     * Executor service for multithreaded rendering.
+     */
+    private ExecutorService renderers;
+
 
     /**
      * Main method calling javafx-application main
@@ -72,18 +83,16 @@ public class Raytracer extends Application {
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
-        //starts with chosen Scene
-//        width = 800;
-//        height = 400;
-
-//        addAxes(new Point3(0, 0, 0), 1);
-
         final Scene scene = new Scene(pane, width, height);
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
         primaryStage.setTitle("Tray Racer v0.20");
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
         loadScene(new Primitives());
     }
@@ -94,29 +103,28 @@ public class Raytracer extends Application {
      * which will be placed in the ImageView.
      */
     private void raytrace() {
+        counter = 0;
+        pixels = width * height;
+
         BufferedImage rImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int maxThreads = Runtime.getRuntime().availableProcessors();
+        renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
-        ExecutorService renderers = Executors.newFixedThreadPool(CORES);
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 renderers.execute(pixelRenderer(x, y, rImage));
             }
         }
         renderers.shutdown();
-        try {
-            renderers.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException ignore) {
-        }
-
-        Image image = SwingFXUtils.toFXImage(rImage, null);
-        view.setImage(image);
+        Thread thread = new Thread(refresher(rImage));
+        thread.start();
     }
 
     /**
-     * This method creates a Runnable for the renderer which calculates the specified pixel of the image
-     * @param x The x-coordinate of the pixel.
-     * @param y The y-coordinate of the pixel.
+     * This method creates a Runnable for the renderer which calculates the specified pixel of the image.
+     *
+     * @param x      The x-coordinate of the pixel.
+     * @param y      The y-coordinate of the pixel.
      * @param rImage The buffered image.
      * @return The Runnable.
      */
@@ -130,6 +138,23 @@ public class Raytracer extends Application {
                 c = world.backgroundColor;
             }
             rImage.setRGB(x, y, c.getRGB());
+            counter++;
+        };
+    }
+
+    /**
+     * This method refreshes the UI while rendering.
+     *
+     * @param rImage The BufferedImage to show.
+     * @return The Runnable.
+     */
+    private Runnable refresher(BufferedImage rImage) {
+        return () -> {
+            while (!renderers.isTerminated()) {
+                Image image = SwingFXUtils.toFXImage(rImage, null);
+                view.setImage(image);
+                System.out.println("Proz: " + counter * 100 / pixels);
+            }
         };
     }
 
@@ -150,8 +175,7 @@ public class Raytracer extends Application {
             String fileExt = fileDialog.getSelectedExtensionFilter().getExtensions().get(0);
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), null), fileExt.split("\\.")[1], file);
-            } catch (IOException e) {
-                // Suppress exception
+            } catch (IOException ignore) {
             }
         }
     }
@@ -305,19 +329,5 @@ public class Raytracer extends Application {
         raytrace();
         stage.setWidth(width);
         stage.setHeight(height);
-    }
-
-    /**
-     * This method adds 6 colored Triangles representing the positive coordinate systems directions
-     * on the Point p with the length f to the world. Red indicating x, green indicating y, blue indicating z.
-     */
-    private void addAxes(final Point3 p, final double f) {
-        double b = f / 10;
-        world.addGeometry(new Triangle(new Point3(p.x + f, p.y, p.z), new Point3(p.x, p.y + b, p.z), new Point3(p.x, p.y - b, p.z), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(p.x + f, p.y, p.z), new Point3(p.x, p.y, p.z + b), new Point3(p.x, p.y, p.z - b), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(p.x, p.y + f, p.z), new Point3(p.x + b, p.y, p.z), new Point3(p.x - b, p.y, p.z), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(p.x, p.y + f, p.z), new Point3(p.x, p.y, p.z + b), new Point3(p.x, p.y, p.z - b), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x + b, p.y, p.z), new Point3(p.x - b, p.y, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(p.x, p.y, p.z + f), new Point3(p.x, p.y + b, p.z), new Point3(p.x, p.y - b, p.z), new SingleColorMaterial(new Color(0, 0, 1))));
     }
 }
