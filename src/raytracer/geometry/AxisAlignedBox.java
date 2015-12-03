@@ -30,15 +30,15 @@ public class AxisAlignedBox extends Geometry {
      * This constructor creates the 6 Planes describing the Box out of the 2 Points.
      * Each value of the Point lbf has to be smaller than the corresponding value of the Point run.
      *
-     * @param lbf   The left-bottom-far Point of the Box.
-     * @param run   The right-up-near Point of the Box.
+     * @param lbf      The left-bottom-far Point of the Box.
+     * @param run      The right-up-near Point of the Box.
      * @param material The material of the Box.
      */
     public AxisAlignedBox(final Point3 lbf, final Point3 run, final Material material) {
         super(material);
+        if (lbf == null || run == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (lbf.x >= run.x || lbf.y >= run.y || lbf.z >= run.z)
             throw new IllegalArgumentException("Each value of the Point lbf has to be smaller than the corresponding value of the Point run.");
-        if (lbf == null || run == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.lbf = lbf;
         this.run = run;
         planes[0] = new Plane(lbf, new Normal3(0, 0, -1), material);
@@ -49,21 +49,15 @@ public class AxisAlignedBox extends Geometry {
         planes[5] = new Plane(run, new Normal3(0, 1, 0), material);
     }
 
-    /**
-     * This method returns a Hit for a Ray and this Box.
-     *
-     * @param ray The ray.
-     * @return Hit for ray and box or null if there is no visible intersection.
-     */
+    @Override
     public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         for (Plane plane : planes) {
             if (Math.acos(plane.n.dot(ray.d) / ray.d.magnitude) >= Math.PI / 2) {
                 double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);
-                if (t <= 0) break;
                 Point3 hitPoint = ray.at(t);
                 double small = 0.0000000000001; // smoothen the bounds for rounding errors
-                if (lbf.x - small <= hitPoint.x && hitPoint.x <= run.x + small && lbf.y - small <= hitPoint.y && hitPoint.y <= run.y + small && lbf.z - small <= hitPoint.z && hitPoint.z <= run.z + small) {
+                if (t > 0 && lbf.x - small <= hitPoint.x && hitPoint.x <= run.x + small && lbf.y - small <= hitPoint.y && hitPoint.y <= run.y + small && lbf.z - small <= hitPoint.z && hitPoint.z <= run.z + small) {
                     return new Hit(t, ray, plane, plane.n);
                 }
             }
@@ -79,11 +73,8 @@ public class AxisAlignedBox extends Geometry {
 
         AxisAlignedBox that = (AxisAlignedBox) o;
 
-        if (lbf != null ? !lbf.equals(that.lbf) : that.lbf != null) return false;
-        if (run != null ? !run.equals(that.run) : that.run != null) return false;
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(planes, that.planes);
-
+        return !(lbf != null ? !lbf.equals(that.lbf) : that.lbf != null)
+                && !(run != null ? !run.equals(that.run) : that.run != null);
     }
 
     @Override
@@ -91,7 +82,6 @@ public class AxisAlignedBox extends Geometry {
         int result = super.hashCode();
         result = 31 * result + (lbf != null ? lbf.hashCode() : 0);
         result = 31 * result + (run != null ? run.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(planes);
         return result;
     }
 

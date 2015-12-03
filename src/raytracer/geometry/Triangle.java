@@ -2,9 +2,6 @@ package raytracer.geometry;
 
 import raytracer.material.Material;
 import raytracer.math.*;
-import raytracer.texture.Color;
-
-import java.util.Vector;
 
 /**
  * This class represents a triangle.
@@ -40,9 +37,9 @@ public class Triangle extends Geometry {
     /**
      * This constructor creates a triangle with 3 Points.
      *
-     * @param a     The point a of the triangle.
-     * @param b     The point b of the triangle.
-     * @param c     The point c of the triangle.
+     * @param a        The point a of the triangle.
+     * @param b        The point b of the triangle.
+     * @param c        The point c of the triangle.
      * @param material The material of the triangle.
      */
     public Triangle(final Point3 a, final Point3 b, final Point3 c, final Material material) {
@@ -60,14 +57,14 @@ public class Triangle extends Geometry {
     }
 
     /**
-     * This constructor creates a triangle with 3 Points.
+     * This constructor creates a triangle with 3 Points and 3 specified normals.
      *
-     * @param a     The point a of the triangle.
-     * @param b     The point b of the triangle.
-     * @param c     The point c of the triangle.
-     * @param na    The normal at point a.
-     * @param nb    The normal at point b.
-     * @param nc    The normal at point c.
+     * @param a        The point a of the triangle.
+     * @param b        The point b of the triangle.
+     * @param c        The point c of the triangle.
+     * @param na       The normal at point a.
+     * @param nb       The normal at point b.
+     * @param nc       The normal at point c.
      * @param material The material of the triangle.
      */
     public Triangle(final Point3 a, final Point3 b, final Point3 c, final Normal3 na, final Normal3 nb, final Normal3 nc, final Material material) {
@@ -82,26 +79,6 @@ public class Triangle extends Geometry {
         this.na = na;
         this.nb = nb;
         this.nc = nc;
-    }
-
-    /**
-     * This method return the normal for a given point.
-     *
-     * @param point The point where the normal is calculated.
-     * @return The normal at the point.
-     */
-    public Normal3 normalAt(final Point3 point) {
-        if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        double area = (b.sub(a)).x((c.sub(a))).magnitude;
-        double beta = (b.sub(a)).x((point.sub(a))).magnitude / area;
-        double gamma = (c.sub(a)).x((point.sub(a))).magnitude / area;
-        double alpha = 1.0 - beta - gamma;
-        double small = 0.0000001;
-        if (alpha < 0 - small || alpha > 1 + small || beta < 0 - small || beta > 1 + small || gamma < 0 - small || gamma > 1 + small || alpha + beta + gamma > 1 + small) {
-            throw new IllegalArgumentException("Point must be in triangle.");
-        }
-
-        return (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
     }
 
     /**
@@ -120,24 +97,27 @@ public class Triangle extends Geometry {
         double gamma = matA.changeCol2(right).determinant / detA;
         double t = matA.changeCol3(right).determinant / detA;
         if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
-            return new Hit(t, ray, this, normalAt(ray.at(t)));
+            //create normal and normalize
+            double alpha = 1.0 - beta - gamma;
+            Normal3 normal = (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
+            normal = normal.mul(1 / (Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z)));
+
+            return new Hit(t, ray, this, normal);
         }
         return null;
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         Triangle triangle = (Triangle) o;
 
-        if (a != null ? !a.equals(triangle.a) : triangle.a != null) return false;
-        if (b != null ? !b.equals(triangle.b) : triangle.b != null) return false;
-        return !(c != null ? !c.equals(triangle.c) : triangle.c != null);
-
+        return !(a != null ? !a.equals(triangle.a) : triangle.a != null)
+                && !(b != null ? !b.equals(triangle.b) : triangle.b != null)
+                && !(c != null ? !c.equals(triangle.c) : triangle.c != null);
     }
 
     @Override

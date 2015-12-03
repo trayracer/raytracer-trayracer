@@ -17,14 +17,17 @@ public class SingleColorMaterial extends Material {
 
     /**
      * The constructor.
+     *
      * @param color Color of the material.
      */
-    public SingleColorMaterial(final Color color){
+    public SingleColorMaterial(final Color color) {
+        if (color == null) throw new IllegalArgumentException("Color must not be null.");
         this.color = color;
     }
 
     @Override
     public Color colorFor(final Hit hit, final World world) {
+        if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         return color;
     }
 

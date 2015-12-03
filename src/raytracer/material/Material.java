@@ -14,7 +14,7 @@ public abstract class Material {
     /**
      * This method returns the color of a hit in the world.
      *
-     * @param hit The hit.
+     * @param hit   The hit.
      * @param world The world with the lights.
      * @return Color of the Point of the Hit.
      */

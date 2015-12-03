@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Oliver Kniejski
  */
-public class LambertMaterial extends Material{
+public class LambertMaterial extends Material {
     /**
      * The color property of this material.
      */
@@ -20,10 +20,11 @@ public class LambertMaterial extends Material{
 
     /**
      * This constructor creates a new Lambert material.
+     *
      * @param color The color of the material.
      */
     public LambertMaterial(final Color color) {
-        if (color == null)  throw new IllegalArgumentException("color must not be null.");
+        if (color == null) throw new IllegalArgumentException("Color must not be null.");
         this.color = color;
     }
 
@@ -32,7 +33,7 @@ public class LambertMaterial extends Material{
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
         Color c = color.mul(world.ambientColor);
-        for (Light l : lights){
+        for (Light l : lights) {
             if (l.illuminates(hit.ray.at(hit.t))) {
                 c = c.add(color.mul(l.color).mul(Math.max(0, l.directionFrom(hit.ray.at(hit.t)).normalized().dot(hit.normal))));
             }
@@ -44,11 +45,8 @@ public class LambertMaterial extends Material{
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LambertMaterial that = (LambertMaterial) o;
-
         return color.equals(that.color);
-
     }
 
     @Override

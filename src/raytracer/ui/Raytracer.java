@@ -1,6 +1,7 @@
 package raytracer.ui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -12,25 +13,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import raytracer.camera.Camera;
-import raytracer.camera.OrthographicCamera;
-import raytracer.camera.PerspectiveCamera;
-import raytracer.camera.StereoCamera;
 import raytracer.geometry.*;
-import raytracer.light.DirectionalLight;
-import raytracer.light.PointLight;
-import raytracer.light.SpotLight;
-import raytracer.material.LambertMaterial;
-import raytracer.material.PhongMaterial;
-import raytracer.material.SingleColorMaterial;
-import raytracer.math.Normal3;
-import raytracer.math.Point3;
-import raytracer.math.Vector3;
+import raytracer.scene.*;
+import raytracer.scene.Torus;
 import raytracer.texture.Color;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.*;
 
 /**
  * This class is a FX Ray Tracer application. It has a menu bar with several options for displaying different scenes
@@ -62,6 +54,20 @@ public class Raytracer extends Application {
     private final ImageView view = new ImageView();
 
     /**
+     * Pixels currently to render. Render helper.
+     */
+    private int pixels;
+    /**
+     * Pixels already rendered. Render helper.
+     */
+    private int counter = 0;
+    /**
+     * Executor service for multithreaded rendering.
+     */
+    private ExecutorService renderers;
+
+
+    /**
      * Main method calling javafx-application main
      *
      * @param args Starting arguments
@@ -72,13 +78,10 @@ public class Raytracer extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
+
         final BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
-
-        //starts with the plane scene
-        demo3();
-        generate();
 
         final Scene scene = new Scene(pane, width, height);
         primaryStage.setScene(scene);
@@ -86,211 +89,73 @@ public class Raytracer extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("Tray Racer v0.20");
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
+        loadScene(new Primitives());
     }
 
     /**
-     * This method calls the drawWorld method and converts the BufferedImage to a FXImage
+     * The raytracer.
+     * This method draws the world for the perspective of the given camera and saves it in a bufferedimage and converts the BufferedImage to a FXImage
      * which will be placed in the ImageView.
      */
-    private void generate() {
-        Image image = SwingFXUtils.toFXImage(drawWorld(), null);
-        view.setImage(image);
-    }
+    private void raytrace() {
+        counter = 0;
+        pixels = width * height;
 
-    /**
-     * This method draws the world for the perspective of the given camera and saves it in a bufferedimage.
-     *
-     * @return The BufferedImage the world is drawn in.
-     */
-    private BufferedImage drawWorld() {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage rImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int maxThreads = Runtime.getRuntime().availableProcessors();
+        renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
-
-                if (hit != null) {
-                    bufferedImage.setRGB(x, y, hit.geo.material.colorFor(hit, world).getRGB());
-                } else {
-                    bufferedImage.setRGB(x, y, world.backgroundColor.getRGB());
-                }
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                renderers.execute(pixelRenderer(x, y, rImage));
             }
         }
-        return bufferedImage;
+        renderers.shutdown();
+        Thread thread = new Thread(refresher(rImage));
+        thread.start();
     }
 
     /**
-     * Sets a perspective camera and adds a plane to the world.
-     */
-    private void planeScene() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        world.addGeometry(new Plane(new Point3(0, -1, 0), new Normal3(0, 1, 0), new SingleColorMaterial(new Color(0, 1, 0))));
-    }
-
-    /**
-     * Sets a perspective camera and adds a sphere to the world.
-     */
-    private void sphereScene() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
-        world.addLight(new DirectionalLight(new Color(0.5, 0.5, 0.5), new Vector3(0, -1, -1)));
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(3, 3, 4)));
-        world.addGeometry(new Sphere(new Point3(0, 0, -3), 0.5, new LambertMaterial(new Color(1, 0, 0))));
-    }
-
-    /**
-     * Sets a perspective camera and adds a box to the world.
-     */
-    private void boxScene() {
-        cam = new PerspectiveCamera(new Point3(3, 3, 3), new Vector3(-3, -3, -3), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
-        world.addLight(new DirectionalLight(new Color(0.3, 0.3, 0.3), new Vector3(0, -1, -2)));
-        world.addLight(new SpotLight(new Color(0.5, 0.5, 0.5), new Point3(3, 3, 4), new Vector3(-3, -3, -3), 0.2));
-        world.addGeometry(new AxisAlignedBox(new Point3(-0.5, 0, -0.5), new Point3(0.5, 1, 0.5), new LambertMaterial(new Color(0, 0, 1))));
-    }
-
-    /**
-     * Sets a perspective camera and adds a triangle to the world.
-     */
-    private void triangleScene() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        world.addGeometry(new Triangle(new Point3(-0.5, 0.5, -3), new Point3(0.5, 0.5, -3), new Point3(0.5, -0.5, -3), new SingleColorMaterial(new Color(1, 0, 1))));
-    }
-
-    /**
-     * Sets a perspective camera and adds two spheres to the world.
-     */
-    private void twoSpheresPerspective() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        world.addGeometry(new Sphere(new Point3(-1, 0, -3), 0.5, new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(1, 0, -6), 0.5, new SingleColorMaterial(new Color(1, 0, 0))));
-    }
-
-    /**
-     * Sets a orthographic camera and adds two spheres to the world.
-     */
-    private void twoSpheresOrthographic() {
-        cam = new OrthographicCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 3);
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        world.addGeometry(new Sphere(new Point3(-1, 0, -3), 0.5, new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(1, 0, -6), 0.5, new SingleColorMaterial(new Color(1, 0, 0))));
-    }
-
-    /**
-     * This is a method for additional testing
+     * This method creates a Runnable for the renderer which calculates the specified pixel of the image.
      *
-     * @param test testcase
+     * @param x      The x-coordinate of the pixel.
+     * @param y      The y-coordinate of the pixel.
+     * @param rImage The buffered image.
+     * @return The Runnable.
      */
-    private void testScene(final boolean test) {
-        if (test) {
-            cam = new OrthographicCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 100);
-        }
-        if (!test) {
-            cam = new PerspectiveCamera(new Point3(0, 0, 100), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        }
-        world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
-        for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
-        for (int i = 0; i < 100; i++) world.addGeometry(randomTriangle());
+    private Runnable pixelRenderer(final int x, final int y, BufferedImage rImage) {
+        return () -> {
+            Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
+            Color c;
+            if (hit != null) {
+                c = hit.geo.material.colorFor(hit, world);
+            } else {
+                c = world.backgroundColor;
+            }
+            rImage.setRGB(x, y, c.getRGB());
+            counter++;
+        };
     }
 
     /**
-     * This method creates a test scene with a cylinder.
-     */
-    private void cylinder() {
-        cam = new PerspectiveCamera(new Point3(5, 5, 5), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0.2, 0.2, 0.2), new Color(1, 1, 1));
-        world.addGeometry(new ZAxisAlignedCylinder(new Point3(0, -3, 0), -5, 1, new SingleColorMaterial(new Color(0, 1, 0))));
-        addAxes();
-    }
-
-    /**
-     * This method creates a test scene for the stereoscopic camera.
-     */
-    private void stereoTest() {
-        width = 500;
-        height = 250;
-        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
-        world = new World(new Color(0.3, 0.3, 0.3), new Color(0.2, 0.2, 0.2));
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(20, 25, 40)));
-
-        world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new LambertMaterial(new Color(1, 1, 1))));
-        world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 4, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 4), 2, new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(5, 5, 0), 2, new LambertMaterial(new Color(1, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(5, 0, 5), 2, new LambertMaterial(new Color(1, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(0, 5, 5), 2, new LambertMaterial(new Color(0, 1, 1))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(-1, 10, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0, 0.2, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, -1, 10), new LambertMaterial(new Color(0.2, 0, 0.2))));
-        world.addGeometry(new Triangle(new Point3(-1, -1, -1), new Point3(10, -1, -1), new Point3(-1, 10, -1), new LambertMaterial(new Color(0.2, 0.2, 0))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(-2, 11, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0, 0.4, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, -2, 11), new LambertMaterial(new Color(0.4, 0, 0.4))));
-        world.addGeometry(new Triangle(new Point3(-2, -2, -2), new Point3(11, -2, -2), new Point3(-2, 11, -2), new LambertMaterial(new Color(0.4, 0.4, 0))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(-3, 12, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0, 0.6, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, -3, 12), new LambertMaterial(new Color(0.6, 0, 0.6))));
-        world.addGeometry(new Triangle(new Point3(-3, -3, -3), new Point3(12, -3, -3), new Point3(-3, 12, -3), new LambertMaterial(new Color(0.6, 0.6, 0))));
-        world.addGeometry(new Sphere(new Point3(15, 0, 0), 2, new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 15, 0), 2, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Sphere(new Point3(0, 0, 15), 2, new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Sphere(new Point3(17, 17, 17), 2, new LambertMaterial(new Color(1, 1, 1))));
-    }
-
-    /**
-     * This method adds 6 colored Triangles representing the coordinate systems axes on the 0-Point to the world.
-     */
-    private void addAxes() {
-        world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(1, 0, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new SingleColorMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 1, 0), new Point3(0, 0, 0.01), new Point3(0, 0, -0.01), new SingleColorMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0.01, 0, 0), new Point3(-0.01, 0, 0), new SingleColorMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(0, 0, 1), new Point3(0, 0.01, 0), new Point3(0, -0.01, 0), new SingleColorMaterial(new Color(0, 0, 1))));
-    }
-
-    /**
-     * This method implements the demo scene from exercise 3.
-     */
-    private void demo3(){
-        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
-        world.addLight(new PointLight(new Color(1, 1, 1), new Point3(4, 4, 4)));
-        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new LambertMaterial(new Color(1, 1, 0))));
-
-    }
-
-    private void demo4(){
-        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
-        world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
-        world.addLight(new PointLight(new Color(1, 1, 1), new Point3(4, 4, 4)));
-        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new PhongMaterial(new Color(1, 0, 0),new Color(1,1,1),64)));
-        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new PhongMaterial(new Color(0, 1, 0),new Color(1,1,1),64)));
-        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new PhongMaterial(new Color(0, 0, 1),new Color(1,1,1),64)));
-        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new PhongMaterial(new Color(1, 1, 0),new Color(1,1,1),64)));
-
-    }
-
-    /**
-     * This method generates a rather random sphere. testing purposes only, see inside for details.
+     * This method refreshes the UI while rendering.
      *
-     * @return a random sphere
+     * @param rImage The BufferedImage to show.
+     * @return The Runnable.
      */
-    private Sphere randomSphere() {
-        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new SingleColorMaterial(new Color(Math.random(), Math.random(), Math.random())));
-    }
-
-    /**
-     * This method generates a rather random triangle. testing purposes only, see inside for details.
-     *
-     * @return a random triangle
-     */
-    private Triangle randomTriangle() {
-        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new SingleColorMaterial(new Color(Math.random(), Math.random(), Math.random())));
+    private Runnable refresher(BufferedImage rImage) {
+        return () -> {
+            while (!renderers.isTerminated()) {
+                Image image = SwingFXUtils.toFXImage(rImage, null);
+                view.setImage(image);
+                System.out.println("Proz: " + counter * 100 / pixels);
+            }
+        };
     }
 
     /**
@@ -310,8 +175,7 @@ public class Raytracer extends Application {
             String fileExt = fileDialog.getSelectedExtensionFilter().getExtensions().get(0);
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), null), fileExt.split("\\.")[1], file);
-            } catch (IOException e) {
-                // Suppress exception
+            } catch (IOException ignore) {
             }
         }
     }
@@ -324,132 +188,146 @@ public class Raytracer extends Application {
      */
     private MenuBar createMenuBar(Stage primaryStage) {
         final MenuBar menubar = new MenuBar();
+
+        // File Menu
         final Menu filemenu = new Menu("File");
         final MenuItem save = new MenuItem("Save...");
         save.setOnAction(e -> saveImage(primaryStage));
         filemenu.getItems().add(save);
+        menubar.getMenus().add(filemenu);
 
+        // Scene Menu
         final Menu scenemenu = new Menu("Scene");
-        final MenuItem plane = new MenuItem("Plane");
-        plane.setOnAction(e -> {
-            planeScene();
-            generate();
-        });
-        final MenuItem sphere = new MenuItem("Sphere");
-        sphere.setOnAction(e -> {
-            sphereScene();
-            generate();
-        });
-        final MenuItem box = new MenuItem("Box");
-        box.setOnAction(e -> {
-            boxScene();
-            generate();
-        });
-        final MenuItem triangle = new MenuItem("Triangle");
-        triangle.setOnAction(e -> {
-            triangleScene();
-            generate();
-        });
-        final MenuItem twoSpheresPerspective = new MenuItem("Two Spheres Perspective");
-        twoSpheresPerspective.setOnAction(e -> {
-            twoSpheresPerspective();
-            generate();
-        });
-        final MenuItem twoSpheresOrthographic = new MenuItem("Two Spheres Orthographic");
-        twoSpheresOrthographic.setOnAction(e -> {
-            twoSpheresOrthographic();
-            generate();
-        });
-        final MenuItem demo3 = new MenuItem("Demo Ex3");
-        demo3.setOnAction(e -> {
-            demo3();
-            generate();
-        });
-        final MenuItem demo4 = new MenuItem("Demo Ex4");
-        demo4.setOnAction(e -> {
-            demo4();
-            generate();
-        });
 
-        final MenuItem test1 = new MenuItem("Orthographic Test");
-        test1.setOnAction(e -> {
-            testScene(true);
-            generate();
-        });
-        final MenuItem test2 = new MenuItem("Perspective Test");
-        test2.setOnAction(e -> {
-            testScene(false);
-            generate();
-        });
-        final MenuItem cylinder = new MenuItem("Cylinder");
-        cylinder.setOnAction(e -> {
-            cylinder();
-            generate();
-        });
-        final MenuItem testArt = new MenuItem("Stereo Test");
-        testArt.setOnAction(e -> {
-            stereoTest();
-
-            generate();
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
+        final MenuItem plane = new MenuItem("Ex2 Plane");
+        plane.setOnAction(e -> loadScene(new Ex2Plane()));
         scenemenu.getItems().add(plane);
-        scenemenu.getItems().add(sphere);
-        scenemenu.getItems().add(box);
-        scenemenu.getItems().add(triangle);
-        scenemenu.getItems().add(twoSpheresPerspective);
-        scenemenu.getItems().add(twoSpheresOrthographic);
-        scenemenu.getItems().add(demo3);
-        scenemenu.getItems().add(demo4);
-        scenemenu.getItems().add(test1);
-        scenemenu.getItems().add(test2);
-        scenemenu.getItems().add(cylinder);
-        scenemenu.getItems().add(testArt);
 
+        final MenuItem sphere = new MenuItem("Ex2 Sphere");
+        sphere.setOnAction(e -> loadScene(new Ex2Sphere()));
+        scenemenu.getItems().add(sphere);
+
+        final MenuItem box = new MenuItem("Ex2 Box");
+        box.setOnAction(e -> loadScene(new Ex2Box()));
+        scenemenu.getItems().add(box);
+
+        final MenuItem triangle = new MenuItem("Ex2 Triangle");
+        triangle.setOnAction(e -> loadScene(new Ex2Triangle()));
+        scenemenu.getItems().add(triangle);
+
+        final MenuItem twoSpheresPerspective = new MenuItem("Ex2 Two Spheres Perspective");
+        twoSpheresPerspective.setOnAction(e -> loadScene(new Ex2SpheresPerspective()));
+        scenemenu.getItems().add(twoSpheresPerspective);
+
+        final MenuItem twoSpheresOrthographic = new MenuItem("Ex2 Two Spheres Orthographic");
+        twoSpheresOrthographic.setOnAction(e -> loadScene(new Ex2SpheresOrthographic()));
+        scenemenu.getItems().add(twoSpheresOrthographic);
+
+        final MenuItem ex3v1 = new MenuItem("Ex3 v1");
+        ex3v1.setOnAction(e -> loadScene(new Ex3v1()));
+        scenemenu.getItems().add(ex3v1);
+
+        final MenuItem ex3v2 = new MenuItem("Ex3 v2");
+        ex3v2.setOnAction(e -> loadScene(new Ex3v2()));
+        scenemenu.getItems().add(ex3v2);
+
+        final MenuItem ex3v3 = new MenuItem("Ex3 v3");
+        ex3v3.setOnAction(e -> loadScene(new Ex3v3()));
+        scenemenu.getItems().add(ex3v3);
+
+        final MenuItem ex3v4 = new MenuItem("Ex3 v4");
+        ex3v4.setOnAction(e -> loadScene(new Ex3v4()));
+        scenemenu.getItems().add(ex3v4);
+
+        final MenuItem ex3v5 = new MenuItem("Ex3 v5");
+        ex3v5.setOnAction(e -> loadScene(new Ex3v5()));
+        scenemenu.getItems().add(ex3v5);
+
+        final MenuItem ex3v6 = new MenuItem("Ex3 v6");
+        ex3v6.setOnAction(e -> loadScene(new Ex3v6()));
+        scenemenu.getItems().add(ex3v6);
+
+        final MenuItem okArt = new MenuItem("Abstrakte Kunst");
+        okArt.setOnAction(e -> loadScene(new OkAbstractArt()));
+        scenemenu.getItems().add(okArt);
+
+        final MenuItem cylinder = new MenuItem("Cylinder (1min!)");
+        cylinder.setOnAction(e -> loadScene(new Cylinder()));
+        scenemenu.getItems().add(cylinder);
+
+        final MenuItem torus = new MenuItem("Torus");
+        torus.setOnAction(e -> loadScene(new Torus()));
+        scenemenu.getItems().add(torus);
+
+        final MenuItem cone = new MenuItem("Cone");
+        cone.setOnAction(e -> loadScene(new Cone()));
+        scenemenu.getItems().add(cone);
+
+        final MenuItem stereoTest = new MenuItem("Stereo Test");
+        stereoTest.setOnAction(e -> {
+            setDimensions(primaryStage, 800, 400);
+            loadScene(new StereoTest());
+        });
+        scenemenu.getItems().add(stereoTest);
+
+        final MenuItem okCity = new MenuItem("Stadt mit Invasor (3min!)");
+        okCity.setOnAction(e -> loadScene(new OkCity()));
+        scenemenu.getItems().add(okCity);
+
+        menubar.getMenus().add(scenemenu);
+
+        // Dimension Menu
         final Menu dimensionsMenu = new Menu("Dimensions");
+
         final MenuItem d640 = new MenuItem("640 x 480");
-        d640.setOnAction(e -> {
-            width = 640;
-            height = 480;
-            generate();
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
-        final MenuItem d800 = new MenuItem("800 x 600");
-        d800.setOnAction(e -> {
-            width = 800;
-            height = 600;
-            generate();
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
-        final MenuItem d1024 = new MenuItem("1024 x 768");
-        d1024.setOnAction(e -> {
-            width = 1024;
-            height = 768;
-            generate();
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
-        final MenuItem d1280 = new MenuItem("1280 x 960");
-        d1280.setOnAction(e -> {
-            width = 1280;
-            height = 960;
-            generate();
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
+        d640.setOnAction(e -> setDimensions(primaryStage, 640, 480));
         dimensionsMenu.getItems().add(d640);
+
+        final MenuItem d800 = new MenuItem("800 x 600");
+        d800.setOnAction(e -> setDimensions(primaryStage, 800, 600));
         dimensionsMenu.getItems().add(d800);
+
+        final MenuItem d1024 = new MenuItem("1024 x 768");
+        d1024.setOnAction(e -> setDimensions(primaryStage, 1024, 768));
         dimensionsMenu.getItems().add(d1024);
+
+        final MenuItem d1280 = new MenuItem("1280 x 960");
+        d1280.setOnAction(e -> setDimensions(primaryStage, 1280, 960));
         dimensionsMenu.getItems().add(d1280);
 
-        menubar.getMenus().add(filemenu);
-        menubar.getMenus().add(scenemenu);
+        final MenuItem d1440 = new MenuItem("1440 x 900 (Olli's Monitor)");
+        d1440.setOnAction(e -> setDimensions(primaryStage, 1440, 900));
+        dimensionsMenu.getItems().add(d1440);
+
         menubar.getMenus().add(dimensionsMenu);
 
         return menubar;
     }
 
+    /**
+     * This method loads a RayTracer scene.
+     *
+     * @param scene The scene to load.
+     */
+    private void loadScene(RtScene scene) {
+        cam = scene.getCam();
+        world = scene.getWorld();
+        raytrace();
+
+    }
+
+    /**
+     * This method sets the image and stage size.
+     *
+     * @param stage  The stage.
+     * @param width  The width.
+     * @param height The height.
+     */
+    private void setDimensions(Stage stage, int width, int height) {
+        this.width = width;
+        this.height = height;
+        raytrace();
+        stage.setWidth(width);
+        stage.setHeight(height);
+    }
 }
