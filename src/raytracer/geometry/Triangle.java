@@ -100,7 +100,7 @@ public class Triangle extends Geometry {
             //create normal and normalize
             double alpha = 1.0 - beta - gamma;
             Normal3 normal = (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
-            normal = normal.mul(1/(Math.sqrt(normal.x*normal.x + normal.y * normal.y + normal.z * normal.z)));
+            normal = normal.mul(1 / (Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z)));
 
             return new Hit(t, ray, this, normal);
         }

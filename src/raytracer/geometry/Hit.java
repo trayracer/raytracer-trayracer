@@ -29,13 +29,14 @@ public class Hit {
     /**
      * This constructor creates a new hit of a ray with a geometry at a given t.
      *
-     * @param t   The t.
-     * @param ray The hit.
-     * @param geo The geometry.
+     * @param t      The t.
+     * @param ray    The hit.
+     * @param geo    The geometry.
      * @param normal The normal.
      */
     public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal) {
-        if (ray == null || geo == null || normal == null) throw new IllegalArgumentException("Parameters must not be null.");
+        if (ray == null || geo == null || normal == null)
+            throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
         this.ray = ray;
         this.geo = geo;

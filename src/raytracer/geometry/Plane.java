@@ -24,8 +24,8 @@ public class Plane extends Geometry {
     /**
      * This constructor creates a plane of a point and the normal.
      *
-     * @param a     A Point.
-     * @param n     The normal. The magnitude of the normal must not be zero.
+     * @param a        A Point.
+     * @param n        The normal. The magnitude of the normal must not be zero.
      * @param material The material.
      */
     public Plane(final Point3 a, final Normal3 n, final Material material) {
@@ -48,7 +48,8 @@ public class Plane extends Geometry {
         if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
         if (t > 0) {
-            return new Hit(t, r, this, n);
+            Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
+            return new Hit(t, r, this, normal);
         }
         return null;
     }
@@ -63,7 +64,6 @@ public class Plane extends Geometry {
 
         if (!a.equals(plane.a)) return false;
         return n.equals(plane.n);
-
     }
 
     @Override
