@@ -10,6 +10,8 @@ import raytracer.texture.Color;
 
 /**
  * Sets a perspective camera and adds two spheres to the world.
+ *
+ * @author TrayRacingTeam
  */
 public class Ex2SpheresPerspective extends RtScene {
     public Ex2SpheresPerspective() {

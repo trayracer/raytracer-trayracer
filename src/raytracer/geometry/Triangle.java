@@ -2,9 +2,6 @@ package raytracer.geometry;
 
 import raytracer.material.Material;
 import raytracer.math.*;
-import raytracer.texture.Color;
-
-import java.util.Vector;
 
 /**
  * This class represents a triangle.
@@ -40,9 +37,9 @@ public class Triangle extends Geometry {
     /**
      * This constructor creates a triangle with 3 Points.
      *
-     * @param a     The point a of the triangle.
-     * @param b     The point b of the triangle.
-     * @param c     The point c of the triangle.
+     * @param a        The point a of the triangle.
+     * @param b        The point b of the triangle.
+     * @param c        The point c of the triangle.
      * @param material The material of the triangle.
      */
     public Triangle(final Point3 a, final Point3 b, final Point3 c, final Material material) {
@@ -60,14 +57,14 @@ public class Triangle extends Geometry {
     }
 
     /**
-     * This constructor creates a triangle with 3 Points.
+     * This constructor creates a triangle with 3 Points and 3 specified normals.
      *
-     * @param a     The point a of the triangle.
-     * @param b     The point b of the triangle.
-     * @param c     The point c of the triangle.
-     * @param na    The normal at point a.
-     * @param nb    The normal at point b.
-     * @param nc    The normal at point c.
+     * @param a        The point a of the triangle.
+     * @param b        The point b of the triangle.
+     * @param c        The point c of the triangle.
+     * @param na       The normal at point a.
+     * @param nb       The normal at point b.
+     * @param nc       The normal at point c.
      * @param material The material of the triangle.
      */
     public Triangle(final Point3 a, final Point3 b, final Point3 c, final Normal3 na, final Normal3 nb, final Normal3 nc, final Material material) {
@@ -100,7 +97,6 @@ public class Triangle extends Geometry {
         if (alpha < 0 - small || alpha > 1 + small || beta < 0 - small || beta > 1 + small || gamma < 0 - small || gamma > 1 + small || alpha + beta + gamma > 1 + small) {
             throw new IllegalArgumentException("Point must be in triangle.");
         }
-
         return (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
     }
 
@@ -125,19 +121,17 @@ public class Triangle extends Geometry {
         return null;
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         Triangle triangle = (Triangle) o;
 
-        if (a != null ? !a.equals(triangle.a) : triangle.a != null) return false;
-        if (b != null ? !b.equals(triangle.b) : triangle.b != null) return false;
-        return !(c != null ? !c.equals(triangle.c) : triangle.c != null);
-
+        return !(a != null ? !a.equals(triangle.a) : triangle.a != null)
+                && !(b != null ? !b.equals(triangle.b) : triangle.b != null)
+                && !(c != null ? !c.equals(triangle.c) : triangle.c != null);
     }
 
     @Override

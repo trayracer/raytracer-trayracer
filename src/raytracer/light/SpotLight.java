@@ -10,23 +10,32 @@ import raytracer.texture.Color;
  * @author Oliver Kniejski
  */
 public class SpotLight extends Light {
+    /**
+     * The Position of the light.
+     */
     public final Point3 position;
+    /**
+     * The direction of the light.
+     */
     public final Vector3 direction;
+    /**
+     * Half of the opening angel of the light.
+     */
     public final double halfAngle;
 
     /**
      * This constructor creates a spotlight on a given position in a given direction with a given color.
-     * The opening of the spot light is set with the halfAngle.
+     * The opening of the spot light is calculated from the halfAngle.
      *
-     * @param color The color of the light.
-     * @param position The position.
+     * @param color     The color of the light.
+     * @param position  The position.
      * @param direction The direction.
-     * @param halfAngle half of the opening Angle.
+     * @param halfAngle Half of the opening Angle.
      */
     public SpotLight(final Color color, final Point3 position, final Vector3 direction, final double halfAngle) {
         super(color);
         if (position == null || direction == null) throw new IllegalArgumentException("Parameters must not be null.");
-        if (halfAngle <= 0 || halfAngle > Math.PI){
+        if (halfAngle <= 0 || halfAngle > Math.PI) {
             throw new IllegalArgumentException("halfAngle must be in the range ]0,PI]");
         }
         this.position = position;
@@ -53,7 +62,8 @@ public class SpotLight extends Light {
 
         SpotLight spotLight = (SpotLight) o;
 
-        return Double.compare(spotLight.halfAngle, halfAngle) == 0 && !(position != null ? !position.equals(spotLight.position) : spotLight.position != null) && !(direction != null ? !direction.equals(spotLight.direction) : spotLight.direction != null);
+        return Double.compare(spotLight.halfAngle, halfAngle) == 0 && !(position != null ? !position.equals(spotLight.position) : spotLight.position != null)
+                && !(direction != null ? !direction.equals(spotLight.direction) : spotLight.direction != null);
     }
 
     @Override

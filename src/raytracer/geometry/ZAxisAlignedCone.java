@@ -49,7 +49,7 @@ public class ZAxisAlignedCone extends Geometry {
      */
     public ZAxisAlignedCone(final Point3 m, final double height, final double cap, final double scale, final Material material) {
         super(material);
-        if (m == null) throw new IllegalArgumentException("m must not be null.");
+        if (m == null) throw new IllegalArgumentException("Point m must not be null.");
         if (height == 0) throw new IllegalArgumentException("Height must not be zero.");
         if ((height > 0 && height <= cap) || (height < 0 && height >= cap))
             throw new IllegalArgumentException("Value for cap is not allowed.");
@@ -59,7 +59,6 @@ public class ZAxisAlignedCone extends Geometry {
         this.s = scale;
         this.zmax = Math.max(m.z + cap, m.z + height);
         this.zmin = Math.min(m.z + cap, m.z + height);
-        //TODO: Optional covers for cap and bottom ?!
     }
 
     @Override
@@ -100,7 +99,6 @@ public class ZAxisAlignedCone extends Geometry {
         return cp.normalized().add(new Vector3(0, 0, 1 / s)).asNormal();
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -109,12 +107,9 @@ public class ZAxisAlignedCone extends Geometry {
 
         ZAxisAlignedCone that = (ZAxisAlignedCone) o;
 
-        if (Double.compare(that.height, height) != 0) return false;
-        if (Double.compare(that.cap, cap) != 0) return false;
-        if (Double.compare(that.s, s) != 0) return false;
-        if (Double.compare(that.zmax, zmax) != 0) return false;
-        if (Double.compare(that.zmin, zmin) != 0) return false;
-        return !(m != null ? !m.equals(that.m) : that.m != null);
+        return Double.compare(that.height, height) == 0 && Double.compare(that.cap, cap) == 0
+                && Double.compare(that.s, s) == 0 && Double.compare(that.zmax, zmax) == 0
+                && Double.compare(that.zmin, zmin) == 0 && !(m != null ? !m.equals(that.m) : that.m != null);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package raytracer.scene;
 
 import raytracer.camera.PerspectiveCamera;
-import raytracer.camera.StereoCamera;
 import raytracer.geometry.*;
 import raytracer.light.PointLight;
 import raytracer.material.LambertMaterial;
@@ -12,15 +11,13 @@ import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
- * A festive scene with 3 cones, 4 spheres, 2 triangles and a cylinder.
+ * A festive scene with 3 cones, 4 spheres, 2 triangles, 4 boxes and a cylinder.
  *
  * @author Oliver Kniejski
  */
 public class Cone extends RtScene {
     public Cone() {
         cam = new PerspectiveCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4);
-//        cam = new StereoCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4, 2, true);
-
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
         // Planes
         world.addGeometry(new Plane(new Point3(0, 0, -1), new Normal3(0, 0, 1), new LambertMaterial(new Color(1, 0.5, 0))));

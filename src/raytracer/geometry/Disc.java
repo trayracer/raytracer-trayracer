@@ -4,12 +4,11 @@ import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
-import raytracer.texture.Color;
 
 /**
- * @author Oliver Kniejski
- *
  * This class represents a Disk.
+ *
+ * @author Oliver Kniejski
  */
 public class Disc extends Geometry {
     /**
@@ -27,9 +26,10 @@ public class Disc extends Geometry {
 
     /**
      * This constructor creates a new Disk.
-     * @param c The center.
-     * @param n The normal.
-     * @param radius The radius.
+     *
+     * @param c        The center.
+     * @param n        The normal.
+     * @param radius   The radius.
      * @param material The material.
      */
     public Disc(final Point3 c, final Normal3 n, final double radius, final Material material) {
@@ -44,13 +44,12 @@ public class Disc extends Geometry {
     public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
-        if (t>0 && ray.at(t).sub(c).dot(ray.at(t).sub(c))<= radius*radius) {
+        if (t > 0 && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
             return new Hit(t, ray, this, n);
         }
         return null;
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -59,9 +58,8 @@ public class Disc extends Geometry {
 
         Disc disc = (Disc) o;
 
-        if (Double.compare(disc.radius, radius) != 0) return false;
-        if (c != null ? !c.equals(disc.c) : disc.c != null) return false;
-        return !(n != null ? !n.equals(disc.n) : disc.n != null);
+        return Double.compare(disc.radius, radius) == 0 && !(c != null ? !c.equals(disc.c) : disc.c != null)
+                && !(n != null ? !n.equals(disc.n) : disc.n != null);
     }
 
     @Override

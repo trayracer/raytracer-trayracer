@@ -34,10 +34,11 @@ public class World {
      * This constructor creates an empty world with the given background color and ambient light color.
      *
      * @param backgroundColor The background Color.
-     * @param ambientColor The Color of the ambient Light.
+     * @param ambientColor    The Color of the ambient Light.
      */
-    public World(final Color backgroundColor,  final Color ambientColor) {
-        if (backgroundColor == null || ambientColor == null) throw new IllegalArgumentException("Parameters must not be null.");
+    public World(final Color backgroundColor, final Color ambientColor) {
+        if (backgroundColor == null || ambientColor == null)
+            throw new IllegalArgumentException("Parameters must not be null.");
         this.backgroundColor = backgroundColor;
         this.ambientColor = ambientColor;
     }
@@ -83,9 +84,10 @@ public class World {
 
     /**
      * This method adds a Light to this world.
-     * @param
+     *
+     * @param light The Light to add.
      */
-    public void addLight(final Light light){
+    public void addLight(final Light light) {
         if (light == null) throw new IllegalArgumentException("Light must not be null.");
         this.lights.add(light);
     }
@@ -95,23 +97,17 @@ public class World {
      *
      * @return LinkedList containing all Lights in this world.
      */
-    public List<Light> getLights(){
+    public List<Light> getLights() {
         return lights;
     }
 
-
-
-    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         World world = (World) o;
-
-        if (backgroundColor != null ? !backgroundColor.equals(world.backgroundColor) : world.backgroundColor != null)
-            return false;
-        return !(geometries != null ? !geometries.equals(world.geometries) : world.geometries != null);
+        return !(backgroundColor != null ? !backgroundColor.equals(world.backgroundColor) : world.backgroundColor != null)
+                && !(geometries != null ? !geometries.equals(world.geometries) : world.geometries != null);
     }
 
     @Override

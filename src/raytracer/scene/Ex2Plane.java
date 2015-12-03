@@ -11,6 +11,8 @@ import raytracer.texture.Color;
 
 /**
  * Sets a perspective camera and adds a plane to the world.
+ *
+ * @author TrayRacingTeam
  */
 public class Ex2Plane extends RtScene{
     public Ex2Plane(){

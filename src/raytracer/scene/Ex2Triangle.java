@@ -10,6 +10,8 @@ import raytracer.texture.Color;
 
 /**
  * Sets a perspective camera and adds a triangle to the world.
+ *
+ * @author TrayRacingTeam
  */
 public class Ex2Triangle extends RtScene{
     public Ex2Triangle() {

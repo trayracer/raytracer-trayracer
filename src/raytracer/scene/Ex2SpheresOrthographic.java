@@ -10,6 +10,8 @@ import raytracer.texture.Color;
 
 /**
  * Sets a orthographic camera and adds two spheres to the world.
+ *
+ * @author TrayRacingTeam
  */
 public class Ex2SpheresOrthographic extends RtScene {
     public Ex2SpheresOrthographic() {
