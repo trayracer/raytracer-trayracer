@@ -21,6 +21,7 @@ public abstract class Light {
      * @param color the given color
      */
     public Light(final Color color) {
+        if(color == null) throw new IllegalArgumentException("Parameters must not be null!");
         this.color = color;
     }
 
