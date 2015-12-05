@@ -13,7 +13,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import raytracer.camera.Camera;
+import raytracer.camera.PerspectiveCamera;
 import raytracer.geometry.*;
+import raytracer.light.PointLight;
+import raytracer.material.LambertMaterial;
+import raytracer.math.Point3;
+import raytracer.math.Vector3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
@@ -22,6 +27,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -103,6 +111,7 @@ public class Raytracer extends Application {
      * which will be placed in the ImageView.
      */
     private void raytrace() {
+        if (renderers != null) renderers.shutdownNow();
         counter = 0;
         pixels = width * height;
 
@@ -110,11 +119,27 @@ public class Raytracer extends Application {
         int maxThreads = Runtime.getRuntime().availableProcessors();
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
+
+//        List pixelsToDo = new ArrayList();
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                pixelsToDo.add(new int []{x, y});
+//            }
+//        }
+//        Collections.shuffle(pixelsToDo);
+//        while (pixelsToDo.size()>0){
+//            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
+//            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
+//
+//        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 renderers.execute(pixelRenderer(x, y, rImage));
             }
         }
+
+
         renderers.shutdown();
         Thread thread = new Thread(refresher(rImage));
         thread.start();
@@ -143,7 +168,7 @@ public class Raytracer extends Application {
     }
 
     /**
-     * This method refreshes the UI while rendering.
+     * This method creates a runnable that refreshes the UI while rendering.
      *
      * @param rImage The BufferedImage to show.
      * @return The Runnable.
@@ -155,6 +180,9 @@ public class Raytracer extends Application {
                 view.setImage(image);
                 System.out.println("Proz: " + counter * 100 / pixels);
             }
+            Image image = SwingFXUtils.toFXImage(rImage, null);
+            view.setImage(image);
+            System.out.println("Proz: " + counter * 100 / pixels);
         };
     }
 
@@ -181,6 +209,27 @@ public class Raytracer extends Application {
     }
 
     /**
+     * This method loads and renders a .obj file.
+     *
+     * @param stage The FxStage.
+     */
+    private void renderObjFile(final Stage stage){
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.obj"));
+        final File objFile = fileChooser.showOpenDialog(stage);
+        if (objFile != null) {
+            ShapeFromFile objGeo = new ShapeFromFile(objFile, new LambertMaterial(new Color(1, 1, 0)));
+            Vector3 geoMiddle = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).mul(0.5);
+            double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
+            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x-objHeight, geoMiddle.y-objHeight, geoMiddle.z-objHeight), new Vector3(0, 1, 0), Math.PI / 4);
+            world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
+            world.addGeometry(objGeo);
+            world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight,objHeight,objHeight/2)));
+            raytrace();
+        }
+    }
+
+    /**
      * This method creates a menu-bar and it's functionality for the raytracer.
      *
      * @param primaryStage The primary stage.
@@ -191,9 +240,15 @@ public class Raytracer extends Application {
 
         // File Menu
         final Menu filemenu = new Menu("File");
+
         final MenuItem save = new MenuItem("Save...");
         save.setOnAction(e -> saveImage(primaryStage));
         filemenu.getItems().add(save);
+
+        final MenuItem open = new MenuItem("Open .obj");
+        open.setOnAction(e -> renderObjFile(primaryStage));
+        filemenu.getItems().add(open);
+
         menubar.getMenus().add(filemenu);
 
         // Scene Menu
