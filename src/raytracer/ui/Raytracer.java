@@ -9,6 +9,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -121,23 +123,23 @@ public class Raytracer extends Application {
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
 
-        List pixelsToDo = new ArrayList();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                pixelsToDo.add(new int []{x, y});
-            }
-        }
-        Collections.shuffle(pixelsToDo);
-        while (pixelsToDo.size()>0){
-            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
-            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
-        }
-
+//        List pixelsToDo = new ArrayList();
 //        for (int y = 0; y < height; y++) {
 //            for (int x = 0; x < width; x++) {
-//                renderers.execute(pixelRenderer(x, y, rImage));
+//                pixelsToDo.add(new int []{x, y});
 //            }
 //        }
+//        Collections.shuffle(pixelsToDo);
+//        while (pixelsToDo.size()>0){
+//            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
+//            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
+//        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                renderers.execute(pixelRenderer(x, y, rImage));
+            }
+        }
 
         renderers.shutdown();
         Thread thread = new Thread(refresher(rImage));
@@ -166,6 +168,7 @@ public class Raytracer extends Application {
         };
     }
 
+
     /**
      * This method creates a runnable that refreshes the UI while rendering.
      *
@@ -177,11 +180,11 @@ public class Raytracer extends Application {
             while (!renderers.isTerminated()) {
                 Image image = SwingFXUtils.toFXImage(rImage, null);
                 view.setImage(image);
-                System.out.println("Proz: " + counter * 100 / pixels);
+                System.out.println(counter * 100 / pixels + "%");
             }
             Image image = SwingFXUtils.toFXImage(rImage, null);
             view.setImage(image);
-            System.out.println("Proz: " + counter * 100 / pixels);
+            System.out.println(counter * 100 / pixels + "%");
         };
     }
 
@@ -205,6 +208,26 @@ public class Raytracer extends Application {
             } catch (IOException ignore) {
             }
         }
+    }
+
+    private void anaglyph(final Stage stage){
+        Image sourceImg = view.getImage();
+        WritableImage targetImg = new WritableImage((int) (sourceImg.getWidth() / 2), (int) sourceImg.getHeight());
+        for (int y = 0; y < sourceImg.getHeight(); y++){
+            for (int x = 0; x < sourceImg.getWidth() / 2; x++){
+                double lGreen = sourceImg.getPixelReader().getColor(x, y).getGreen();
+                double lBlue = sourceImg.getPixelReader().getColor(x, y).getBlue();
+                double rRed = sourceImg.getPixelReader().getColor(x + (int) (sourceImg.getWidth() / 2), y).getRed();
+
+                targetImg.getPixelWriter().setColor(x, y, new javafx.scene.paint.Color(rRed, lGreen, lBlue, 1));
+            }
+        }
+
+        this.width = (int) (sourceImg.getWidth() / 2);
+        this.height = (int) sourceImg.getHeight();
+        stage.setWidth(width);
+        stage.setHeight(height);
+        view.setImage(targetImg);
     }
 
     /**
@@ -248,6 +271,10 @@ public class Raytracer extends Application {
         final MenuItem open = new MenuItem("Open .obj");
         open.setOnAction(e -> renderObjFile(primaryStage));
         filemenu.getItems().add(open);
+
+        final MenuItem anaglyph = new MenuItem("... anaglyph");
+        anaglyph.setOnAction(e -> anaglyph(primaryStage));
+        filemenu.getItems().add(anaglyph);
 
         menubar.getMenus().add(filemenu);
 

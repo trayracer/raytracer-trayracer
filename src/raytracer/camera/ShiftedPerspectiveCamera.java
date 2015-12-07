@@ -30,7 +30,7 @@ public class ShiftedPerspectiveCamera extends PerspectiveCamera {
 
     @Override
     public Ray rayFor(final int width, final int height, final int x, final int y) {
-        Vector3 r = this.w.invert().mul((height/2)/Math.tan(angle/2)).add(u.mul(x-((width-1)/2)-shift)).add(v.mul(y-((height-1)/2)));
+        Vector3 r = this.w.invert().mul((height/2)/Math.tan(angle/2)).add(u.mul(x-((width-1)/2)-(shift*10))).add(v.mul(y-((height-1)/2)));
         Vector3 d = r.mul(1/r.magnitude);
         return new Ray(e,d);
     }
