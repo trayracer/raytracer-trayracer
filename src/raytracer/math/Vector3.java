@@ -113,7 +113,6 @@ public final class Vector3 {
      *
      * @return The normal of this vector.
      */
-    @SuppressWarnings("unused")
     public Normal3 asNormal() {
         Vector3 nv = this.normalized();
         return new Normal3(nv.x, nv.y, nv.z);
@@ -169,16 +168,13 @@ public final class Vector3 {
      * @param o The object to check.
      * @return true if the given object is a vector and has the same properties as this one.
      */
-    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals( final Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Vector3 vector3 = (Vector3) o;
 
-        if (Double.compare(vector3.x, x) != 0) return false;
-        if (Double.compare(vector3.y, y) != 0) return false;
-        return Double.compare(vector3.z, z) == 0;
+        return Double.compare(vector3.x, x) == 0 && Double.compare(vector3.y, y) == 0 && Double.compare(vector3.z, z) == 0;
     }
 
     /**

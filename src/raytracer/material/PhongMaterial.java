@@ -3,6 +3,9 @@ package raytracer.material;
 import raytracer.geometry.Hit;
 import raytracer.geometry.World;
 import raytracer.light.Light;
+import raytracer.math.Normal3;
+import raytracer.math.Point3;
+import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.List;
  *
  * @author Steven Sobkowski
  */
-public class PhongMaterial extends Material{
+public class PhongMaterial extends Material {
     /**
      * The diffuse color property of the material.
      */
@@ -29,24 +32,35 @@ public class PhongMaterial extends Material{
     /**
      * The constructor of the PhongMaterial.
      *
-     * @param diffuse the given diffuse color
+     * @param diffuse  the given diffuse color
      * @param specular the given specular color
      * @param exponent the given exponent
      */
-    public PhongMaterial(final Color diffuse, final Color specular,final int exponent) {
+    public PhongMaterial(final Color diffuse, final Color specular, final int exponent) {
         this.diffuse = diffuse;
         this.specular = specular;
         this.exponent = exponent;
     }
 
     @Override
-    public Color colorFor(final Hit hit, final World world){
+    public Color colorFor(final Hit hit, final World world) {
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
         Color c = diffuse.mul(world.ambientColor);
-        for(Light l : lights) {
-            if (l.illuminates(hit.ray.at(hit.t))) {
-                c = c.add(diffuse.mul(l.color.mul(Math.max(0,hit.normal.dot(l.directionFrom(hit.ray.at(hit.t)).normalized()))))).add(specular.mul(l.color.mul(Math.pow((Math.max(0,hit.ray.d.invert().dot(l.directionFrom(hit.ray.at(hit.t)).reflectedOn(hit.normal).normalized()))),exponent))));
+
+        for (Light light : lights) {
+            Point3 hitpoint = hit.ray.at(hit.t);
+
+            if (light.illuminates(hitpoint)) {
+                Normal3 n = hit.normal;
+                Vector3 l = light.directionFrom(hitpoint).normalized();
+                Vector3 e = hit.ray.d.invert().normalized();
+                Vector3 rl = l.reflectedOn(n);
+
+                Color lambert = diffuse.mul(light.color).mul(Math.max(0, l.dot(n)));
+                Color phong = specular.mul(light.color).mul(Math.pow((Math.max(0, e.dot(rl))), exponent));
+
+                c = c.add(lambert).add(phong);
             }
         }
         return c;

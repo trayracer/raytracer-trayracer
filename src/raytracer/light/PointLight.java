@@ -5,7 +5,7 @@ import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
- * This class represents a PointLight
+ * This class represents a PointLight.
  *
  * @author Steven Sobkowski
  */
@@ -28,24 +28,25 @@ public class PointLight extends Light {
     }
 
     @Override
-    public boolean illuminates(Point3 point) {
+    public boolean illuminates(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
         return true;
     }
 
     @Override
     public Vector3 directionFrom(final Point3 point) {
+        if (point == null) throw new IllegalArgumentException("Point must not be null.");
         return position.sub(point);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         PointLight that = (PointLight) o;
 
         return position.equals(that.position);
-
     }
 
     @Override

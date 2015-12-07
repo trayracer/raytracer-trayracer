@@ -46,7 +46,7 @@ public class SpotLight extends Light {
     @Override
     public boolean illuminates(final Point3 point) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        return Math.acos(this.directionFrom(point).invert().dot(direction) / (this.directionFrom(point).invert().magnitude * direction.magnitude)) <= halfAngle;
+        return Math.acos(directionFrom(point).invert().normalized().dot(direction.normalized())) <= halfAngle;
     }
 
     @Override

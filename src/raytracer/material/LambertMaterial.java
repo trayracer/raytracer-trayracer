@@ -3,6 +3,9 @@ package raytracer.material;
 import raytracer.geometry.Hit;
 import raytracer.geometry.World;
 import raytracer.light.Light;
+import raytracer.math.Normal3;
+import raytracer.math.Point3;
+import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 import java.util.List;
@@ -33,9 +36,15 @@ public class LambertMaterial extends Material {
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
         Color c = color.mul(world.ambientColor);
-        for (Light l : lights) {
-            if (l.illuminates(hit.ray.at(hit.t))) {
-                c = c.add(color.mul(l.color).mul(Math.max(0, l.directionFrom(hit.ray.at(hit.t)).normalized().dot(hit.normal))));
+        for (Light light : lights) {
+            Point3 hitpoint = hit.ray.at(hit.t);
+            if (light.illuminates(hitpoint)) {
+                Normal3 n = hit.normal;
+                Vector3 l = light.directionFrom(hitpoint).normalized();
+
+                Color lambert = color.mul(light.color).mul(Math.max(0, l.dot(n)));
+
+                c = c.add(lambert);
             }
         }
         return c;
