@@ -1,10 +1,9 @@
 package raytracer.geometry;
 
-import raytracer.material.LambertMaterial;
 import raytracer.material.Material;
+import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
-import raytracer.texture.Color;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -62,61 +61,141 @@ public class ShapeFromFile extends Geometry {
      */
     private void parser() throws IOException {
         List<Point3> points = new LinkedList<>();
-        List<int[]> rawTriangles = new LinkedList<>();
+        List<double[]> textureCoordinates = new LinkedList<>();
+        List<Normal3> normals = new LinkedList<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(objFile));
         String line;
+
         int vCount = 0;
+        int vtCount = 0;
+        int vnCount = 0;
         int fCount = 0;
+
+        // vatiables for lbf & run
+        double maxX = -1000000000;
+        double maxY = -1000000000;
+        double maxZ = -1000000000;
+        double minX = 1000000000;
+        double minY = 1000000000;
+        double minZ = 1000000000;
 
 
         while ((line = reader.readLine()) != null) {
-            if (!line.isEmpty()){
-                line = line.replace("  ", " ").trim();
-                if (line.startsWith("\u0023")) System.out.println(line); // Kommentare ausgeben
-                String[] lineArray = line.split(" ", 2);
-                switch(lineArray[0]){
-
-                    case "v":   vCount++;
-                        String[] coords = lineArray[1].split(" ", 3);
-                        points.add(new Point3(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
-                        break;
-
-                    case "f":   fCount++;
-                        String[] tri = lineArray[1].split(" ", 3);
-                        rawTriangles.add(new int[]{Integer.parseInt(tri[0]), Integer.parseInt(tri[1]), Integer.parseInt(tri[2])});
-                    default:    break;
-                }
+            if (line.isEmpty()) {
+                continue;
+            }
+            if (line.startsWith("#")) {
+                System.out.println(line); // # print comments
+                continue;
             }
 
+            // remove unnecessary spaces
+            line = line.replace("     ", " ").replace("    ", " ").replace("   ", " ").replace("  ", " ").trim(); //TODO: das geht bestimmt schöner
+            String[] lineArray = line.split(" ", 5);
+
+            switch (lineArray[0]) {
+                case "v":
+                    vCount++;
+                    Point3 point = new Point3(Double.parseDouble(lineArray[1]), Double.parseDouble(lineArray[2]), Double.parseDouble(lineArray[3]));
+                    points.add(point);
+
+                    // find lbf & run
+                    if (point.x > maxX) maxX = point.x;
+                    if (point.x < minX) minX = point.x;
+                    if (point.y > maxY) maxY = point.y;
+                    if (point.y < minY) minY = point.y;
+                    if (point.z > maxZ) maxZ = point.z;
+                    if (point.z < minZ) minZ = point.z;
+                    break;
+
+                case "vt":
+                    vtCount++;
+                    textureCoordinates.add(new double[]{Double.parseDouble(lineArray[1]), Double.parseDouble(lineArray[2])});
+                    break;
+
+                case "vn":
+                    vnCount++;
+                    normals.add(new Normal3(Double.parseDouble(lineArray[1]), Double.parseDouble(lineArray[2]), Double.parseDouble(lineArray[3])));
+                    break;
+
+                case "f":
+                    fCount++;
+
+                    String[] fa = lineArray[1].split("/", 3);
+                    String[] fb = lineArray[2].split("/", 3);
+                    String[] fc = lineArray[3].split("/", 3);
+
+                    if (fa.length != fb.length || fb.length != fc.length) throw new RuntimeException("Illegal .obj format.");
+
+                    Point3 a = getVertex(Integer.parseInt(fa[0]), points);
+                    Point3 b = getVertex(Integer.parseInt(fb[0]), points);
+                    Point3 c = getVertex(Integer.parseInt(fc[0]), points);
+
+                    double[] at;
+                    double[] bt;
+                    double[] ct;
+                    if (fa.length >= 2 && !fa[1].isEmpty()){
+                        at = getTexture(Integer.parseInt(fa[1]), textureCoordinates);
+                        bt = getTexture(Integer.parseInt(fb[1]), textureCoordinates);
+                        ct = getTexture(Integer.parseInt(fc[1]), textureCoordinates);
+                    }
+
+                    if (fa.length < 3) {
+                        Triangle tri = new Triangle(a, b, c, this.material);
+//                        if (triangles.contains(tri)) throw new RuntimeException("Illegal .obj format.");
+                        triangles.add(tri);
+                        break;
+                    }
+
+                    Normal3 na = getNormal(Integer.parseInt(fa[2]), normals);
+                    Normal3 nb = getNormal(Integer.parseInt(fb[2]), normals);
+                    Normal3 nc = getNormal(Integer.parseInt(fc[2]), normals);
+
+                    Triangle tri = new Triangle(a, b, c, na, nb, nc, this.material);
+//                    if (triangles.contains(tri)) throw new RuntimeException("Illegal .obj format.");
+                    triangles.add(tri);
+                    break;
+
+                default:
+                    break;
+            }
         }
 
-        System.out.println("Points: " + fCount + " Triangles: " + vCount);
+        System.out.println("Points: " + fCount + " TexCoords: " + vtCount + " Normals: " + vnCount + " Triangles: " + vCount);
 
-        for (int [] tri : rawTriangles){
-            triangles.add(new Triangle(points.get(tri[0]-1), points.get(tri[1]-1), points.get(tri[2]-1), this.material));
-            //Random coloring
-//            triangles.add(new Triangle(points.get(tri[0]-1), points.get(tri[1]-1), points.get(tri[2]-1), new LambertMaterial(new Color(Math.random(), Math.random(), Math.random()))));
-        }
-
-        //lbf und run finden
-        double maxX = points.get(0).x;
-        double maxY = points.get(0).y;
-        double maxZ = points.get(0).z;
-        double minX = points.get(0).x;
-        double minY = points.get(0).y;
-        double minZ = points.get(0).z;
-
-        for (int i = 1; i < points.size(); i++){
-            if (points.get(i).x > maxX) maxX = points.get(i).x;
-            if (points.get(i).x < minX) minX = points.get(i).x;
-            if (points.get(i).y > maxY) maxY = points.get(i).y;
-            if (points.get(i).y < minY) minY = points.get(i).y;
-            if (points.get(i).z > maxZ) maxZ = points.get(i).z;
-            if (points.get(i).z < minZ) minZ = points.get(i).z;
-        }
         // Bounding Box erstellen
         this.boundingBox = new AxisAlignedBox(new Point3(minX, minY, minZ), new Point3(maxX, maxY, maxZ), this.material);
+    }
 
+    /**
+     * This method gets the correct vertex Point according to .obj file specifications.
+     *
+     * @param i      The index of the vertex point.
+     * @param points The list containing the vertex points.
+     * @return The specified vertex Point.
+     */
+    private Point3 getVertex(int i, List<Point3> points) {
+        if (i > 0) {
+            return points.get(i - 1);
+        } else if (i < 0) {
+            return points.get(points.size() + i);
+        } else throw new IllegalArgumentException("vertex index must not be 0.");
+    }
+
+    private Normal3 getNormal(int i, List<Normal3> normals) {
+        if (i > 0) {
+            return normals.get(i - 1);
+        } else if (i < 0) {
+            return normals.get(normals.size() + i);
+        } else throw new IllegalArgumentException("normal index must not be 0.");
+    }
+
+    private double[] getTexture(int i, List<double[]> textures) {
+        if (i > 0) {
+            return textures.get(i - 1);
+        } else if (i < 0) {
+            return textures.get(textures.size() + i);
+        } else throw new IllegalArgumentException("texture index must not be 0.");
     }
 }

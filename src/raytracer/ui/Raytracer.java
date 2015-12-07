@@ -17,6 +17,7 @@ import raytracer.camera.PerspectiveCamera;
 import raytracer.geometry.*;
 import raytracer.light.PointLight;
 import raytracer.material.LambertMaterial;
+import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.scene.*;
@@ -120,25 +121,23 @@ public class Raytracer extends Application {
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
 
-//        List pixelsToDo = new ArrayList();
-//        for (int y = 0; y < height; y++) {
-//            for (int x = 0; x < width; x++) {
-//                pixelsToDo.add(new int []{x, y});
-//            }
-//        }
-//        Collections.shuffle(pixelsToDo);
-//        while (pixelsToDo.size()>0){
-//            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
-//            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
-//
-//        }
-
+        List pixelsToDo = new ArrayList();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                renderers.execute(pixelRenderer(x, y, rImage));
+                pixelsToDo.add(new int []{x, y});
             }
         }
+        Collections.shuffle(pixelsToDo);
+        while (pixelsToDo.size()>0){
+            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
+            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
+        }
 
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                renderers.execute(pixelRenderer(x, y, rImage));
+//            }
+//        }
 
         renderers.shutdown();
         Thread thread = new Thread(refresher(rImage));
@@ -218,8 +217,9 @@ public class Raytracer extends Application {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.obj"));
         final File objFile = fileChooser.showOpenDialog(stage);
         if (objFile != null) {
-            ShapeFromFile objGeo = new ShapeFromFile(objFile, new LambertMaterial(new Color(1, 1, 0)));
-            Vector3 geoMiddle = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).mul(0.5);
+//            ShapeFromFile objGeo = new ShapeFromFile(objFile, new LambertMaterial(new Color(1, 1, 0)));
+            ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new Color(1, 1, 0), new Color(1, 1, 1), 64));
+            Vector3 geoMiddle = new Vector3(objGeo.boundingBox.lbf.x, objGeo.boundingBox.lbf.y, objGeo.boundingBox.lbf.z).mul(0.5).add(new Vector3(objGeo.boundingBox.run.x, objGeo.boundingBox.run.y, objGeo.boundingBox.run.z).mul(0.5));
             double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
             cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x-objHeight, geoMiddle.y-objHeight, geoMiddle.z-objHeight), new Vector3(0, 1, 0), Math.PI / 4);
             world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
