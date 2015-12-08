@@ -9,36 +9,28 @@ import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
- * Created by ok on 08.12.15.
+ * This class
+ *
+ * @author Steven Sobkowski & Marie Hennings & Oliver Kniejski
  */
 public class Tracer {
-
-    int counter;
+    private int counter;
 
     public Tracer(int counter){
         this.counter = counter;
     }
-    public Color tracing(final Ray ray, final World world){
+
+    public Color tracing(final Point3 origin, final Vector3 direction, final World world){
         if(counter < 0) return world.backgroundColor;
-        else {
-            Hit hit = world.hit(ray);
-            if(hit != null){
-                Normal3 n = hit.normal;
-                Vector3 d = hit.ray.d;
-                Vector3 rd = d.add(n.mul(d.invert().dot(n)).mul(2));
-                Point3 hitpoint = hit.ray.at(hit.t);
+        counter--;
 
-                Hit newHit = world.hit(new Ray(hitpoint,rd));
-                if (newHit != null){
-                    return  hit.geo.material.colorFor(newHit, world, new Tracer(counter-1));
-                } else {
-                    return world.backgroundColor;
-                }
-            }
-            else {
-                return world.backgroundColor;
-            }
-        }
+        Ray ray = new Ray(origin, direction.normalized());
+        Hit hit = world.hit(ray);
+        if (hit == null) return world.backgroundColor;
+        Normal3 n = hit.normal;
+        Vector3 rd = direction.add(n.mul(direction.invert().dot(n)).mul(2));
+        Point3 hitpoint = hit.ray.at(hit.t);
 
+        return hit.geo.material.colorFor(hit, world, this);
     }
 }

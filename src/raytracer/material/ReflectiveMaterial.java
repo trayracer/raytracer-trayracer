@@ -30,20 +30,21 @@ public class ReflectiveMaterial extends Material{
     @Override
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
         if(hit == null || world == null || tracer == null) throw new IllegalArgumentException("Parameters must not be null");
-        List<Light> lights = world.getLights();
+
         Normal3 n = hit.normal;
         Vector3 d = hit.ray.d;
+        Vector3 rd = d.add(n.mul(d.invert().dot(n)).mul(2));
         Point3 hitpoint = hit.ray.at(hit.t);
 
-        Color c = diffuse.mul(world.ambientColor).add(reflection.mul(tracer.tracing(hit.ray,world)));
+        Color c = diffuse.mul(world.ambientColor).add(reflection.mul(tracer.tracing(hitpoint, rd, world)));
 
+        List<Light> lights = world.getLights();
         for (Light light : lights) {
 
             if (light.illuminates(hitpoint, world)) {
                 Vector3 l = light.directionFrom(hitpoint).normalized();
                 Vector3 e = d.invert().normalized();
                 Vector3 rl = l.reflectedOn(n);
-
 
                 Color lambert = diffuse.mul(light.color).mul(Math.max(0, l.dot(n)));
                 Color phong = specular.mul(light.color).mul(Math.pow((Math.max(0, e.dot(rl))), exponent));

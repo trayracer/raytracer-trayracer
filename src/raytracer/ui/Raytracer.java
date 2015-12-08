@@ -104,7 +104,7 @@ public class Raytracer extends Application {
             System.exit(0);
         });
 
-        loadScene(new Primitives());
+        loadScene(new Ex4Spheres());
     }
 
     /**
