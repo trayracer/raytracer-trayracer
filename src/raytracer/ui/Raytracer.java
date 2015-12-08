@@ -330,6 +330,14 @@ public class Raytracer extends Application {
         ex3v6.setOnAction(e -> loadScene(new Ex3v6()));
         scenemenu.getItems().add(ex3v6);
 
+        final MenuItem ex4spheres = new MenuItem("Ex4 Spheres");
+        ex4spheres.setOnAction(e -> loadScene(new Ex4Spheres()));
+        scenemenu.getItems().add(ex4spheres);
+
+        final MenuItem ex4box = new MenuItem("Ex4 Box");
+        ex4box.setOnAction(e -> loadScene(new Ex4Box()));
+        scenemenu.getItems().add(ex4box);
+
         final MenuItem okArt = new MenuItem("Abstrakte Kunst");
         okArt.setOnAction(e -> loadScene(new OkAbstractArt()));
         scenemenu.getItems().add(okArt);
