@@ -34,7 +34,7 @@ public class DirectionalLight extends Light {
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (castsShadow) {
-            if (world.hit(new Ray(point, direction.invert())) == null) {
+            if (world.hit(new Ray(point.add(direction.invert().normalized().mul(0.00000001)), direction.invert())) == null) {
                 return true;
             } else {
                 return false;
