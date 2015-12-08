@@ -19,7 +19,7 @@ public class OkAbstractArt extends RtScene{
     public OkAbstractArt() {
         cam = new PerspectiveCamera(new Point3(0, 0, 160), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
         world = new World(new Color(0, 0, 0), new Color(0.5, 0.5, 0.5));
-        world.addLight(new PointLight(new Color(0.8, 0.8, 0.8), new Point3(0, 0, 0)));
+        world.addLight(new PointLight(new Color(0.8, 0.8, 0.8), new Point3(0, 0, 0), true));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());
         for (int i = 0; i < 10; i++) world.addGeometry(randomTriangle());
     }

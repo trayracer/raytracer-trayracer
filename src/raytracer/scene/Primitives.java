@@ -29,8 +29,8 @@ public class Primitives extends RtScene {
         world.addGeometry(new Triangle(new Point3(-7, 1, 2), new Point3(-8, -1, 3), new Point3(-9, 3, 4), new PhongMaterial(new Color(0, 1, 0), new Color(1, 1, 1), 64)));
         world.addGeometry(new Disc(new Point3(1, -6, 4), new Normal3(1, 1, 3), 1.5, new PhongMaterial(new Color(0.5, 0.5, 1), new Color(1, 1, 1), 16)));
 
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0), new Point3(0, 10, 5)));
-        world.addLight(new PointLight(new Color(0, 0.3, 0.3), new Point3(6, -7, 5)));
-        world.addLight(new SpotLight(new Color(0.5, 0.5, 0.5), new Point3(8, 3, 8), new Vector3(-3, -3, -4), Math.PI /8));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0), new Point3(0, 10, 5), true));
+        world.addLight(new PointLight(new Color(0, 0.3, 0.3), new Point3(6, -7, 5), true));
+        world.addLight(new SpotLight(new Color(0.5, 0.5, 0.5), new Point3(8, 3, 8), new Vector3(-3, -3, -4), Math.PI /8, true));
     }
 }

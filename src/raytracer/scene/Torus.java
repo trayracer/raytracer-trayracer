@@ -28,6 +28,6 @@ public class Torus extends RtScene {
         world.addGeometry(new Sphere(new Point3(0, 3, 0), 1.1, new PhongMaterial(new Color(1, 1, 1), new Color(1, 1, 1), 64)));
         world.addGeometry(new Sphere(new Point3(0, -3, 0), 1.1, new PhongMaterial(new Color(1, 1, 1), new Color(1, 1, 1), 64)));
 
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, 5, 5)));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, 5, 5), true));
     }
 }

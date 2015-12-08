@@ -21,9 +21,9 @@ public class OkCity extends RtScene {
     public OkCity() {
         cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4);
         world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
-        world.addLight(new DirectionalLight(new Color(0.1, 0.1, 0.1), new Vector3(-1,2,-7)));
-        world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12)));
-        world.addLight(new SpotLight(new Color(0.3, 0, 0), new Point3(-0.25, -0.25, 0), new Vector3(0, 0, 1), Math.PI / 4));
+        world.addLight(new DirectionalLight(new Color(0.1, 0.1, 0.1), new Vector3(-1,2,-7), true));
+        world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12), true));
+        world.addLight(new SpotLight(new Color(0.3, 0, 0), new Point3(-0.25, -0.25, 0), new Vector3(0, 0, 1), Math.PI / 4, true));
 
         world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
 
