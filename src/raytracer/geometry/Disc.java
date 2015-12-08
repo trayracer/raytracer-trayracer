@@ -1,6 +1,7 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
+import raytracer.math.Constants;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
@@ -44,7 +45,7 @@ public class Disc extends Geometry {
     public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
-        if (t > 0 && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
+        if (t > Constants.EPSILON && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
             return new Hit(t, ray, this, n);
         }
         return null;

@@ -1,6 +1,7 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
+import raytracer.math.Constants;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
@@ -47,7 +48,7 @@ public class Plane extends Geometry {
     public Hit hit(final Ray r) {
         if (r == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
-        if (t > 0) {
+        if (t > Constants.EPSILON) {
             Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
             return new Hit(t, r, this, normal);
         }

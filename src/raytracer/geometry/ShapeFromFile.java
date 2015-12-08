@@ -73,12 +73,12 @@ public class ShapeFromFile extends Geometry {
         int fCount = 0;
 
         // vatiables for lbf & run
-        double maxX = -1000000000;
-        double maxY = -1000000000;
-        double maxZ = -1000000000;
-        double minX = 1000000000;
-        double minY = 1000000000;
-        double minZ = 1000000000;
+        double maxX = Double.MIN_VALUE;
+        double maxY = Double.MIN_VALUE;
+        double maxZ = Double.MIN_VALUE;
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double minZ = Double.MAX_VALUE;
 
 
         while ((line = reader.readLine()) != null) {
@@ -126,7 +126,8 @@ public class ShapeFromFile extends Geometry {
                     String[] fb = lineArray[2].split("/", 3);
                     String[] fc = lineArray[3].split("/", 3);
 
-                    if (fa.length != fb.length || fb.length != fc.length) throw new RuntimeException("Illegal .obj format.");
+                    if (fa.length != fb.length || fb.length != fc.length)
+                        throw new RuntimeException("Illegal .obj format.");
 
                     Point3 a = getVertex(Integer.parseInt(fa[0]), points);
                     Point3 b = getVertex(Integer.parseInt(fb[0]), points);
@@ -135,7 +136,7 @@ public class ShapeFromFile extends Geometry {
                     double[] at;
                     double[] bt;
                     double[] ct;
-                    if (fa.length >= 2 && !fa[1].isEmpty()){
+                    if (fa.length >= 2 && !fa[1].isEmpty()) {
                         at = getTexture(Integer.parseInt(fa[1]), textureCoordinates);
                         bt = getTexture(Integer.parseInt(fb[1]), textureCoordinates);
                         ct = getTexture(Integer.parseInt(fc[1]), textureCoordinates);

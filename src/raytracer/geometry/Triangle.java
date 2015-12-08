@@ -96,7 +96,7 @@ public class Triangle extends Geometry {
         double beta = matA.changeCol1(right).determinant / detA;
         double gamma = matA.changeCol2(right).determinant / detA;
         double t = matA.changeCol3(right).determinant / detA;
-        if (0 < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
+        if (Constants.EPSILON < t && 0 <= beta && beta <= 1 && 0 <= gamma && gamma <= 1 && beta + gamma <= 1) {
             //create normal and normalize
             double alpha = 1.0 - beta - gamma;
             Normal3 normal = (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));

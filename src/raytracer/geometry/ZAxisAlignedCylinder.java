@@ -1,10 +1,7 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
-import raytracer.math.Normal3;
-import raytracer.math.Point3;
-import raytracer.math.Ray;
-import raytracer.math.Vector3;
+import raytracer.math.*;
 
 /**
  * @author Oliver Kniejski
@@ -52,13 +49,14 @@ public class ZAxisAlignedCylinder extends Geometry {
 
         if (d == 0) {
             double t = (-b) / (2 * a);
-            if (t > 0 && m.z < r.at(t).z && r.at(t).z < (m.z + h)) return new Hit(t, r, this, normalAt(r, t));
+            if (t > Constants.EPSILON && m.z < r.at(t).z && r.at(t).z < (m.z + h))
+                return new Hit(t, r, this, normalAt(r, t));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            boolean b1 = t1 > 0 && m.z <= r.at(t1).z && r.at(t1).z <= (m.z + h);
-            boolean b2 = t2 > 0 && m.z <= r.at(t2).z && r.at(t2).z <= (m.z + h);
+            boolean b1 = t1 > Constants.EPSILON && m.z <= r.at(t1).z && r.at(t1).z <= (m.z + h);
+            boolean b2 = t2 > Constants.EPSILON && m.z <= r.at(t2).z && r.at(t2).z <= (m.z + h);
             if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1));
             if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2));
         }

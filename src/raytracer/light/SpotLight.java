@@ -1,6 +1,8 @@
 package raytracer.light;
 
+import raytracer.geometry.Hit;
 import raytracer.geometry.World;
+import raytracer.math.Constants;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
@@ -29,10 +31,10 @@ public class SpotLight extends Light {
      * This constructor creates a spotlight on a given position in a given direction with a given color.
      * The opening of the spot light is calculated from the halfAngle.
      *
-     * @param color     The color of the light.
-     * @param position  The position.
-     * @param direction The direction.
-     * @param halfAngle Half of the opening Angle.
+     * @param color       The color of the light.
+     * @param position    The position.
+     * @param direction   The direction.
+     * @param halfAngle   Half of the opening Angle.
      * @param castsShadow
      */
     public SpotLight(final Color color, final Point3 position, final Vector3 direction, final double halfAngle, final boolean castsShadow) {
@@ -49,15 +51,18 @@ public class SpotLight extends Light {
     @Override
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        if(castsShadow) {
-            double tl = position.sub(point).magnitude/directionFrom(point).magnitude;
-            double small = 0.0000000001;
-            if(world.hit(new Ray(position,directionFrom(point).invert())).t + small < tl){
-                return false;
-            }
-            else return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
+
+        boolean inLightCone = directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
+        if (castsShadow) {
+            double tl = position.sub(point).magnitude / directionFrom(point).magnitude;
+
+            Ray shadowray = new Ray(point, directionFrom(point));
+            Hit hitpoint = world.hit(shadowray);
+            if (hitpoint == null) return inLightCone;
+            if (Constants.EPSILON < hitpoint.t && hitpoint.t < tl) return false;
+            else return inLightCone;
         }
-        return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
+        return inLightCone;
     }
 
     @Override
