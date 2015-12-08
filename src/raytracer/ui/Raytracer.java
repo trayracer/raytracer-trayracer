@@ -19,6 +19,7 @@ import raytracer.geometry.*;
 import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.material.Tracer;
+import raytracer.math.Constants;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.scene.*;
@@ -157,7 +158,7 @@ public class Raytracer extends Application {
             Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
             Color c;
             if (hit != null) {
-                c = hit.geo.material.colorFor(hit, world, new Tracer());
+                c = hit.geo.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER));
             } else {
                 c = world.backgroundColor;
             }

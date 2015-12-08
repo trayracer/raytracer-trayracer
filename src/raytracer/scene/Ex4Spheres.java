@@ -24,7 +24,7 @@ public class Ex4Spheres extends RtScene {
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(8, 8, 8), false));
 
-        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new ReflectiveMaterial(new Color(0.1, 0.1, 0.1), new Color(1, 1, 1), 64, new Color(0.5,0.5,0.5))));
         world.addGeometry(new Sphere(new Point3(-3, 1, 0), 1, new ReflectiveMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64, new Color(0.5, 0.5, 0.5))));
         world.addGeometry(new Sphere(new Point3(0, 1, 0), 1, new ReflectiveMaterial(new Color(0, 1, 0), new Color(1, 1, 1), 64, new Color(0.5, 0.5, 0.5))));
         world.addGeometry(new Sphere(new Point3(3, 1, 0), 1, new ReflectiveMaterial(new Color(0, 0, 1), new Color(1, 1, 1), 64, new Color(0.5, 0.5, 0.5))));
