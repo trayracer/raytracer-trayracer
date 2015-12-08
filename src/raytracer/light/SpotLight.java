@@ -50,8 +50,9 @@ public class SpotLight extends Light {
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
         if(castsShadow) {
-            double tl = position.sub(point).magnitude/directionFrom(position).magnitude;
-            if(world.hit(new Ray(position,directionFrom(position).invert())).t < tl){
+            double tl = position.sub(point).magnitude/directionFrom(point).magnitude;
+            double small = 0.0000000001;
+            if(world.hit(new Ray(position,directionFrom(point).invert())).t + small < tl){
                 return false;
             }
             else return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);

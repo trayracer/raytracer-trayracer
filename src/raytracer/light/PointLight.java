@@ -33,8 +33,9 @@ public class PointLight extends Light {
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         if(castsShadow) {
-            double tl = position.sub(point).magnitude/directionFrom(position).magnitude;
-            if(world.hit(new Ray(position,directionFrom(position).invert())).t < tl){
+            double tl = (position.sub(point).magnitude)/directionFrom(point).magnitude;
+            double small = 0.0000000001;
+            if(world.hit(new Ray(position,directionFrom(point).invert())).t + small < tl ){
                 return false;
             }
             else return true;
