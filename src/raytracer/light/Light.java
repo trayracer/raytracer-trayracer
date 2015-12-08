@@ -25,7 +25,7 @@ public abstract class Light {
      * This constructor creates a light with the given parameters.
      *
      * @param color the given color
-     * @param castsShadow
+     * @param castsShadow the given boolean
      */
     public Light(final Color color, final boolean castsShadow) {
         if(color == null) throw new IllegalArgumentException("Parameters must not be null!");
@@ -38,6 +38,7 @@ public abstract class Light {
      * This method checks if a point is illuminated by the light.
      *
      * @param point the point, which has to be checked.
+     * @param world the given world
      * @return returns true, if the point is illuminated by the light or false, if not.
      */
     public abstract boolean illuminates(final Point3 point, final World world);
