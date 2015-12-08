@@ -2,6 +2,7 @@ package raytracer.light;
 
 import raytracer.geometry.World;
 import raytracer.math.Point3;
+import raytracer.math.Ray;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
@@ -31,6 +32,13 @@ public class PointLight extends Light {
     @Override
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
+        if(castsShadow) {
+            double tl = position.sub(point).magnitude/directionFrom(position).magnitude;
+            if(world.hit(new Ray(position,directionFrom(position).invert())).t < tl){
+                return false;
+            }
+            else return true;
+        }
         return true;
     }
 

@@ -2,6 +2,7 @@ package raytracer.light;
 
 import raytracer.geometry.World;
 import raytracer.math.Point3;
+import raytracer.math.Ray;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
@@ -47,6 +48,13 @@ public class SpotLight extends Light {
     @Override
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
+        if(castsShadow) {
+            double tl = position.sub(point).magnitude/directionFrom(position).magnitude;
+            if(world.hit(new Ray(position,directionFrom(position).invert())).t < tl){
+                return false;
+            }
+            else return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
+        }
         return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
     }
 
