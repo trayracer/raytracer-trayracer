@@ -16,7 +16,8 @@ public abstract class Material {
      *
      * @param hit   The hit.
      * @param world The world with the lights.
+     * @param tracer
      * @return Color of the Point of the Hit.
      */
-    public abstract Color colorFor(final Hit hit, final World world);
+    public abstract Color colorFor(final Hit hit, final World world, final Tracer tracer);
 }

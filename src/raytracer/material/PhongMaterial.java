@@ -43,7 +43,7 @@ public class PhongMaterial extends Material {
     }
 
     @Override
-    public Color colorFor(final Hit hit, final World world) {
+    public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
         Color c = diffuse.mul(world.ambientColor);
@@ -51,7 +51,7 @@ public class PhongMaterial extends Material {
         for (Light light : lights) {
             Point3 hitpoint = hit.ray.at(hit.t);
 
-            if (light.illuminates(hitpoint)) {
+            if (light.illuminates(hitpoint, world)) {
                 Normal3 n = hit.normal;
                 Vector3 l = light.directionFrom(hitpoint).normalized();
                 Vector3 e = hit.ray.d.invert().normalized();

@@ -38,9 +38,9 @@ public class Cylinder extends RtScene {
             for (double x = -7.5; x < 8; x += 3) makeColumn(x, y);
         }
         // lights
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, 7.5, 0.5)));
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, -7.5, 0.5)));
-        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(15, -5, 8)));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, 7.5, 0.5), true));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(0, -7.5, 0.5), true));
+        world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(15, -5, 8), true));
     }
 
     /**

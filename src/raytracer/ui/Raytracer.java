@@ -20,6 +20,7 @@ import raytracer.geometry.*;
 import raytracer.light.PointLight;
 import raytracer.material.LambertMaterial;
 import raytracer.material.PhongMaterial;
+import raytracer.material.Tracer;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.scene.*;
@@ -123,23 +124,23 @@ public class Raytracer extends Application {
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
 
-//        List pixelsToDo = new ArrayList();
-//        for (int y = 0; y < height; y++) {
-//            for (int x = 0; x < width; x++) {
-//                pixelsToDo.add(new int []{x, y});
-//            }
-//        }
-//        Collections.shuffle(pixelsToDo);
-//        while (pixelsToDo.size()>0){
-//            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
-//            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
-//        }
-
+        List pixelsToDo = new ArrayList();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                renderers.execute(pixelRenderer(x, y, rImage));
+                pixelsToDo.add(new int []{x, y});
             }
         }
+        Collections.shuffle(pixelsToDo);
+        while (pixelsToDo.size()>0){
+            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
+            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
+        }
+
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                renderers.execute(pixelRenderer(x, y, rImage));
+//            }
+//        }
 
         renderers.shutdown();
         Thread thread = new Thread(refresher(rImage));
@@ -159,7 +160,7 @@ public class Raytracer extends Application {
             Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
             Color c;
             if (hit != null) {
-                c = hit.geo.material.colorFor(hit, world);
+                c = hit.geo.material.colorFor(hit, world, new Tracer());
             } else {
                 c = world.backgroundColor;
             }
@@ -247,7 +248,7 @@ public class Raytracer extends Application {
             cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x-objHeight, geoMiddle.y-objHeight, geoMiddle.z-objHeight), new Vector3(0, 1, 0), Math.PI / 4);
             world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
             world.addGeometry(objGeo);
-            world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight,objHeight,objHeight/2)));
+            world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight,objHeight,objHeight/2), false));
             raytrace();
         }
     }

@@ -19,7 +19,7 @@ public class StereoTest extends RtScene {
     public StereoTest() {
         cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
-        world.addLight(new PointLight(new Color(0.6, 0.6, 0.6), new Point3(20, 40, 40)));
+        world.addLight(new PointLight(new Color(0.6, 0.6, 0.6), new Point3(20, 40, 40), true));
 
         world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new PhongMaterial(new Color(1, 1, 1), new Color(1, 1, 1), 64)));
         world.addGeometry(new Sphere(new Point3(4, 0, 0), 2, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
