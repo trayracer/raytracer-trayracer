@@ -1,5 +1,6 @@
 package raytracer.light;
 
+import raytracer.geometry.Hit;
 import raytracer.geometry.World;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
@@ -33,11 +34,13 @@ public class PointLight extends Light {
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         if(castsShadow) {
-            double tl = (position.sub(point).magnitude)/directionFrom(point).magnitude;
-            double small = 0.0000000001;
-            if(world.hit(new Ray(position,directionFrom(point).invert())).t + small < tl ){
-                return false;
-            }
+            double tl = position.sub(point).magnitude/directionFrom(point).magnitude;
+            double small = 0.000000001;
+            Ray shadowray = new Ray(point,directionFrom(point));
+            Hit hitpoint = world.hit(shadowray);
+
+            if (hitpoint == null) return true;
+            else if(hitpoint.t < tl && small < hitpoint.t) return false;
             else return true;
         }
         return true;
