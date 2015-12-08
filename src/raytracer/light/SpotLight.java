@@ -1,5 +1,6 @@
 package raytracer.light;
 
+import raytracer.geometry.World;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
@@ -32,8 +33,8 @@ public class SpotLight extends Light {
      * @param direction The direction.
      * @param halfAngle Half of the opening Angle.
      */
-    public SpotLight(final Color color, final Point3 position, final Vector3 direction, final double halfAngle) {
-        super(color);
+    public SpotLight(final Color color, final Point3 position, final Vector3 direction, final double halfAngle, final boolean castsShadow) {
+        super(color, castsShadow);
         if (position == null || direction == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (halfAngle <= 0 || halfAngle > Math.PI) {
             throw new IllegalArgumentException("halfAngle must be in the range ]0,PI]");
@@ -44,9 +45,9 @@ public class SpotLight extends Light {
     }
 
     @Override
-    public boolean illuminates(final Point3 point) {
+    public boolean illuminates(final Point3 point, final World world) {
         if (point == null) throw new IllegalArgumentException("Point must not be null.");
-        return Math.acos(directionFrom(point).invert().normalized().dot(direction.normalized())) <= halfAngle;
+        return directionFrom(point).invert().normalized().dot(direction.normalized()) >= Math.cos(halfAngle);
     }
 
     @Override

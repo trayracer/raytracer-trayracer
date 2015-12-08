@@ -1,5 +1,6 @@
 package raytracer.light;
 
+import raytracer.geometry.World;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
@@ -16,13 +17,21 @@ public abstract class Light {
     final public Color color;
 
     /**
+     * A boolean which determines if the light casts a shadow.
+     */
+    final boolean castsShadow;
+
+    /**
      * This constructor creates a light with the given parameters.
      *
      * @param color the given color
+     * @param castsShadow
      */
-    public Light(final Color color) {
+    public Light(final Color color, final boolean castsShadow) {
         if(color == null) throw new IllegalArgumentException("Parameters must not be null!");
         this.color = color;
+        this.castsShadow = castsShadow;
+
     }
 
     /**
@@ -31,7 +40,7 @@ public abstract class Light {
      * @param point the point, which has to be checked.
      * @return returns true, if the point is illuminated by the light or false, if not.
      */
-    public abstract boolean illuminates(final Point3 point);
+    public abstract boolean illuminates(final Point3 point, final World world);
 
     /**
      * This method returns a vector, which points to the direction, where the light is coming from with the given point as its origin.
@@ -41,27 +50,32 @@ public abstract class Light {
      */
     public abstract Vector3 directionFrom(final Point3 point);
 
-
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Light light = (Light) o;
 
+        if (castsShadow != light.castsShadow) return false;
         return color.equals(light.color);
 
-    }
-
-    @Override
-    public int hashCode() {
-        return color.hashCode();
     }
 
     @Override
     public String toString() {
         return "Light{" +
                 "color=" + color +
+                ", castsShadow=" + castsShadow +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        int result = color.hashCode();
+        result = 31 * result + (castsShadow ? 1 : 0);
+        return result;
+    }
+
+
 }

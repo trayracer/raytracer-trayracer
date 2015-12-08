@@ -1,5 +1,6 @@
 package raytracer.light;
 
+import raytracer.geometry.World;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
@@ -21,15 +22,15 @@ public class PointLight extends Light {
      * @param color the given color
      * @param position the given position
      */
-    public PointLight(final Color color, final Point3 position){
-        super(color);
+    public PointLight(final Color color,final Point3 position, final boolean castsShadow ){
+        super(color, castsShadow);
         if(color == null || position == null) throw new IllegalArgumentException("Parameters must not be null!");
         this.position = position;
     }
 
     @Override
-    public boolean illuminates(final Point3 point) {
-        if (point == null) throw new IllegalArgumentException("Point must not be null.");
+    public boolean illuminates(final Point3 point, final World world) {
+        if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         return true;
     }
 
