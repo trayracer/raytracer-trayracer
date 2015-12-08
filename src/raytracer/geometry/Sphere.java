@@ -1,10 +1,7 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
-import raytracer.math.Normal3;
-import raytracer.math.Point3;
-import raytracer.math.Ray;
-import raytracer.math.Vector3;
+import raytracer.math.*;
 import raytracer.texture.Color;
 
 /**
@@ -26,13 +23,13 @@ public class Sphere extends Geometry {
     /**
      * This constructor creates a sphere with a point a double and a color.
      *
-     * @param c      Represents the center of the sphere.
-     * @param radius Represents the radius.
-     * @param material  Represents the color, the sphere is supposed to have.
+     * @param c        Represents the center of the sphere.
+     * @param radius   Represents the radius.
+     * @param material Represents the color, the sphere is supposed to have.
      */
     public Sphere(final Point3 c, final double radius, final Material material) {
         super(material);
-        if (radius <= 0 ) throw new IllegalArgumentException("Radius must be greater than zero.");
+        if (radius <= 0) throw new IllegalArgumentException("Radius must be greater than zero.");
         if (c == null) throw new IllegalArgumentException("Sphere center must not be null.");
         this.c = c;
         this.radius = radius;
@@ -54,19 +51,19 @@ public class Sphere extends Geometry {
         if (d < 0) return null;
         if (d == 0) {
             double t = (-b) / (2 * a);
-            if (t > 0){
-                return new Hit(t, r, this, normalAt(r,t));
+            if (t > Constants.EPSILON) {
+                return new Hit(t, r, this, normalAt(r, t));
             }
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
-            if (t1 < t2 && t1 > 0){
+            if (t1 < t2 && t1 > Constants.EPSILON) {
 
-                return new Hit(t1, r, this, normalAt(r,t1));
+                return new Hit(t1, r, this, normalAt(r, t1));
             }
-            if (t2 > 0){
-                return new Hit(t2, r, this, normalAt(r,t2));
+            if (t2 > Constants.EPSILON) {
+                return new Hit(t2, r, this, normalAt(r, t2));
             }
         }
         return null;
@@ -79,7 +76,7 @@ public class Sphere extends Geometry {
      * @param t the double
      * @return the normal of the hitpoint.
      */
-    public Normal3 normalAt(final Ray r, final double t){
+    public Normal3 normalAt(final Ray r, final double t) {
         final Point3 hitpoint = r.at(t);
         final Vector3 hitvector = hitpoint.sub(this.c);
         return hitvector.asNormal();

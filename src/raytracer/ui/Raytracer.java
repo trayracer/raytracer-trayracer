@@ -9,7 +9,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -18,7 +17,6 @@ import raytracer.camera.Camera;
 import raytracer.camera.PerspectiveCamera;
 import raytracer.geometry.*;
 import raytracer.light.PointLight;
-import raytracer.material.LambertMaterial;
 import raytracer.material.PhongMaterial;
 import raytracer.material.Tracer;
 import raytracer.math.Point3;
@@ -26,7 +24,6 @@ import raytracer.math.Vector3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -127,12 +124,12 @@ public class Raytracer extends Application {
         List pixelsToDo = new ArrayList();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                pixelsToDo.add(new int []{x, y});
+                pixelsToDo.add(new int[]{x, y});
             }
         }
         Collections.shuffle(pixelsToDo);
-        while (pixelsToDo.size()>0){
-            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size()-1);
+        while (pixelsToDo.size() > 0) {
+            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size() - 1);
             renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
         }
 
@@ -211,11 +208,11 @@ public class Raytracer extends Application {
         }
     }
 
-    private void anaglyph(final Stage stage){
+    private void anaglyph(final Stage stage) {
         Image sourceImg = view.getImage();
         WritableImage targetImg = new WritableImage((int) (sourceImg.getWidth() / 2), (int) sourceImg.getHeight());
-        for (int y = 0; y < sourceImg.getHeight(); y++){
-            for (int x = 0; x < sourceImg.getWidth() / 2; x++){
+        for (int y = 0; y < sourceImg.getHeight(); y++) {
+            for (int x = 0; x < sourceImg.getWidth() / 2; x++) {
                 double lGreen = sourceImg.getPixelReader().getColor(x, y).getGreen();
                 double lBlue = sourceImg.getPixelReader().getColor(x, y).getBlue();
                 double rRed = sourceImg.getPixelReader().getColor(x + (int) (sourceImg.getWidth() / 2), y).getRed();
@@ -236,7 +233,7 @@ public class Raytracer extends Application {
      *
      * @param stage The FxStage.
      */
-    private void renderObjFile(final Stage stage){
+    private void renderObjFile(final Stage stage) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.obj"));
         final File objFile = fileChooser.showOpenDialog(stage);
@@ -245,10 +242,10 @@ public class Raytracer extends Application {
             ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new Color(1, 1, 0), new Color(1, 1, 1), 64));
             Vector3 geoMiddle = new Vector3(objGeo.boundingBox.lbf.x, objGeo.boundingBox.lbf.y, objGeo.boundingBox.lbf.z).mul(0.5).add(new Vector3(objGeo.boundingBox.run.x, objGeo.boundingBox.run.y, objGeo.boundingBox.run.z).mul(0.5));
             double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
-            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x-objHeight, geoMiddle.y-objHeight, geoMiddle.z-objHeight), new Vector3(0, 1, 0), Math.PI / 4);
+            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4);
             world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
             world.addGeometry(objGeo);
-            world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight,objHeight,objHeight/2), false));
+            world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight, objHeight, objHeight / 2), false));
             raytrace();
         }
     }
@@ -338,19 +335,23 @@ public class Raytracer extends Application {
         ex4box.setOnAction(e -> loadScene(new Ex4Box()));
         scenemenu.getItems().add(ex4box);
 
+        final MenuItem primitives = new MenuItem("Primitive");
+        primitives.setOnAction(e -> loadScene(new Primitives()));
+        scenemenu.getItems().add(primitives);
+
         final MenuItem okArt = new MenuItem("Abstrakte Kunst");
         okArt.setOnAction(e -> loadScene(new OkAbstractArt()));
         scenemenu.getItems().add(okArt);
 
-        final MenuItem cylinder = new MenuItem("Cylinder (1min!)");
+        final MenuItem cylinder = new MenuItem("The Greeks!");
         cylinder.setOnAction(e -> loadScene(new Cylinder()));
         scenemenu.getItems().add(cylinder);
 
-        final MenuItem torus = new MenuItem("Torus");
+        final MenuItem torus = new MenuItem("Lifebelt");
         torus.setOnAction(e -> loadScene(new Torus()));
         scenemenu.getItems().add(torus);
 
-        final MenuItem cone = new MenuItem("Cone");
+        final MenuItem cone = new MenuItem("X-Mas Scene");
         cone.setOnAction(e -> loadScene(new Cone()));
         scenemenu.getItems().add(cone);
 
@@ -361,7 +362,7 @@ public class Raytracer extends Application {
         });
         scenemenu.getItems().add(stereoTest);
 
-        final MenuItem okCity = new MenuItem("Stadt mit Invasor (3min!)");
+        final MenuItem okCity = new MenuItem("Invader Over City (heavy!)");
         okCity.setOnAction(e -> loadScene(new OkCity()));
         scenemenu.getItems().add(okCity);
 

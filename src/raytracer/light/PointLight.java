@@ -2,6 +2,7 @@ package raytracer.light;
 
 import raytracer.geometry.Hit;
 import raytracer.geometry.World;
+import raytracer.math.Constants;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
@@ -21,30 +22,28 @@ public class PointLight extends Light {
     /**
      * This constructor creates a PointLight with the given parameters.
      *
-     * @param color the given color
+     * @param color    the given color
      * @param position the given position
      * @param castsShadow determines if the given light casts a shadow
      */
-    public PointLight(final Color color,final Point3 position, final boolean castsShadow ){
+    public PointLight(final Color color, final Point3 position, final boolean castsShadow) {
         super(color, castsShadow);
-        if(color == null || position == null) throw new IllegalArgumentException("Parameters must not be null!");
+        if (color == null || position == null) throw new IllegalArgumentException("Parameters must not be null!");
         this.position = position;
     }
 
     @Override
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
-        if(castsShadow) {
-            double tl = position.sub(point).magnitude/directionFrom(point).magnitude;
-            double small = 0.000000001;
-            Ray shadowray = new Ray(point,directionFrom(point));
+        if (castsShadow) {
+            double tl = position.sub(point).magnitude / directionFrom(point).magnitude;
+            Ray shadowray = new Ray(point, directionFrom(point));
             Hit hitpoint = world.hit(shadowray);
 
             if (hitpoint == null) return true;
-            else if(hitpoint.t < tl && small < hitpoint.t) return false;
+            else if (Constants.EPSILON < hitpoint.t && hitpoint.t < tl) return false;
             else return true;
-        }
-        return true;
+        } else return true;
     }
 
     @Override
