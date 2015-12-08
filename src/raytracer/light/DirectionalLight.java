@@ -2,6 +2,7 @@ package raytracer.light;
 
 import raytracer.geometry.World;
 import raytracer.math.Point3;
+import raytracer.math.Ray;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
@@ -19,8 +20,9 @@ public class DirectionalLight extends Light {
     /**
      * The constructor.
      *
-     * @param color     The color of the light.
-     * @param direction The direction of the light.
+     * @param color       The color of the light.
+     * @param direction   The direction of the light.
+     * @param castsShadow
      */
     public DirectionalLight(final Color color, final Vector3 direction, final boolean castsShadow) {
         super(color, castsShadow);
@@ -30,8 +32,16 @@ public class DirectionalLight extends Light {
 
     @Override
     public boolean illuminates(final Point3 point, final World world) {
-        if (point == null) throw new IllegalArgumentException("Point must not ne null.");
-        return true;
+        if (point == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
+        if (castsShadow) {
+            if (world.hit(new Ray(point, direction.invert())) == null) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override
