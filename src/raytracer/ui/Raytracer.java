@@ -7,9 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
+import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -25,13 +23,12 @@ import raytracer.math.Vector3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
+
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.*;
 
 /**
@@ -75,6 +72,14 @@ public class Raytracer extends Application {
      * Executor service for multithreaded rendering.
      */
     private ExecutorService renderers;
+    /**
+     * Pixel buffer for rendering.
+     */
+    private int[] pixelBuffer;
+    /**
+     * The image.
+     */
+    private WritableImage wImage;
 
 
     /**
@@ -98,13 +103,30 @@ public class Raytracer extends Application {
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
         primaryStage.setTitle("Tray Racer v0.20");
+
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
             Platform.exit();
             System.exit(0);
         });
 
-        loadScene(new Ex4Spheres());
+        loadScene(new MirrorHall());
+    }
+
+    /**
+     * This method resets the Image. Useful for size changes and setting it black.
+     */
+    private void resetImage() {
+        wImage = new WritableImage(width, height);
+        pixelBuffer = new int[width * height];
+
+        for (int pixel = 0; pixel < pixelBuffer.length; pixel++) {
+            pixelBuffer[pixel] = new java.awt.Color(0, 0, 0, 255).getRGB();
+        }
+
+        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, 1);
+
+        view.setImage(wImage);
     }
 
     /**
@@ -116,44 +138,44 @@ public class Raytracer extends Application {
         if (renderers != null) renderers.shutdownNow();
         counter = 0;
         pixels = width * height;
+        resetImage();
 
-        BufferedImage rImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         int maxThreads = Runtime.getRuntime().availableProcessors();
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
-
-        List pixelsToDo = new ArrayList();
+        // randomly distributed pixel rendering
+        LinkedList<int[]> pixelsToDo = new LinkedList();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 pixelsToDo.add(new int[]{x, y});
             }
         }
         Collections.shuffle(pixelsToDo);
-        while (pixelsToDo.size() > 0) {
-            int[] coords = (int[]) pixelsToDo.remove(pixelsToDo.size() - 1);
-            renderers.execute(pixelRenderer(coords[0], coords[1], rImage));
+        while (!pixelsToDo.isEmpty()) {
+            int[] coords = pixelsToDo.remove(0);
+            renderers.execute(pixelRenderer(coords[0], coords[1]));
         }
 
+        // Line by line rendering
 //        for (int y = 0; y < height; y++) {
 //            for (int x = 0; x < width; x++) {
-//                renderers.execute(pixelRenderer(x, y, rImage));
+//                renderers.execute(pixelRenderer(x, y));
 //            }
 //        }
 
         renderers.shutdown();
-        Thread thread = new Thread(refresher(rImage));
+        Thread thread = new Thread(refresher());
         thread.start();
     }
 
     /**
      * This method creates a Runnable for the renderer which calculates the specified pixel of the image.
      *
-     * @param x      The x-coordinate of the pixel.
-     * @param y      The y-coordinate of the pixel.
-     * @param rImage The buffered image.
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
      * @return The Runnable.
      */
-    private Runnable pixelRenderer(final int x, final int y, BufferedImage rImage) {
+    private Runnable pixelRenderer(final int x, final int y) {
         return () -> {
             Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
             Color c;
@@ -162,7 +184,7 @@ public class Raytracer extends Application {
             } else {
                 c = world.backgroundColor;
             }
-            rImage.setRGB(x, y, c.getRGB());
+            pixelBuffer[y * width + x] = c.getRGB();
             counter++;
         };
     }
@@ -171,19 +193,14 @@ public class Raytracer extends Application {
     /**
      * This method creates a runnable that refreshes the UI while rendering.
      *
-     * @param rImage The BufferedImage to show.
      * @return The Runnable.
      */
-    private Runnable refresher(BufferedImage rImage) {
+    private Runnable refresher() {
         return () -> {
             while (!renderers.isTerminated()) {
-                Image image = SwingFXUtils.toFXImage(rImage, null);
-                view.setImage(image);
-                System.out.println(counter * 100 / pixels + "%");
+                wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
             }
-            Image image = SwingFXUtils.toFXImage(rImage, null);
-            view.setImage(image);
-            System.out.println(counter * 100 / pixels + "%");
+            wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
         };
     }
 
@@ -280,92 +297,112 @@ public class Raytracer extends Application {
         // Scene Menu
         final Menu scenemenu = new Menu("Scene");
 
-        final MenuItem plane = new MenuItem("Ex2 Plane");
+        final Menu ex2 = new Menu("Exercise 2");
+
+        final MenuItem plane = new MenuItem("Plane");
         plane.setOnAction(e -> loadScene(new Ex2Plane()));
-        scenemenu.getItems().add(plane);
+        ex2.getItems().add(plane);
 
-        final MenuItem sphere = new MenuItem("Ex2 Sphere");
+        final MenuItem sphere = new MenuItem("Sphere");
         sphere.setOnAction(e -> loadScene(new Ex2Sphere()));
-        scenemenu.getItems().add(sphere);
+        ex2.getItems().add(sphere);
 
-        final MenuItem box = new MenuItem("Ex2 Box");
+        final MenuItem box = new MenuItem("Box");
         box.setOnAction(e -> loadScene(new Ex2Box()));
-        scenemenu.getItems().add(box);
+        ex2.getItems().add(box);
 
-        final MenuItem triangle = new MenuItem("Ex2 Triangle");
+        final MenuItem triangle = new MenuItem("Triangle");
         triangle.setOnAction(e -> loadScene(new Ex2Triangle()));
-        scenemenu.getItems().add(triangle);
+        ex2.getItems().add(triangle);
 
-        final MenuItem twoSpheresPerspective = new MenuItem("Ex2 Two Spheres Perspective");
+        final MenuItem twoSpheresPerspective = new MenuItem("Two Spheres Perspective");
         twoSpheresPerspective.setOnAction(e -> loadScene(new Ex2SpheresPerspective()));
-        scenemenu.getItems().add(twoSpheresPerspective);
+        ex2.getItems().add(twoSpheresPerspective);
 
-        final MenuItem twoSpheresOrthographic = new MenuItem("Ex2 Two Spheres Orthographic");
+        final MenuItem twoSpheresOrthographic = new MenuItem("Two Spheres Orthographic");
         twoSpheresOrthographic.setOnAction(e -> loadScene(new Ex2SpheresOrthographic()));
-        scenemenu.getItems().add(twoSpheresOrthographic);
+        ex2.getItems().add(twoSpheresOrthographic);
 
-        final MenuItem ex3v1 = new MenuItem("Ex3 v1");
+        scenemenu.getItems().add(ex2);
+
+        final Menu ex3 = new Menu("Exercise 3");
+
+        final MenuItem ex3v1 = new MenuItem("Scene 1");
         ex3v1.setOnAction(e -> loadScene(new Ex3v1()));
-        scenemenu.getItems().add(ex3v1);
+        ex3.getItems().add(ex3v1);
 
-        final MenuItem ex3v2 = new MenuItem("Ex3 v2");
+        final MenuItem ex3v2 = new MenuItem("Scene 2");
         ex3v2.setOnAction(e -> loadScene(new Ex3v2()));
-        scenemenu.getItems().add(ex3v2);
+        ex3.getItems().add(ex3v2);
 
-        final MenuItem ex3v3 = new MenuItem("Ex3 v3");
+        final MenuItem ex3v3 = new MenuItem("Scene 3");
         ex3v3.setOnAction(e -> loadScene(new Ex3v3()));
-        scenemenu.getItems().add(ex3v3);
+        ex3.getItems().add(ex3v3);
 
-        final MenuItem ex3v4 = new MenuItem("Ex3 v4");
+        final MenuItem ex3v4 = new MenuItem("Scene 4");
         ex3v4.setOnAction(e -> loadScene(new Ex3v4()));
-        scenemenu.getItems().add(ex3v4);
+        ex3.getItems().add(ex3v4);
 
-        final MenuItem ex3v5 = new MenuItem("Ex3 v5");
+        final MenuItem ex3v5 = new MenuItem("Scene 5");
         ex3v5.setOnAction(e -> loadScene(new Ex3v5()));
-        scenemenu.getItems().add(ex3v5);
+        ex3.getItems().add(ex3v5);
 
-        final MenuItem ex3v6 = new MenuItem("Ex3 v6");
+        final MenuItem ex3v6 = new MenuItem("Scene 6");
         ex3v6.setOnAction(e -> loadScene(new Ex3v6()));
-        scenemenu.getItems().add(ex3v6);
+        ex3.getItems().add(ex3v6);
 
-        final MenuItem ex4spheres = new MenuItem("Ex4 Spheres");
+        scenemenu.getItems().add(ex3);
+
+        final Menu ex4 = new Menu("Exercise 4");
+
+        final MenuItem ex4spheres = new MenuItem("Spheres");
         ex4spheres.setOnAction(e -> loadScene(new Ex4Spheres()));
-        scenemenu.getItems().add(ex4spheres);
+        ex4.getItems().add(ex4spheres);
 
-        final MenuItem ex4box = new MenuItem("Ex4 Box");
+        final MenuItem ex4box = new MenuItem("Box");
         ex4box.setOnAction(e -> loadScene(new Ex4Box()));
-        scenemenu.getItems().add(ex4box);
+        ex4.getItems().add(ex4box);
+
+        scenemenu.getItems().add(ex4);
+
+        final Menu extra = new Menu("Additional Scenes");
 
         final MenuItem primitives = new MenuItem("Primitive");
         primitives.setOnAction(e -> loadScene(new Primitives()));
-        scenemenu.getItems().add(primitives);
+        extra.getItems().add(primitives);
 
         final MenuItem okArt = new MenuItem("Abstrakte Kunst");
         okArt.setOnAction(e -> loadScene(new OkAbstractArt()));
-        scenemenu.getItems().add(okArt);
+        extra.getItems().add(okArt);
 
         final MenuItem cylinder = new MenuItem("The Greeks!");
         cylinder.setOnAction(e -> loadScene(new Cylinder()));
-        scenemenu.getItems().add(cylinder);
+        extra.getItems().add(cylinder);
 
         final MenuItem torus = new MenuItem("Lifebelt");
         torus.setOnAction(e -> loadScene(new Torus()));
-        scenemenu.getItems().add(torus);
+        extra.getItems().add(torus);
 
         final MenuItem cone = new MenuItem("X-Mas Scene");
         cone.setOnAction(e -> loadScene(new Cone()));
-        scenemenu.getItems().add(cone);
+        extra.getItems().add(cone);
 
         final MenuItem stereoTest = new MenuItem("Stereo Test");
         stereoTest.setOnAction(e -> {
             setDimensions(primaryStage, 800, 400);
             loadScene(new StereoTest());
         });
-        scenemenu.getItems().add(stereoTest);
+        extra.getItems().add(stereoTest);
 
         final MenuItem okCity = new MenuItem("Invader Over City (heavy!)");
         okCity.setOnAction(e -> loadScene(new OkCity()));
-        scenemenu.getItems().add(okCity);
+        extra.getItems().add(okCity);
+
+        final MenuItem mirrorhall = new MenuItem("MirrorMirror");
+        mirrorhall.setOnAction(e -> loadScene(new MirrorHall()));
+        extra.getItems().add(mirrorhall);
+
+        scenemenu.getItems().add(extra);
 
         menubar.getMenus().add(scenemenu);
 
