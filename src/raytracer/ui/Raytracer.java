@@ -81,7 +81,6 @@ public class Raytracer extends Application {
      */
     private WritableImage wImage;
 
-
     /**
      * Main method calling javafx-application main
      *
@@ -164,8 +163,9 @@ public class Raytracer extends Application {
 //        }
 
         renderers.shutdown();
-        Thread thread = new Thread(refresher());
-        thread.start();
+
+        Thread refreshThread = new Thread(refresher());
+        refreshThread.start();
     }
 
     /**
@@ -202,6 +202,11 @@ public class Raytracer extends Application {
             }
             wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
         };
+    }
+
+
+    private void refreshView() {
+        view.setImage(wImage);
     }
 
     /**
@@ -283,6 +288,10 @@ public class Raytracer extends Application {
         final MenuItem save = new MenuItem("Save...");
         save.setOnAction(e -> saveImage(primaryStage));
         filemenu.getItems().add(save);
+
+        final MenuItem refreshView = new MenuItem("Refresh view");
+        refreshView.setOnAction(e -> refreshView());
+        filemenu.getItems().add(refreshView);
 
         final MenuItem open = new MenuItem("Open .obj");
         open.setOnAction(e -> renderObjFile(primaryStage));
