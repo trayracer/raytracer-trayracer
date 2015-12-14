@@ -15,9 +15,9 @@ import raytracer.math.Vector3;
 import raytracer.texture.Color;
 
 /**
- * Created on 08.12.2015.
+ * This class represents demo-scene No. 1 for exercise 4.
  *
- * @author Marie Hennings
+ * @author TrayRacingTeam
  */
 public class Ex4Box extends RtScene {
     public Ex4Box() {
