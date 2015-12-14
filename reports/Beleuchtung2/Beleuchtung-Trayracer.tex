@@ -1,0 +1,41 @@
+\documentclass[a4paper,parskip=half,11pt]{scrartcl}
+
+%%% Standardpakete
+\usepackage[T1]{fontenc} 
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{libertine} %Schriftart
+\usepackage{tabularx} %fuer Tabellen
+\usepackage{xcolor} %fuer Farben
+\usepackage{amsmath} %fuer Mathematikmodus
+%\usepackage[top=1cm]{geometry} %verringert Rand oben
+
+\author{Trayracer: Oliver Kniejski, Steven Sobkowski, Marie Hennings}
+\title{Bericht zu der Beleuchtung Teil 2}
+
+\begin{document}
+ 
+\maketitle
+
+\section*{Die Aufgabenstellung}
+In der aktuellen Aufgabe geht es darum die Beleuchtung des Raytracers um Schattierung und Reflektion zu erweitern. 
+Hierzu sollen die Konstruktoren der Lichtklassen um eine Variable vom Typ boolean ergänzt werden, welcher bestimmt, ob die Lichtquelle einen Schatten wirft.
+Des Weiteren muss die \emph{Illuminates}-Methode der Lichtklassen angepasst werden.
+Außerdem wird ein weiteres Material, das \emph{ReflectiveMaterial}, implementiert. 
+Um die Tiefe der Rekursion bei reflektierenden Materialien zu berechnen, wird die Klasse \emph{Tracer} entworfen.
+
+\section*{Lösungsstrategien}
+Die Aufgaben wurden untereinander aufgeteilt und bei Problemen wurde versucht diese gemeinsam zu lösen.
+
+
+\section*{Implementierung}
+Die Aufgaben wurden anhand der Aufgabenstellung implementiert. Lediglich der Tracer hatte spezifischen Vorgaben. Dieser erhielt das Attribut \emph{Counter} welcher im Konstruktor übergeben wird und die Rekursionstiefe bestimmt. Des Weiteren gibt es die Methode Tracing, welche ein Color-Objekt zurückgibt und nur vom \emph{ReflectiveMaterial} aufgerufen wird.
+
+\section*{Besondere Probleme oder Schwierigkeiten bei der Bearbeitung}
+Vorübergehende Schwierigkeiten hatten wir bei der Implementierung des \emph{Tracers}, im Speziellen bei dem rekursiven Aufruf der Reflektionen.
+
+\section*{Zeitbedarf}
+Der Zeitbedarf betrug pro Person ca. 7 Stunden.
+
+\end{document}
