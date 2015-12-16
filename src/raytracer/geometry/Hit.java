@@ -2,6 +2,7 @@ package raytracer.geometry;
 
 import raytracer.math.Normal3;
 import raytracer.math.Ray;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a hit of a ray with a geometry.
@@ -33,8 +34,9 @@ public class Hit {
      * @param ray    The hit.
      * @param geo    The geometry.
      * @param normal The normal.
+     * @param coord  The TextureCoordinates.
      */
-    public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal) {
+    public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal, final TexCoord2 coord) {
         if (ray == null || geo == null || normal == null)
             throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
