@@ -204,9 +204,11 @@ public class Raytracer extends Application {
         };
     }
 
-
+    /**
+     * This method refreshes the UI.
+     */
     private void refreshView() {
-        view.setImage(wImage);
+        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
     }
 
     /**

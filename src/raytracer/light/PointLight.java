@@ -22,8 +22,8 @@ public class PointLight extends Light {
     /**
      * This constructor creates a PointLight with the given parameters.
      *
-     * @param color    the given color
-     * @param position the given position
+     * @param color       the given color
+     * @param position    the given position
      * @param castsShadow determines if the given light casts a shadow
      */
     public PointLight(final Color color, final Point3 position, final boolean castsShadow) {

@@ -31,10 +31,10 @@ public class SpotLight extends Light {
      * This constructor creates a spotlight on a given position in a given direction with a given color.
      * The opening of the spot light is calculated from the halfAngle.
      *
-     * @param color     The color of the light.
-     * @param position  The position.
-     * @param direction The direction.
-     * @param halfAngle Half of the opening Angle.
+     * @param color       The color of the light.
+     * @param position    The position.
+     * @param direction   The direction.
+     * @param halfAngle   Half of the opening Angle.
      * @param castsShadow determines if the light casts a shadow
      */
     public SpotLight(final Color color, final Point3 position, final Vector3 direction, final double halfAngle, final boolean castsShadow) {

@@ -14,24 +14,23 @@ public abstract class Light {
     /**
      * The color of the light.
      */
-    final public Color color;
+    public final Color color;
 
     /**
      * A boolean which determines if the light casts a shadow.
      */
-    final boolean castsShadow;
+    public final boolean castsShadow;
 
     /**
      * This constructor creates a light with the given parameters.
      *
-     * @param color the given color
+     * @param color       the given color
      * @param castsShadow the given boolean
      */
     public Light(final Color color, final boolean castsShadow) {
-        if(color == null) throw new IllegalArgumentException("Parameters must not be null!");
+        if (color == null) throw new IllegalArgumentException("Parameters must not be null!");
         this.color = color;
         this.castsShadow = castsShadow;
-
     }
 
     /**
