@@ -8,6 +8,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.SingleColorTexture;
 
 /**
  * This class represents demo-scene Nr. 2 for exercise 3.
@@ -21,9 +22,9 @@ public class Ex3v2 extends RtScene {
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(4, 4, 4), false));
 
-        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new LambertMaterial(new Color(1, 0, 0))));
-        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new LambertMaterial(new Color(0, 1, 0))));
-        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new LambertMaterial(new Color(0, 0, 1))));
-        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new LambertMaterial(new Color(1, 1, 0))));
+        world.addGeometry(new Plane(new Point3(0, 0, 0), new Normal3(0, 1, 0), new LambertMaterial(new SingleColorTexture(new Color(1, 0, 0)))));
+        world.addGeometry(new Sphere(new Point3(1, 1, 1), 0.5, new LambertMaterial(new SingleColorTexture(new Color(0, 1, 0)))));
+        world.addGeometry(new AxisAlignedBox(new Point3(-1.5, 0.5, 0.5), new Point3(-0.5, 1.5, 1.5), new LambertMaterial(new SingleColorTexture(new Color(0, 0, 1)))));
+        world.addGeometry(new Triangle(new Point3(0, 0, -1), new Point3(1, 0, -1), new Point3(1, 1, -1), new LambertMaterial(new SingleColorTexture(new Color(1, 1, 0)))));
     }
 }
