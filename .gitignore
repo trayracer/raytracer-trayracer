@@ -7,6 +7,9 @@ out/
 
 *.DS_Store
 
+#img files
+*.db
+
 #latex files
 *.aux
 *.glo
