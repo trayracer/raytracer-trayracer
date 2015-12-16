@@ -11,6 +11,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.SingleColorTexture;
 
 /**
  * This is a test scene with 400 evenly distributed boxes with ordered base height and random top height and a sphere.
@@ -25,11 +26,11 @@ public class OkCity extends RtScene {
         world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12), true));
         world.addLight(new SpotLight(new Color(0.3, 0, 0), new Point3(-0.25, -0.25, 0), new Vector3(0, 0, 1), Math.PI / 4, true));
 
-        world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new PhongMaterial(new Color(1, 0, 0), new Color(1, 1, 1), 64)));
+        world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new PhongMaterial(new SingleColorTexture(new Color(1, 0, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64)));
 
         for (int y = -10; y < 10; y++){
             for (int x = -10; x < 10; x++){
-                world.addGeometry(new AxisAlignedBox(new Point3(x, y, 0), new Point3(x + 0.5, y + 0.5, Math.random() * Math.max(Math.abs(x), Math.abs(y))/2 + Math.max(Math.abs(x), Math.abs(y)) + 0.001), new PhongMaterial(new Color(0.8, 0.8, 0.8), new Color(1, 1, 1), 64)));
+                world.addGeometry(new AxisAlignedBox(new Point3(x, y, 0), new Point3(x + 0.5, y + 0.5, Math.random() * Math.max(Math.abs(x), Math.abs(y))/2 + Math.max(Math.abs(x), Math.abs(y)) + 0.001), new PhongMaterial(new SingleColorTexture(new Color(0.8, 0.8, 0.8)), new SingleColorTexture(new Color(1, 1, 1)), 64)));
             }
         }
     }

@@ -23,6 +23,7 @@ import raytracer.math.Vector3;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
+import raytracer.texture.SingleColorTexture;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -264,7 +265,7 @@ public class Raytracer extends Application {
         final File objFile = fileChooser.showOpenDialog(stage);
         if (objFile != null) {
 //            ShapeFromFile objGeo = new ShapeFromFile(objFile, new LambertMaterial(new Color(1, 1, 0)));
-            ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new Color(1, 1, 0), new Color(1, 1, 1), 64));
+            ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new SingleColorTexture(new Color(1, 1, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64));
             Vector3 geoMiddle = new Vector3(objGeo.boundingBox.lbf.x, objGeo.boundingBox.lbf.y, objGeo.boundingBox.lbf.z).mul(0.5).add(new Vector3(objGeo.boundingBox.run.x, objGeo.boundingBox.run.y, objGeo.boundingBox.run.z).mul(0.5));
             double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
             cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4);

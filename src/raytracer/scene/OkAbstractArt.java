@@ -9,6 +9,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.SingleColorTexture;
 
 /**
  * This is a method creates abstract Art.
@@ -30,7 +31,7 @@ public class OkAbstractArt extends RtScene{
      * @return a random sphere
      */
     private Sphere randomSphere() {
-        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new PhongMaterial(new Color(Math.random(), Math.random(), Math.random()), new Color(1, 1, 1), 64));
+        return new Sphere(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), Math.random() * 10, new PhongMaterial(new SingleColorTexture(new Color(Math.random(), Math.random(), Math.random())), new SingleColorTexture(new Color(1, 1, 1)), 64));
     }
 
     /**
@@ -39,7 +40,7 @@ public class OkAbstractArt extends RtScene{
      * @return a random triangle
      */
     private Triangle randomTriangle() {
-        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new PhongMaterial(new Color(Math.random(), Math.random(), Math.random()), new Color(1, 1, 1), 64));
+        return new Triangle(new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new Point3(50 - Math.random() * 100, 50 - Math.random() * 100, -Math.random() * 50), new PhongMaterial(new SingleColorTexture(new Color(Math.random(), Math.random(), Math.random())), new SingleColorTexture(new Color(1, 1, 1)), 64));
     }
 
 }
