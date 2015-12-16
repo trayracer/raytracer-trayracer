@@ -69,12 +69,21 @@ public class Sphere extends Geometry {
         return null;
     }
 
+    /**
+     * This method calculates the coordinates of the texture.
+     * @param ray the ray
+     * @param t the t
+     * @return The TexCoord2
+     */
     public TexCoord2 calcTexCoord(final Ray ray, final double t) {
         Point3 hitpoint = ray.at(t);
-        double phi = Math.atan(hitpoint.x / hitpoint.z);
-        double theta = Math.acos(hitpoint.y);
+
+        double theta = Math.acos((hitpoint.z - c.z) / radius);
+        double phi = Math.atan2((hitpoint.x - c.x), (hitpoint.y - c.y));
+
         double u = phi / (2 * Math.PI);
-        double v = 1 - (theta / Math.PI);
+        double v = (Math.PI - theta) / Math.PI;
+
         return new TexCoord2(u, v);
     }
 

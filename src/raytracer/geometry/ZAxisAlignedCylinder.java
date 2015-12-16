@@ -51,21 +51,34 @@ public class ZAxisAlignedCylinder extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && m.z < r.at(t).z && r.at(t).z < (m.z + h))
-                //TODO
-                return new Hit(t, r, this, normalAt(r, t), new TexCoord2(1, 1)
-                );
+                return new Hit(t, r, this, normalAt(r, t), calcTexCoord(r, t));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
             boolean b1 = t1 > Constants.EPSILON && m.z <= r.at(t1).z && r.at(t1).z <= (m.z + h);
             boolean b2 = t2 > Constants.EPSILON && m.z <= r.at(t2).z && r.at(t2).z <= (m.z + h);
-            //TODO
-            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), new TexCoord2(1, 1));
-            //TODO
-            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), new TexCoord2(1, 1));
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), calcTexCoord(r, t1));
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), calcTexCoord(r, t2));
         }
         return null;
+    }
+
+    /**
+     * This method calculates the coordinates of the texture.
+     *
+     * @param ray the ray
+     * @param t   the t
+     * @return The TexCoord2
+     */
+    public TexCoord2 calcTexCoord(final Ray ray, final double t) {
+        Point3 hitpoint = ray.at(t);
+        double phi = Math.atan(hitpoint.x / hitpoint.y);
+
+        double u = phi / (2 * Math.PI);
+        double v = (hitpoint.z + 1) / 4;
+
+        return new TexCoord2(u, v);
     }
 
     /**
