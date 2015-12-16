@@ -5,5 +5,5 @@ package raytracer.texture;
  */
 public interface Texture {
 
-    public Color getColor(final double u, final double v);
+    public Color getColor(final TexCoord2 coord2);
 }

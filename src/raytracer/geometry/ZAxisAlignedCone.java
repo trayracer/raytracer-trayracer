@@ -2,6 +2,7 @@ package raytracer.geometry;
 
 import raytracer.material.Material;
 import raytracer.math.*;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a cone aligned on the z-axis with the pointy piece on the point m with height h and cap cap.
@@ -69,15 +70,18 @@ public class ZAxisAlignedCone extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && zmin <= r.at(t).z && r.at(t).z <= zmax)
-                return new Hit(t, r, this, normalAt(r, t));
+                //TODO
+                return new Hit(t, r, this, normalAt(r, t), new TexCoord2(1, 1));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
             boolean b1 = t1 > Constants.EPSILON && zmin <= r.at(t1).z && r.at(t1).z <= zmax;
             boolean b2 = t2 > Constants.EPSILON && zmin <= r.at(t2).z && r.at(t2).z <= zmax;
-            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1));
-            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2));
+            //TODO
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), new TexCoord2(1, 1));
+            //TODO
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), new TexCoord2(1, 1));
         }
         return null;
     }

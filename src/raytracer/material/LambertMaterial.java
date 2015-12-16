@@ -7,6 +7,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.Texture;
 
 import java.util.List;
 
@@ -19,22 +20,23 @@ public class LambertMaterial extends Material {
     /**
      * The color property of this material.
      */
-    public final Color color;
+    public final Texture texture;
 
     /**
      * This constructor creates a new Lambert material.
      *
-     * @param color The color of the material.
+     * @param texture The texture of the material.
      */
-    public LambertMaterial(final Color color) {
-        if (color == null) throw new IllegalArgumentException("Color must not be null.");
-        this.color = color;
+    public LambertMaterial(final Texture texture) {
+        if (texture == null) throw new IllegalArgumentException("Color must not be null.");
+        this.texture = texture;
     }
 
     @Override
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
+        Color color = texture.getColor(hit.coord);
         Color c = color.mul(world.ambientColor);
         for (Light light : lights) {
             Point3 hitpoint = hit.ray.at(hit.t);
@@ -51,22 +53,25 @@ public class LambertMaterial extends Material {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         LambertMaterial that = (LambertMaterial) o;
-        return color.equals(that.color);
+
+        return texture.equals(that.texture);
+
     }
 
     @Override
     public int hashCode() {
-        return color.hashCode();
+        return texture.hashCode();
     }
 
     @Override
     public String toString() {
         return "LambertMaterial{" +
-                "color=" + color +
-                "} " + super.toString();
+                "texture=" + texture +
+                '}';
     }
 }

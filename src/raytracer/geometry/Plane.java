@@ -6,6 +6,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.texture.Color;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a plane.
@@ -50,7 +51,8 @@ public class Plane extends Geometry {
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
         if (t > Constants.EPSILON) {
             Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
-            return new Hit(t, r, this, normal);
+            //TODO
+            return new Hit(t, r, this, normal, new TexCoord2(1, 1));
         }
         return null;
     }

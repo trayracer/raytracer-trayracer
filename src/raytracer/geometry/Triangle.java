@@ -2,6 +2,7 @@ package raytracer.geometry;
 
 import raytracer.material.Material;
 import raytracer.math.*;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a triangle.
@@ -101,8 +102,8 @@ public class Triangle extends Geometry {
             double alpha = 1.0 - beta - gamma;
             Normal3 normal = (na.mul(alpha)).add((nb.mul(beta)).add(nc.mul(gamma)));
             normal = normal.mul(1 / (Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z)));
-
-            return new Hit(t, ray, this, normal);
+            //TODO
+            return new Hit(t, ray, this, normal, new TexCoord2(1, 1));
         }
         return null;
     }

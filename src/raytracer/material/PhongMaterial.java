@@ -7,6 +7,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.Texture;
 
 import java.util.List;
 
@@ -17,13 +18,13 @@ import java.util.List;
  */
 public class PhongMaterial extends Material {
     /**
-     * The diffuse color property of the material.
+     * The diffuse texture property of the material.
      */
-    public final Color diffuse;
+    public final Texture diffuseTexture;
     /**
-     * The specular color property of the material
+     * The specular texture property of the material
      */
-    public final Color specular;
+    public final Texture specularTexture;
     /**
      * The exponent needed for the colorFor - method.
      */
@@ -36,9 +37,9 @@ public class PhongMaterial extends Material {
      * @param specular the given specular color
      * @param exponent the given exponent
      */
-    public PhongMaterial(final Color diffuse, final Color specular, final int exponent) {
-        this.diffuse = diffuse;
-        this.specular = specular;
+    public PhongMaterial(final Texture diffuse, final Texture specular, final int exponent) {
+        this.diffuseTexture = diffuse;
+        this.specularTexture = specular;
         this.exponent = exponent;
     }
 
@@ -46,6 +47,8 @@ public class PhongMaterial extends Material {
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
         if (hit == null || world == null) throw new IllegalArgumentException("Parameters must not be null.");
         List<Light> lights = world.getLights();
+        Color diffuse = diffuseTexture.getColor(hit.coord);
+        Color specular = specularTexture.getColor(hit.coord);
         Color c = diffuse.mul(world.ambientColor);
 
         for (Light light : lights) {
@@ -67,6 +70,15 @@ public class PhongMaterial extends Material {
     }
 
     @Override
+    public String toString() {
+        return "PhongMaterial{" +
+                "diffuseTexture=" + diffuseTexture +
+                ", specularTexture=" + specularTexture +
+                ", exponent=" + exponent +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -74,26 +86,17 @@ public class PhongMaterial extends Material {
         PhongMaterial that = (PhongMaterial) o;
 
         if (exponent != that.exponent) return false;
-        if (!diffuse.equals(that.diffuse)) return false;
-        return specular.equals(that.specular);
+        if (!diffuseTexture.equals(that.diffuseTexture)) return false;
+        return specularTexture.equals(that.specularTexture);
 
     }
 
     @Override
     public int hashCode() {
-        int result = diffuse.hashCode();
-        result = 31 * result + specular.hashCode();
+        int result = diffuseTexture.hashCode();
+        result = 31 * result + specularTexture.hashCode();
         result = 31 * result + exponent;
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "PhongMaterial{" +
-                "diffuse=" + diffuse +
-                ", specular=" + specular +
-                ", exponent=" + exponent +
-                '}';
     }
 }
 

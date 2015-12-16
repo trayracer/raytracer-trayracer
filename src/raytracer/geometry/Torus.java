@@ -2,6 +2,7 @@ package raytracer.geometry;
 
 import raytracer.material.Material;
 import raytracer.math.*;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a Torus around the z-axis on the 0-Point.
@@ -42,8 +43,8 @@ public class Torus extends Geometry {
         double f = Math.pow(r.o.x, 2) + Math.pow(r.o.y, 2) + Math.pow(r.o.z, 2) + Math.pow(radius, 2) - Math.pow(diameter, 2);
 
         double[] roots = Solvers.solveQuartic(Math.pow(d, 2), 2 * d * e, 2 * d * f + Math.pow(e, 2) - a, 2 * e * f - b, Math.pow(f, 2) - c);
-
-        if (roots != null) return new Hit(roots[0], r, this, normalAt(r, roots[0]));
+        //TODO
+        if (roots != null) return new Hit(roots[0], r, this, normalAt(r, roots[0]), new TexCoord2(1, 1));
         return null;
     }
 

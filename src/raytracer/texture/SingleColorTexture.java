@@ -14,8 +14,7 @@ public class SingleColorTexture implements Texture {
 
 
     @Override
-    public Color getColor(final double u, final double v) {
-
+    public Color getColor(final TexCoord2 coord2) {
         return color;
     }
 }

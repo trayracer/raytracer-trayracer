@@ -7,6 +7,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
+import raytracer.texture.Texture;
 
 import java.util.List;
 
@@ -19,11 +20,11 @@ public class ReflectiveMaterial extends Material {
     /**
      * The diffuse color for the lambert component.
      */
-    public final Color diffuse;
+    public final Texture diffuseTexture;
     /**
      * The specular color for the phong component.
      */
-    public final Color specular;
+    public final Texture specularTexture;
     /**
      * The phong exponent.
      */
@@ -31,7 +32,7 @@ public class ReflectiveMaterial extends Material {
     /**
      * The color for the reflection.
      */
-    public final Color reflection;
+    public final Texture reflectionTexture;
 
     /**
      * This constructor creates a  reflective material.
@@ -41,19 +42,23 @@ public class ReflectiveMaterial extends Material {
      * @param exponent   The phong exponent.
      * @param reflection The color for the reflection.
      */
-    public ReflectiveMaterial(final Color diffuse, final Color specular, final int exponent, final Color reflection) {
+    public ReflectiveMaterial(final Texture diffuse, final Texture specular, final int exponent, final Texture reflection) {
         if (diffuse == null || specular == null || reflection == null)
             throw new IllegalArgumentException("Colors must not be null.");
-        this.diffuse = diffuse;
-        this.specular = specular;
+        this.diffuseTexture = diffuse;
+        this.specularTexture = specular;
         this.exponent = exponent;
-        this.reflection = reflection;
+        this.reflectionTexture = reflection;
     }
 
     @Override
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
         if (hit == null || world == null || tracer == null)
             throw new IllegalArgumentException("Parameters must not be null");
+
+        Color diffuse = diffuseTexture.getColor(hit.coord);
+        Color specular = specularTexture.getColor(hit.coord);
+        Color reflection = reflectionTexture.getColor(hit.coord);
 
         Normal3 n = hit.normal;
         Vector3 d = hit.ray.d;
@@ -80,33 +85,35 @@ public class ReflectiveMaterial extends Material {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public String toString() {
+        return "ReflectiveMaterial{" +
+                "diffuseTexture=" + diffuseTexture +
+                ", specularTexture=" + specularTexture +
+                ", exponent=" + exponent +
+                ", reflectionTexture=" + reflectionTexture +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         ReflectiveMaterial that = (ReflectiveMaterial) o;
 
-        return exponent == that.exponent && diffuse.equals(that.diffuse)
-                && specular.equals(that.specular)
-                && reflection.equals(that.reflection);
+        if (exponent != that.exponent) return false;
+        if (!diffuseTexture.equals(that.diffuseTexture)) return false;
+        if (!specularTexture.equals(that.specularTexture)) return false;
+        return reflectionTexture.equals(that.reflectionTexture);
+
     }
 
     @Override
     public int hashCode() {
-        int result = diffuse.hashCode();
-        result = 31 * result + (specular.hashCode());
+        int result = diffuseTexture.hashCode();
+        result = 31 * result + specularTexture.hashCode();
         result = 31 * result + exponent;
-        result = 31 * result + (reflection.hashCode());
+        result = 31 * result + reflectionTexture.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ReflectiveMaterial{" +
-                "diffuse=" + diffuse +
-                ", specular=" + specular +
-                ", exponent=" + exponent +
-                ", reflection=" + reflection +
-                "} " + super.toString();
     }
 }

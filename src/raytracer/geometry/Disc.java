@@ -5,6 +5,7 @@ import raytracer.math.Constants;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
+import raytracer.texture.TexCoord2;
 
 /**
  * This class represents a Disk.
@@ -46,7 +47,8 @@ public class Disc extends Geometry {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t > Constants.EPSILON && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
-            return new Hit(t, ray, this, n);
+            //TODO
+            return new Hit(t, ray, this, n, new TexCoord2(1, 1));
         }
         return null;
     }

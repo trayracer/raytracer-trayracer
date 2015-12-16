@@ -17,8 +17,8 @@ public class ImageTexture implements Texture {
     }
 
     @Override
-    public Color getColor(final double u, final double v) {
-
+    public Color getColor(final TexCoord2 coord2) {
+        //Color color = image.getPixelReader().getColor((int)u, (int) v);
         return null;
     }
 }

@@ -26,6 +26,10 @@ public class Hit {
      * The normal.
      */
     public final Normal3 normal;
+    /**
+     * The coordinates for texture.
+     */
+    public final TexCoord2 coord;
 
     /**
      * This constructor creates a new hit of a ray with a geometry at a given t.
@@ -43,6 +47,7 @@ public class Hit {
         this.ray = ray;
         this.geo = geo;
         this.normal = normal;
+        this.coord = coord;
     }
 
     @Override
