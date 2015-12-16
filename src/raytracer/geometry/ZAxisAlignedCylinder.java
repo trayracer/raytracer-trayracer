@@ -73,10 +73,10 @@ public class ZAxisAlignedCylinder extends Geometry {
      */
     public TexCoord2 calcTexCoord(final Ray ray, final double t) {
         Point3 hitpoint = ray.at(t);
-        double phi = Math.atan(hitpoint.x / hitpoint.y);
+        double phi = Math.atan2((hitpoint.x - m.x), (hitpoint.y - m.y));
 
         double u = phi / (2 * Math.PI);
-        double v = (hitpoint.z + 1) / 4;
+        double v = (hitpoint.z - m.z) / h;
 
         return new TexCoord2(u, v);
     }

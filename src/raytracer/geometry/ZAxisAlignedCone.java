@@ -71,7 +71,7 @@ public class ZAxisAlignedCone extends Geometry {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && zmin <= r.at(t).z && r.at(t).z <= zmax)
                 //TODO
-                return new Hit(t, r, this, normalAt(r, t), new TexCoord2(1, 1));
+                return new Hit(t, r, this, normalAt(r, t), calcTexCoord(r,t));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
@@ -79,11 +79,28 @@ public class ZAxisAlignedCone extends Geometry {
             boolean b1 = t1 > Constants.EPSILON && zmin <= r.at(t1).z && r.at(t1).z <= zmax;
             boolean b2 = t2 > Constants.EPSILON && zmin <= r.at(t2).z && r.at(t2).z <= zmax;
             //TODO
-            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), new TexCoord2(1, 1));
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), calcTexCoord(r,t1));
             //TODO
-            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), new TexCoord2(1, 1));
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), calcTexCoord(r,t2));
         }
         return null;
+    }
+
+    /**
+     * This method calculates the coordinates of the texture.
+     *
+     * @param ray the ray
+     * @param t   the t
+     * @return The TexCoord2
+     */
+    public TexCoord2 calcTexCoord(final Ray ray, final double t) {
+        Point3 hitpoint = ray.at(t);
+        double phi = Math.atan2((hitpoint.x - m.x), (hitpoint.y - m.y));
+
+        double u = phi / (2 * Math.PI);
+        double v = (hitpoint.z - m.z) / height;
+
+        return new TexCoord2(u, v);
     }
 
     /**

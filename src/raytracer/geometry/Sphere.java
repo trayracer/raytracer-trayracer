@@ -71,8 +71,9 @@ public class Sphere extends Geometry {
 
     /**
      * This method calculates the coordinates of the texture.
+     *
      * @param ray the ray
-     * @param t the t
+     * @param t   the t
      * @return The TexCoord2
      */
     public TexCoord2 calcTexCoord(final Ray ray, final double t) {

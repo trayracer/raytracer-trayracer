@@ -48,7 +48,8 @@ public class Disc extends Geometry {
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t > Constants.EPSILON && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
             //TODO
-            return new Hit(t, ray, this, n, new TexCoord2(1, 1));
+            Point3 hitpoint = ray.at(t);
+            return new Hit(t, ray, this, n, new TexCoord2(hitpoint.x, -hitpoint.z));
         }
         return null;
     }
