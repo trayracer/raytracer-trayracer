@@ -16,4 +16,17 @@ public class TextureStock {
     public static final String WOOD = System.getProperty("user.dir") + "/textures/wood.jpg";
     public static final String METAL = System.getProperty("user.dir") + "/textures/metal.jpg";
     public static final String LAWN = System.getProperty("user.dir") + "/textures/lawn.jpg";
+
+    //for xmas scene
+    public static final String FIR_BRANCHES = System.getProperty("user.dir") + "/textures/fir_branches.jpg";
+    public static final String BARK = System.getProperty("user.dir") + "/textures/bark.jpg";
+    public static final String WRAPPING_PAPER1 = System.getProperty("user.dir") + "/textures/wrapping_paper1.jpg";
+    public static final String WRAPPING_PAPER2 = System.getProperty("user.dir") + "/textures/wrapping_paper2.jpg";
+    public static final String WRAPPING_PAPER3 = System.getProperty("user.dir") + "/textures/wrapping_paper3.jpg";
+    public static final String WRAPPING_PAPER4 = System.getProperty("user.dir") + "/textures/wrapping_paper4.jpg";
+    public static final String XMAS_CARPET = System.getProperty("user.dir") + "/textures/xmas_carpet.jpg";
+    public static final String CHRISTMAS_BALL = System.getProperty("user.dir") + "/textures/christmas_ball.jpg";
+    public static final String STAR = System.getProperty("user.dir") + "/textures/star.jpg";
+    public static final String WALL = System.getProperty("user.dir") + "/textures/wall.jpg";
+
 }
