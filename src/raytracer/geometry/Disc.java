@@ -6,6 +6,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.texture.TexCoord2;
+import raytracer.texture.TextureUtils;
 
 /**
  * This class represents a Disk.
@@ -25,9 +26,13 @@ public class Disc extends Geometry {
      * The normal.
      */
     private final Normal3 n;
+    /**
+     * The scalar for the texture of the plane.
+     */
+    public final int textureScalar;
 
     /**
-     * This constructor creates a new Disk.
+     * This constructor creates a new Disk with a default texture scalar.
      *
      * @param c        The center.
      * @param n        The normal.
@@ -35,11 +40,25 @@ public class Disc extends Geometry {
      * @param material The material.
      */
     public Disc(final Point3 c, final Normal3 n, final double radius, final Material material) {
+        this(c, n, radius, material, 1);
+    }
+
+    /**
+     * This constructor creates a new Disk.
+     *
+     * @param c             The center.
+     * @param n             The normal.
+     * @param radius        The radius.
+     * @param material      The material.
+     * @param textureScalar The scalar of the texture.
+     */
+    public Disc(final Point3 c, final Normal3 n, final double radius, final Material material, final int textureScalar) {
         super(material);
         if (c == null || n == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.radius = radius;
         this.c = c;
         this.n = n;
+        this.textureScalar = textureScalar;
     }
 
     @Override
@@ -47,9 +66,7 @@ public class Disc extends Geometry {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t > Constants.EPSILON && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
-            //TODO
-            Point3 hitpoint = ray.at(t);
-            return new Hit(t, ray, this, n, new TexCoord2(hitpoint.x, -hitpoint.z));
+            return new Hit(t, ray, this, n, TextureUtils.getPlaneTexCoord(ray, t, n, textureScalar));
         }
         return null;
     }

@@ -13,7 +13,7 @@ import java.util.Arrays;
 /**
  * This class represents a Box that is aligned by the axes.
  *
- * @author Steven Sobkowski & Oliver Kniejski
+ * @author Steven Sobkowski & Oliver Kniejski & Marie Hennings
  */
 public class AxisAlignedBox extends Geometry {
     /**
@@ -28,9 +28,13 @@ public class AxisAlignedBox extends Geometry {
      * Array for the 6 Planes describing the Box.
      */
     private final Plane[] planes = new Plane[6];
+    /**
+     * The scalar for the texture of the planes describing the Box.
+     */
+    public final int textureScalar;
 
     /**
-     * This constructor creates the 6 Planes describing the Box out of the 2 Points.
+     * This constructor creates the 6 Planes describing the Box out of the 2 Points with a default texture scalar.
      * Each value of the Point lbf has to be smaller than the corresponding value of the Point run.
      *
      * @param lbf      The left-bottom-far Point of the Box.
@@ -38,18 +42,32 @@ public class AxisAlignedBox extends Geometry {
      * @param material The material of the Box.
      */
     public AxisAlignedBox(final Point3 lbf, final Point3 run, final Material material) {
+        this(lbf, run, material, 1);
+    }
+
+    /**
+     * This constructor creates the 6 Planes describing the Box out of the 2 Points.
+     * Each value of the Point lbf has to be smaller than the corresponding value of the Point run.
+     *
+     * @param lbf           The left-bottom-far Point of the Box.
+     * @param run           The right-up-near Point of the Box.
+     * @param material      The material of the Box.
+     * @param textureScalar The scalar of the texture.
+     */
+    public AxisAlignedBox(final Point3 lbf, final Point3 run, final Material material, final int textureScalar) {
         super(material);
         if (lbf == null || run == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (lbf.x >= run.x || lbf.y >= run.y || lbf.z >= run.z)
             throw new IllegalArgumentException("Each value of the Point lbf has to be smaller than the corresponding value of the Point run.");
         this.lbf = lbf;
         this.run = run;
-        planes[0] = new Plane(lbf, new Normal3(0, 0, -1), material);
-        planes[1] = new Plane(run, new Normal3(0, 0, 1), material);
-        planes[2] = new Plane(lbf, new Normal3(-1, 0, 0), material);
-        planes[3] = new Plane(run, new Normal3(1, 0, 0), material);
-        planes[4] = new Plane(lbf, new Normal3(0, -1, 0), material);
-        planes[5] = new Plane(run, new Normal3(0, 1, 0), material);
+        this.textureScalar = textureScalar;
+        planes[0] = new Plane(lbf, new Normal3(0, 0, -1), material, textureScalar);
+        planes[1] = new Plane(run, new Normal3(0, 0, 1), material, textureScalar);
+        planes[2] = new Plane(lbf, new Normal3(-1, 0, 0), material, textureScalar);
+        planes[3] = new Plane(run, new Normal3(1, 0, 0), material, textureScalar);
+        planes[4] = new Plane(lbf, new Normal3(0, -1, 0), material, textureScalar);
+        planes[5] = new Plane(run, new Normal3(0, 1, 0), material, textureScalar);
     }
 
     @Override
@@ -60,7 +78,7 @@ public class AxisAlignedBox extends Geometry {
                 double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);
                 Point3 hitPoint = ray.at(t);
                 if (t > Constants.EPSILON && lbf.x - Constants.EPSILON <= hitPoint.x && hitPoint.x <= run.x + Constants.EPSILON && lbf.y - Constants.EPSILON <= hitPoint.y && hitPoint.y <= run.y + Constants.EPSILON && lbf.z - Constants.EPSILON <= hitPoint.z && hitPoint.z <= run.z + Constants.EPSILON) {
-                    return new Hit(t, ray, plane, plane.n, TextureUtils.getPlaneTexCoord(ray, t, plane.n, 1));
+                    return new Hit(t, ray, plane, plane.n, TextureUtils.getPlaneTexCoord(ray, t, plane.n, plane.textureScalar));
                 }
             }
         }

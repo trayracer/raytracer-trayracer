@@ -48,7 +48,7 @@ public class Triangle extends Geometry {
     public final TexCoord2 tc;
 
     /**
-     * This constructor creates a triangle with 3 Points.
+     * This constructor creates a triangle with 3 Points and the normal.
      *
      * @param a        The point a of the triangle.
      * @param b        The point b of the triangle.
@@ -60,7 +60,7 @@ public class Triangle extends Geometry {
     }
 
     /**
-     * This constructor creates a triangle with 3 Points and 3 specified normals.
+     * This constructor creates a triangle with 3 Points and 3 specified normals and default texture coordinates.
      *
      * @param a        The point a of the triangle.
      * @param b        The point b of the triangle.

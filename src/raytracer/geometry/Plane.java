@@ -23,15 +23,31 @@ public class Plane extends Geometry {
      * The normal of the plane.
      */
     public final Normal3 n;
+    /**
+     * The scalar for the texture of the plane.
+     */
+    public final int textureScalar;
 
     /**
-     * This constructor creates a plane of a point and the normal.
+     * This constructor creates a plane of a point and the normal with a default texture scalar.
      *
      * @param a        A Point.
      * @param n        The normal. The magnitude of the normal must not be zero.
      * @param material The material.
      */
     public Plane(final Point3 a, final Normal3 n, final Material material) {
+        this(a, n, material, 1);
+    }
+
+    /**
+     * This constructor creates a plane of a point and the normal.
+     *
+     * @param a             A Point.
+     * @param n             The normal. The magnitude of the normal must not be zero.
+     * @param material      The material.
+     * @param textureScalar The scalar of the texture.
+     */
+    public Plane(final Point3 a, final Normal3 n, final Material material, final int textureScalar) {
         super(material);
         if (a == null || n == null) throw new IllegalArgumentException("Parameters must not be null.");
         if (n.x == 0 && n.y == 0 && n.z == 0) {
@@ -39,6 +55,7 @@ public class Plane extends Geometry {
         }
         this.a = a;
         this.n = n;
+        this.textureScalar = textureScalar;
     }
 
     /**
@@ -54,7 +71,7 @@ public class Plane extends Geometry {
             Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
 
 
-            return new Hit(t, r, this, normal, TextureUtils.getPlaneTexCoord(r,t,n,5));
+            return new Hit(t, r, this, normal, TextureUtils.getPlaneTexCoord(r, t, n, 5));
         }
         return null;
     }
