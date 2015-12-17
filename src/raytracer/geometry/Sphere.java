@@ -82,7 +82,7 @@ public class Sphere extends Geometry {
         double theta = Math.acos((hitpoint.z - c.z) / radius);
         double phi = Math.atan2((hitpoint.x - c.x), (hitpoint.y - c.y));
 
-        double u = phi / (2 * Math.PI);
+        double u = (2 * Math.PI - phi) / (2 * Math.PI);
         double v = (Math.PI - theta) / Math.PI;
 
         return new TexCoord2(u, v);

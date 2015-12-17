@@ -29,8 +29,8 @@ public class InterpolatedImageTexture implements Texture {
 
     @Override
     public Color getColor(TexCoord2 coord2) {
-        int x = (int) ((image.getWidth() - 1) * coord2.u);
-        int y = (int) ((image.getHeight() - 1) - (image.getHeight() - 1) * coord2.v);
+        double x = (image.getWidth() - 1) * coord2.u;
+        double y = (image.getHeight() - 1) - (image.getHeight() - 1) * coord2.v;
         return null;
     }
 }
