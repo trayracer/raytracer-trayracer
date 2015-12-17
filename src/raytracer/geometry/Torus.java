@@ -11,11 +11,11 @@ import raytracer.texture.TexCoord2;
  */
 public class Torus extends Geometry {
     /**
-     * The radius.
+     * The radius - distance from middle of the hole to the middle of the tube.
      */
     final public double radius;
     /**
-     * The diameter.
+     * The diameter - the radius of the tube.
      */
     final public double diameter;
 
@@ -43,9 +43,41 @@ public class Torus extends Geometry {
         double f = Math.pow(r.o.x, 2) + Math.pow(r.o.y, 2) + Math.pow(r.o.z, 2) + Math.pow(radius, 2) - Math.pow(diameter, 2);
 
         double[] roots = Solvers.solveQuartic(Math.pow(d, 2), 2 * d * e, 2 * d * f + Math.pow(e, 2) - a, 2 * e * f - b, Math.pow(f, 2) - c);
-        //TODO
-        if (roots != null) return new Hit(roots[0], r, this, normalAt(r, roots[0]), new TexCoord2(1, 1));
+
+        if (roots != null) {
+            double t = roots[0];
+            return new Hit(t, r, this, normalAt(r, roots[0]), calcTexCoord(r, t));
+        }
         return null;
+    }
+
+    /**
+     * This method calculates the coordinates of the texture.
+     *
+     * @param ray the ray
+     * @param t   the t
+     * @return The TexCoord2
+     */
+    public TexCoord2 calcTexCoord(final Ray ray, final double t) {
+        Point3 hitpoint = ray.at(t);
+
+        double v;
+        double phi = Math.asin(hitpoint.z / diameter);
+        if (radius > Math.sqrt(hitpoint.x * hitpoint.x + hitpoint.y * hitpoint.y)) {
+            //inner tube
+            if (phi > 0) {
+                v = 1 - (phi / (2 * Math.PI));
+            } else {
+                v = -(phi / (2 * Math.PI));
+            }
+        } else {
+            //outer tube
+            v = (Math.PI + phi) / (2 * Math.PI);
+        }
+
+        double u = Math.atan2(hitpoint.x, hitpoint.y) / (2 * Math.PI);
+
+        return new TexCoord2(u, v);
     }
 
     /**

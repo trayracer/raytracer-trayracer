@@ -41,8 +41,8 @@ public class ZAxisAlignedCone extends Geometry {
      *
      * @param m        The pointy end of the cone.
      * @param height   The distance to the base.
-     * @param cap      The distance to the cap. If height is negative, cap must not be lower then or equal height.
-     *                 If height is positive, cap musst not be larger then or equal height.
+     * @param cap      The distance to the cap. If height is negative, cap must not be lower than or equal height.
+     *                 If height is positive, cap must not be larger than or equal height.
      * @param scale    The scaling factor of the opening angle. 1 opens the cone 90 degree. A smaller value widens the angle.
      * @param material The material.
      */
@@ -68,10 +68,12 @@ public class ZAxisAlignedCone extends Geometry {
         double c = Math.pow((r.o.x - m.x), 2) + Math.pow((r.o.y - m.y), 2) - Math.pow((r.o.z - m.z), 2) / s;
         double d = Math.pow(b, 2) - 4 * (a * c);
 
+        Point3 basecenter = new Point3(m.x, m.y, zmin);
+        double zheight = zmax-zmin;
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && zmin <= r.at(t).z && r.at(t).z <= zmax) {
-                return new Hit(t, r, this, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, m, height));
+                return new Hit(t, r, this, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, basecenter, zheight));
             }
         }
         if (d > 0) {
@@ -81,9 +83,9 @@ public class ZAxisAlignedCone extends Geometry {
             boolean b2 = t2 > Constants.EPSILON && zmin <= r.at(t2).z && r.at(t2).z <= zmax;
 
             if ((b1 && !b2) || (b1 && b2 && t1 < t2))
-                return new Hit(t1, r, this, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, m, height));
+                return new Hit(t1, r, this, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, basecenter, zheight));
             if ((!b1 && b2) || (b1 && b2 && t1 > t2))
-                return new Hit(t2, r, this, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, m, height));
+                return new Hit(t2, r, this, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, basecenter, zheight));
         }
         return null;
     }

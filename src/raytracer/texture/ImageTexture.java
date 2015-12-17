@@ -35,7 +35,7 @@ public class ImageTexture implements Texture {
     @Override
     public Color getColor(final TexCoord2 coord2) {
         if (coord2 == null) throw new IllegalArgumentException("TexCoord2 must not be null!");
-        int x = (int) ((image.getWidth() - 1) * coord2.u);
+        int x = (int) ((image.getWidth() - 1) - (image.getWidth() - 1) * coord2.u);
         int y = (int) ((image.getHeight() - 1) - (image.getHeight() - 1) * coord2.v);
 
         javafx.scene.paint.Color colorFX = image.getPixelReader().getColor(x, y);
