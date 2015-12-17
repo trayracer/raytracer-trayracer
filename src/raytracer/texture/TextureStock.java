@@ -1,7 +1,7 @@
 package raytracer.texture;
 
 /**
- * This Class
+ * This Class holds the path of texture images.
  *
  * @author Marie Hennings
  */

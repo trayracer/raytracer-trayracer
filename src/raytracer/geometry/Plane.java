@@ -7,6 +7,7 @@ import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.texture.Color;
 import raytracer.texture.TexCoord2;
+import raytracer.texture.TextureUtils;
 
 /**
  * This class represents a plane.
@@ -51,17 +52,9 @@ public class Plane extends Geometry {
         double t = ((a.sub(r.o)).dot(n)) / ((r.d).dot(n));
         if (t > Constants.EPSILON) {
             Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
-            //TODO TexCoord for non axis aligned plane
-            Point3 hitpoint = r.at(t);
-            TexCoord2 coord2;
-            if (n.x == 0 && n.y == 0){
-                coord2 = new TexCoord2(hitpoint.x, hitpoint.y);
-            } else if (n.x == 0 && n.z == 0){
-                coord2 =  new TexCoord2(hitpoint.x, hitpoint.z);
-            } else {
-                coord2 =  new TexCoord2(hitpoint.y, hitpoint.z);
-            }
-            return new Hit(t, r, this, normal, coord2);
+
+
+            return new Hit(t, r, this, normal, TextureUtils.getPlaneTexCoord(r,t,n));
         }
         return null;
     }

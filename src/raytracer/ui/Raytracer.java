@@ -414,6 +414,10 @@ public class Raytracer extends Application {
         mirrorhall.setOnAction(e -> loadScene(new MirrorHall()));
         extra.getItems().add(mirrorhall);
 
+        final MenuItem earth = new MenuItem("Earth");
+        earth.setOnAction(e -> loadScene(new Earth()));
+        extra.getItems().add(earth);
+
         scenemenu.getItems().add(extra);
 
         menubar.getMenus().add(scenemenu);

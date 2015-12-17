@@ -3,6 +3,7 @@ package raytracer.geometry;
 import raytracer.material.Material;
 import raytracer.math.*;
 import raytracer.texture.TexCoord2;
+import raytracer.texture.TextureUtils;
 
 /**
  * @author Oliver Kniejski
@@ -51,34 +52,17 @@ public class ZAxisAlignedCylinder extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && m.z < r.at(t).z && r.at(t).z < (m.z + h))
-                return new Hit(t, r, this, normalAt(r, t), calcTexCoord(r, t));
+                return new Hit(t, r, this, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, m, h));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
             boolean b1 = t1 > Constants.EPSILON && m.z <= r.at(t1).z && r.at(t1).z <= (m.z + h);
             boolean b2 = t2 > Constants.EPSILON && m.z <= r.at(t2).z && r.at(t2).z <= (m.z + h);
-            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), calcTexCoord(r, t1));
-            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), calcTexCoord(r, t2));
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, m, h));
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, m, h));
         }
         return null;
-    }
-
-    /**
-     * This method calculates the coordinates of the texture.
-     *
-     * @param ray the ray
-     * @param t   the t
-     * @return The TexCoord2
-     */
-    public TexCoord2 calcTexCoord(final Ray ray, final double t) {
-        Point3 hitpoint = ray.at(t);
-        double phi = Math.atan2((hitpoint.x - m.x), (hitpoint.y - m.y));
-
-        double u = phi / (2 * Math.PI);
-        double v = (hitpoint.z - m.z) / h;
-
-        return new TexCoord2(u, v);
     }
 
     /**

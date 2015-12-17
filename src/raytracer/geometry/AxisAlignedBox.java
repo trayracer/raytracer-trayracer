@@ -6,6 +6,7 @@ import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.texture.TexCoord2;
+import raytracer.texture.TextureUtils;
 
 import java.util.Arrays;
 
@@ -59,17 +60,7 @@ public class AxisAlignedBox extends Geometry {
                 double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);
                 Point3 hitPoint = ray.at(t);
                 if (t > Constants.EPSILON && lbf.x - Constants.EPSILON <= hitPoint.x && hitPoint.x <= run.x + Constants.EPSILON && lbf.y - Constants.EPSILON <= hitPoint.y && hitPoint.y <= run.y + Constants.EPSILON && lbf.z - Constants.EPSILON <= hitPoint.z && hitPoint.z <= run.z + Constants.EPSILON) {
-                    //TODO TexCoord for non axis aligned plane
-                    Point3 hitpoint = ray.at(t);
-                    TexCoord2 coord2;
-                    if (plane.n.x == 0 && plane.n.y == 0) {
-                        coord2 = new TexCoord2(hitpoint.x, hitpoint.y);
-                    } else if (plane.n.x == 0 && plane.n.z == 0) {
-                        coord2 = new TexCoord2(hitpoint.x, hitpoint.z);
-                    } else {
-                        coord2 = new TexCoord2(hitpoint.y, hitpoint.z);
-                    }
-                    return new Hit(t, ray, plane, plane.n, coord2);
+                    return new Hit(t, ray, plane, plane.n, TextureUtils.getPlaneTexCoord(ray, t, plane.n));
                 }
             }
         }
