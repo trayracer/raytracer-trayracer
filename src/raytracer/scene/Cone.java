@@ -43,7 +43,7 @@ public class Cone extends RtScene {
         world.addGeometry(new AxisAlignedBox(new Point3(0, -0.9 ,-1), new Point3(0.5, -0.3, -0.4), new PhongMaterial(new ImageTexture(TextureStock.WRAPPING_PAPER1), new SingleColorTexture(new Color(1, 1, 1)), 64)));
         world.addGeometry(new AxisAlignedBox(new Point3(0.5, -1 ,-1), new Point3(1.5, 0, -0.8), new PhongMaterial(new ImageTexture(TextureStock.WRAPPING_PAPER3), new SingleColorTexture(new Color(1, 1, 1)), 64)));
         world.addGeometry(new AxisAlignedBox(new Point3(0.2, 0.2 ,-1), new Point3(1.3, 1, -0.4), new PhongMaterial(new ImageTexture(TextureStock.WRAPPING_PAPER2), new SingleColorTexture(new Color(1, 1, 1)), 64)));
-        world.addGeometry(new AxisAlignedBox(new Point3(1, 0.9 ,-1), new Point3(1.2, 1.3, -0.1), new PhongMaterial(new ImageTexture(TextureStock.WRAPPING_PAPER4), new SingleColorTexture(new Color(1, 1, 1)), 64)));
+        world.addGeometry(new AxisAlignedBox(new Point3(1, 1.1 ,-1), new Point3(1.2, 1.5, -0.1), new PhongMaterial(new ImageTexture(TextureStock.WRAPPING_PAPER4), new SingleColorTexture(new Color(1, 1, 1)), 64)));
         // Lights
         world.addLight(new PointLight(new Color(0.2, 0.2, 0.2), new Point3(6, 5, 0), true));
         world.addLight(new PointLight(new Color(0.2, 0.2, 0.2), new Point3(6, -5, 0), true));

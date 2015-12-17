@@ -19,16 +19,16 @@ public class TextureUtils {
      * @param normal The normal of the plane.
      * @return The texture coordinates.
      */
-    public static TexCoord2 getPlaneTexCoord(final Ray ray, final double t, final Normal3 normal) {
+    public static TexCoord2 getPlaneTexCoord(final Ray ray, final double t, final Normal3 normal, final int scalar) {
         //TODO TexCoord for non axis aligned plane
         Point3 hitpoint = ray.at(t);
         TexCoord2 coord2;
         if (normal.x == 0 && normal.y == 0) {
-            coord2 = new TexCoord2(hitpoint.x, hitpoint.y);
+            coord2 = new TexCoord2(hitpoint.x/scalar, hitpoint.y/scalar);
         } else if (normal.x == 0 && normal.z == 0) {
-            coord2 = new TexCoord2(hitpoint.x, hitpoint.z);
+            coord2 = new TexCoord2(hitpoint.x/scalar, hitpoint.z/scalar);
         } else {
-            coord2 = new TexCoord2(hitpoint.y, hitpoint.z);
+            coord2 = new TexCoord2(hitpoint.y/scalar, hitpoint.z/scalar);
         }
         return coord2;
     }
