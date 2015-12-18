@@ -8,10 +8,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
-import raytracer.texture.Color;
-import raytracer.texture.ImageTexture;
-import raytracer.texture.SingleColorTexture;
-import raytracer.texture.TextureStock;
+import raytracer.texture.*;
 
 /**
  * This is a scene with all the primitive geometries and some light.
@@ -23,7 +20,7 @@ public class Primitives extends RtScene {
         cam = new PerspectiveCamera(new Point3(10, 5, 10), new Vector3(-10, -5, -8), new Vector3(0, 0, 1), Math.PI / 4);
         world = new World(new Color(0, 0, 0), new Color(0.4, 0.4, 0.4));
 
-        world.addGeometry(new Plane(new Point3(0, 0, -0.5), new Normal3(0, 0, 1), new PhongMaterial(new ImageTexture(TextureStock.LAWN),new SingleColorTexture( new Color(1, 1, 1)), 64), 4));
+        world.addGeometry(new Plane(new Point3(0, 0, -0.5), new Normal3(0, 0, 1), new PhongMaterial(new InterpolatedImageTexture(TextureStock.LAWN),new SingleColorTexture( new Color(1, 1, 1)), 64), 4));
         world.addGeometry(new raytracer.geometry.Torus(2, 0.5, new PhongMaterial(new ImageTexture(TextureStock.STAR), new SingleColorTexture(new Color(1, 1, 1)), 64)));
         world.addGeometry(new Sphere(new Point3(3, -3, 0.5), 2, new PhongMaterial(new ImageTexture(TextureStock.EARTH), new SingleColorTexture(new Color(1, 1, 1)), 64)));
         world.addGeometry(new AxisAlignedBox(new Point3(-4, -6, -0.5), new Point3(-1, -4, 4), new PhongMaterial(new ImageTexture(TextureStock.METAL), new SingleColorTexture(new Color(0, 0, 0)), 64), 3));
