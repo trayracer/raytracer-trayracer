@@ -17,6 +17,9 @@ public class TextureStock {
     public static final String METAL = System.getProperty("user.dir") + "/textures/metal.jpg";
     public static final String LAWN = System.getProperty("user.dir") + "/textures/lawn.jpg";
 
+    public static final String EARTH_NN = System.getProperty("user.dir") + "/textures/earth_nearest_neighbour.jpg";
+    public static final String EARTH_320 = System.getProperty("user.dir") + "/textures/earth_320.jpg";
+
     //for xmas scene
     public static final String FIR_BRANCHES = System.getProperty("user.dir") + "/textures/fir_branches.jpg";
     public static final String BARK = System.getProperty("user.dir") + "/textures/bark.jpg";
