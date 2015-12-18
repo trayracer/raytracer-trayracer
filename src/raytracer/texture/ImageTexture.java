@@ -38,9 +38,6 @@ public class ImageTexture implements Texture {
         int x = (int) ((image.getWidth() - 1) - (image.getWidth() - 1) * coord2.u);
         int y = (int) ((image.getHeight() - 1) - (image.getHeight() - 1) * coord2.v);
 
-        javafx.scene.paint.Color colorFX = image.getPixelReader().getColor(x, y);
-        Color color = new Color(colorFX.getRed(), colorFX.getGreen(), colorFX.getBlue());
-
-        return color;
+        return new Color(image.getPixelReader().getColor(x, y));
     }
 }

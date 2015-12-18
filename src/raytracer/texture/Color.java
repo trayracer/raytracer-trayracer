@@ -43,6 +43,15 @@ public class Color {
     }
 
     /**
+     * This constructor creates a color from a given fx color
+     *
+     * @param clr the fx color to convert
+     */
+    public Color(final javafx.scene.paint.Color clr) {
+        this(clr.getRed(),clr.getGreen(),clr.getBlue());
+    }
+
+    /**
      * This method calculates the sum of this color and a color and returns the result as a color.
      *
      * @param c The color which is added.

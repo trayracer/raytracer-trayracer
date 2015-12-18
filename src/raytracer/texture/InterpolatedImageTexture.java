@@ -34,17 +34,10 @@ public class InterpolatedImageTexture implements Texture {
         double y = (image.getHeight() - 1) - (image.getHeight() - 1) * coord2.v;
 
         //get the color of the 4 neighbour coordinates
-        javafx.scene.paint.Color p00ColorFX = image.getPixelReader().getColor((int) Math.floor(x), (int) Math.floor(y));
-        Color p00color = new Color(p00ColorFX.getRed(), p00ColorFX.getGreen(), p00ColorFX.getBlue());
-
-        javafx.scene.paint.Color p10colorFX = image.getPixelReader().getColor((int) Math.ceil(x), (int) Math.floor(y));
-        Color p10color = new Color(p10colorFX.getRed(), p10colorFX.getGreen(), p10colorFX.getBlue());
-
-        javafx.scene.paint.Color p01colorFX = image.getPixelReader().getColor((int) Math.floor(x), (int) Math.ceil(y));
-        Color p01color = new Color(p01colorFX.getRed(), p01colorFX.getGreen(), p01colorFX.getBlue());
-
-        javafx.scene.paint.Color p11colorFX = image.getPixelReader().getColor((int) Math.ceil(x), (int) Math.ceil(y));
-        Color p11color = new Color(p11colorFX.getRed(), p11colorFX.getGreen(), p11colorFX.getBlue());
+        Color p00color = new Color(image.getPixelReader().getColor((int) Math.floor(x), (int) Math.floor(y)));
+        Color p10color = new Color(image.getPixelReader().getColor((int) Math.ceil(x), (int) Math.floor(y)));
+        Color p01color = new Color(image.getPixelReader().getColor((int) Math.floor(x), (int) Math.ceil(y)));
+        Color p11color = new Color(image.getPixelReader().getColor((int) Math.ceil(x), (int) Math.ceil(y)));
 
         double dx = x - Math.floor(x);
         double dy = y - Math.floor(y);
