@@ -24,7 +24,7 @@ public class Earth extends RtScene {
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(8, 8, 8), false));
 
-        world.addGeometry(new Plane(new Point3(10, 10, 10), new Normal3(0, 1, 0), new LambertMaterial(new ImageTexture(TextureStock.GALAXY)), 25));
+        world.addGeometry(new Plane(new Point3(10, 10, 10), new Normal3(0, 1, 0), new LambertMaterial(new ImageTexture(TextureStock.GALAXY)), 10));
         world.addGeometry(new Sphere(new Point3(-5, 0, 0), 2, new LambertMaterial(new ImageTexture(TextureStock.EARTH_NN))));
         world.addGeometry(new Sphere(new Point3(0, 0, 0), 2, new LambertMaterial(new InterpolatedImageTexture(TextureStock.EARTH_NN))));
         world.addGeometry(new Sphere(new Point3(5, 0, 0), 2, new LambertMaterial(new InterpolatedImageTexture(TextureStock.EARTH))));
