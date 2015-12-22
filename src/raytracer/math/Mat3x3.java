@@ -80,10 +80,13 @@ public final class Mat3x3 {
      * @param m The matrix to multiplicate with.
      * @return The resulting matrix of the matrix multiplication.
      */
-    public Mat3x3 mul( final Mat3x3 m ) {
-        return new Mat3x3(m11*m.m11 + m12*m.m21 + m13*m.m31, m11*m.m12 + m12*m.m22 + m13*m.m32, m11*m.m13 + m12*m.m23 + m13*m.m33,
-                          m21*m.m11 + m22*m.m21 + m23*m.m31, m21*m.m12 + m22*m.m22 + m23*m.m32, m21*m.m13 + m22*m.m23 + m23*m.m33,
-                          m31*m.m11 + m32*m.m21 + m33*m.m31, m31*m.m12 + m32*m.m22 + m33*m.m32, m31*m.m13 + m32*m.m23 + m33*m.m33);
+    public Mat3x3 mul(final Mat3x3 m) {
+        if (m == null) {
+            throw new IllegalArgumentException("Matrix m must not be null.");
+        }
+        return new Mat3x3(m11 * m.m11 + m12 * m.m21 + m13 * m.m31, m11 * m.m12 + m12 * m.m22 + m13 * m.m32, m11 * m.m13 + m12 * m.m23 + m13 * m.m33,
+                m21 * m.m11 + m22 * m.m21 + m23 * m.m31, m21 * m.m12 + m22 * m.m22 + m23 * m.m32, m21 * m.m13 + m22 * m.m23 + m23 * m.m33,
+                m31 * m.m11 + m32 * m.m21 + m33 * m.m31, m31 * m.m12 + m32 * m.m22 + m33 * m.m32, m31 * m.m13 + m32 * m.m23 + m33 * m.m33);
     }
 
     /**
@@ -92,8 +95,13 @@ public final class Mat3x3 {
      * @param v The vector to multiply with.
      * @return The resulting vector of the matrix multiplication.
      */
-    public Vector3 mul( final Vector3 v ) {
-        return new Vector3(m11*v.x + m12*v.y + m13*v.z, m21*v.x + m22*v.y + m23*v.z, m31*v.x + m32*v.y + m33*v.z);
+    public Vector3 mul(final Vector3 v) {
+        if (v == null) {
+            throw new IllegalArgumentException("Vector v must not be null.");
+        }
+        return new Vector3(m11 * v.x + m12 * v.y + m13 * v.z,
+                m21 * v.x + m22 * v.y + m23 * v.z,
+                m31 * v.x + m32 * v.y + m33 * v.z);
     }
 
     /**
@@ -102,8 +110,13 @@ public final class Mat3x3 {
      * @param p The point to multiply with.
      * @return The resulting point of the matrix multiplication.
      */
-    public Point3 mul( final Point3 p) {
-        return new Point3(m11*p.x + m12*p.y + m13*p.z, m21*p.x + m22*p.y + m23*p.z, m31*p.x + m32*p.y + m33*p.z);
+    public Point3 mul(final Point3 p) {
+        if (p == null) {
+            throw new IllegalArgumentException("Point p must not be null.");
+        }
+        return new Point3(m11 * p.x + m12 * p.y + m13 * p.z,
+                m21 * p.x + m22 * p.y + m23 * p.z,
+                m31 * p.x + m32 * p.y + m33 * p.z);
     }
 
     /**
@@ -112,10 +125,10 @@ public final class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column one.
      */
-    public Mat3x3 changeCol1( final Vector3 v ) {
+    public Mat3x3 changeCol1(final Vector3 v) {
         return new Mat3x3(v.x, m12, m13,
-                          v.y, m22, m23,
-                          v.z, m32, m33);
+                v.y, m22, m23,
+                v.z, m32, m33);
     }
 
     /**
@@ -124,10 +137,10 @@ public final class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column two.
      */
-    public Mat3x3 changeCol2( final Vector3 v ) {
+    public Mat3x3 changeCol2(final Vector3 v) {
         return new Mat3x3(m11, v.x, m13,
-                          m21, v.y, m23,
-                          m31, v.z, m33);
+                m21, v.y, m23,
+                m31, v.z, m33);
     }
 
     /**
@@ -136,10 +149,10 @@ public final class Mat3x3 {
      * @param v The vector to insert.
      * @return The matrix with new column three.
      */
-    public Mat3x3 changeCol3( final Vector3 v ) {
+    public Mat3x3 changeCol3(final Vector3 v) {
         return new Mat3x3(m11, m12, v.x,
-                          m21, m22, v.y,
-                          m31, m32, v.z);
+                m21, m22, v.y,
+                m31, m32, v.z);
     }
 
     /**
@@ -169,7 +182,7 @@ public final class Mat3x3 {
      * @return true if the given object is a Mat3x3 and has the same properties as this one.
      */
     @SuppressWarnings("SimplifiableIfStatement")
-    public boolean equals( final Object o ) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
