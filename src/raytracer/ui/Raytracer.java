@@ -110,7 +110,7 @@ public class Raytracer extends Application {
             System.exit(0);
         });
 
-        loadScene(new Primitives());
+        loadScene(new Ex5Smartie());
     }
 
     /**
@@ -376,6 +376,18 @@ public class Raytracer extends Application {
         ex4.getItems().add(ex4box);
 
         scenemenu.getItems().add(ex4);
+
+        final Menu ex5 = new Menu("Exercise 5");
+
+        final MenuItem ex5smartie = new MenuItem("Smartie");
+        ex5smartie.setOnAction(e -> loadScene(new Ex5Smartie()));
+        ex5.getItems().add(ex5smartie);
+
+//        final MenuItem ex4box = new MenuItem("Box");
+//        ex4box.setOnAction(e -> loadScene(new Ex4Box()));
+//        ex4.getItems().add(ex4box);
+
+        scenemenu.getItems().add(ex5);
 
         final Menu extra = new Menu("Additional Scenes");
 

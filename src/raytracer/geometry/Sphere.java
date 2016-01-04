@@ -22,7 +22,7 @@ public class Sphere extends Geometry {
     public final double radius;
 
     /**
-     * This constructor creates a sphere with a point a double and a color.
+     * This constructor creates a sphere with a point a double and a material.
      *
      * @param c        Represents the center of the sphere.
      * @param radius   Represents the radius.
@@ -34,6 +34,18 @@ public class Sphere extends Geometry {
         if (c == null) throw new IllegalArgumentException("Sphere center must not be null.");
         this.c = c;
         this.radius = radius;
+    }
+
+    /**
+     * This constructor creates a sphere on 0,0,0 with radius 1 and a material.
+     *
+     * @param material Represents the color, the sphere is supposed to have.
+     */
+    public Sphere(final Material material) {
+        super(material);
+
+        this.c = new Point3(0, 0, 0);
+        this.radius = 1;
     }
 
     /**

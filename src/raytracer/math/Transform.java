@@ -47,7 +47,7 @@ public class Transform {
     public Transform translation(final double x, final double y, final double z) {
         Mat4x4 tm = new Mat4x4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
         Mat4x4 ti = new Mat4x4(1, 0, 0, -x, 0, 1, 0, -y, 0, 0, 1, -z, 0, 0, 0, 1);
-        return new Transform(tm, ti);
+        return new Transform(m.mul(tm), ti.mul(i));
     }
 
     /**
@@ -61,7 +61,7 @@ public class Transform {
     public Transform scale(final double x, final double y, final double z) {
         Mat4x4 sm = new Mat4x4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
         Mat4x4 si = new Mat4x4(1 / x, 0, 0, 0, 0, 1 / y, 0, 0, 0, 0, 1 / z, 0, 0, 0, 0, 1);
-        return new Transform(sm, si);
+        return new Transform(m.mul(sm), si.mul(i));
     }
 
     /**
@@ -71,9 +71,9 @@ public class Transform {
      * @return the corresponding transform-object
      */
     public Transform rotateX(final double alpha) {
-        Mat4x4 rxm = new Mat4x4(Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        Mat4x4 rxi = new Mat4x4(Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        return new Transform(rxm, rxi);
+        Mat4x4 rxm = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
+        Mat4x4 rxi = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
+        return new Transform(m.mul(rxm), i.mul(rxi));
     }
 
     /**
@@ -83,9 +83,9 @@ public class Transform {
      * @return the corresponding transform-object
      */
     public Transform rotateY(final double alpha) {
-        Mat4x4 rym = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
-        Mat4x4 ryi = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
-        return new Transform(rym, ryi);
+        Mat4x4 rym = new Mat4x4(Math.cos(alpha), 0, Math.sin(alpha), 0, 0, 1, 0, 0, -Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
+        Mat4x4 ryi = new Mat4x4(Math.cos(alpha), 0, -Math.sin(alpha), 0, 0, 1, 0, 0, Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
+        return new Transform(m.mul(rym), i.mul(ryi));
     }
 
     /**
@@ -95,9 +95,9 @@ public class Transform {
      * @return the corresponding transform-object
      */
     public Transform rotateZ(final double alpha) {
-        Mat4x4 rzm = new Mat4x4(Math.cos(alpha), 0, Math.sin(alpha), 0, 0, 1, 0, 0, -Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
-        Mat4x4 rzi = new Mat4x4(Math.cos(alpha), 0, -Math.sin(alpha), 0, 0, 1, 0, 0, Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
-        return new Transform(rzm, rzi);
+        Mat4x4 rzm = new Mat4x4(Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        Mat4x4 rzi = new Mat4x4(Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        return new Transform(m.mul(rzm), i.mul(rzi));
     }
 
     /**
@@ -107,8 +107,8 @@ public class Transform {
      * @return the transformed normal
      */
     public Normal3 mul(final Normal3 n) {
-        Vector3 v = i.transposed().mul(new Vector3(n.x, n.y, n.z));
-        return new Normal3(v.x, v.y, v.z);
+        Vector3 v = i.transposed().mul(new Vector3(n.x, n.y, n.z)).normalized();
+        return v.asNormal();
     }
 
     /**
