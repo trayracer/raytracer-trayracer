@@ -1,14 +1,14 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
-import raytracer.math.Constants;
-import raytracer.math.Normal3;
-import raytracer.math.Point3;
-import raytracer.math.Ray;
+import raytracer.material.NoMaterial;
+import raytracer.math.*;
 import raytracer.texture.TexCoord2;
 import raytracer.texture.TextureUtils;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents a Box that is aligned by the axes.
@@ -27,7 +27,7 @@ public class AxisAlignedBox extends Geometry {
     /**
      * Array for the 6 Planes describing the Box.
      */
-    private final Plane[] planes = new Plane[6];
+    private final Geometry[] planes = new Geometry[6];
     /**
      * The scalar for the texture of the planes describing the Box.
      */
@@ -62,23 +62,25 @@ public class AxisAlignedBox extends Geometry {
         this.lbf = lbf;
         this.run = run;
         this.textureScalar = textureScalar;
-        planes[0] = new Plane(lbf, new Normal3(0, 0, -1), material, textureScalar);
-        planes[1] = new Plane(run, new Normal3(0, 0, 1), material, textureScalar);
-        planes[2] = new Plane(lbf, new Normal3(-1, 0, 0), material, textureScalar);
-        planes[3] = new Plane(run, new Normal3(1, 0, 0), material, textureScalar);
-        planes[4] = new Plane(lbf, new Normal3(0, -1, 0), material, textureScalar);
-        planes[5] = new Plane(run, new Normal3(0, 1, 0), material, textureScalar);
+        List<Geometry> onePlane = new LinkedList<Geometry>(Arrays.asList(new Plane(material, textureScalar)));
+
+        planes[0] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(-Math.PI/2), onePlane, new NoMaterial());
+        planes[1] = new Node(new Transform().translation(run.x, run.y, run.z).rotateX(Math.PI/2), onePlane, new NoMaterial());
+        planes[2] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateZ(Math.PI/2), onePlane, new NoMaterial());
+        planes[3] = new Node(new Transform().translation(run.x, run.y, run.z).rotateZ(-Math.PI/2), onePlane, new NoMaterial());
+        planes[4] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(Math.PI), onePlane, new NoMaterial());
+        planes[5] = new Node(new Transform().translation(run.x, run.y, run.z), onePlane, new NoMaterial());
     }
 
     @Override
     public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
-        for (Plane plane : planes) {
-            if (Math.acos(plane.n.dot(ray.d) / ray.d.magnitude) >= Math.PI / 2) {
-                double t = plane.a.sub(ray.o).dot(plane.n) / ray.d.dot(plane.n);
-                Point3 hitPoint = ray.at(t);
-                if (t > Constants.EPSILON && lbf.x - Constants.EPSILON <= hitPoint.x && hitPoint.x <= run.x + Constants.EPSILON && lbf.y - Constants.EPSILON <= hitPoint.y && hitPoint.y <= run.y + Constants.EPSILON && lbf.z - Constants.EPSILON <= hitPoint.z && hitPoint.z <= run.z + Constants.EPSILON) {
-                    return new Hit(t, ray, plane, plane.n, TextureUtils.getPlaneTexCoord(ray, t, plane.n, plane.textureScalar));
+        for (Geometry p : planes) {
+            Hit hit = p.hit(ray);
+            if (hit != null && hit.normal.dot(ray.d) / ray.d.magnitude <= Math.cos(Math.PI / 2)) {
+                Point3 hitPoint = ray.at(hit.t);
+                if (hit.t > Constants.EPSILON && lbf.x - Constants.EPSILON <= hitPoint.x && hitPoint.x <= run.x + Constants.EPSILON && lbf.y - Constants.EPSILON <= hitPoint.y && hitPoint.y <= run.y + Constants.EPSILON && lbf.z - Constants.EPSILON <= hitPoint.z && hitPoint.z <= run.z + Constants.EPSILON) {
+                    return hit;
                 }
             }
         }

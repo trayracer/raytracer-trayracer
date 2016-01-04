@@ -29,6 +29,26 @@ public class Plane extends Geometry {
     public final int textureScalar;
 
     /**
+     * This constructor creates a plane on 0 spanning with the normal in y-direction with a default texture scalar.
+     *
+     * @param material The material.
+     */
+    public Plane(final Material material) {
+        this(new Point3(0, 0, 0), new Normal3(0, 1, 0), material, 1);
+    }
+
+    /**
+     * This constructor creates a plane on 0 spanning with the normal in y-direction.
+     *
+     * @param material      The material.
+     * @param textureScalar The scalar of the texture.
+     */
+    public Plane(final Material material, final int textureScalar) {
+        this(new Point3(0, 0, 0), new Normal3(0, 1, 0), material, textureScalar);
+    }
+
+
+    /**
      * This constructor creates a plane of a point and the normal with a default texture scalar.
      *
      * @param a        A Point.
