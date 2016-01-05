@@ -3,11 +3,14 @@ package raytracer.camera;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
+
+import java.util.Set;
 
 /**
  * @author Oliver Kniejski
- *
- * This abstract class represents a Camera.
+ *         <p>
+ *         This abstract class represents a Camera.
  */
 public abstract class Camera {
     /**
@@ -34,32 +37,40 @@ public abstract class Camera {
      * Vector w for the camera coordinate system.
      */
     public final Vector3 w;
+    /**
+     * The SamplingPattern.
+     */
+    public final SamplingPattern pattern;
 
     /**
      * This constructor computes the vectors for the camera coordinate system and creates a new camera.
-     * @param e The eye position.
-     * @param g The gaze direction.
-     * @param t The up-vector.
+     *
+     * @param e       The eye position.
+     * @param g       The gaze direction.
+     * @param t       The up-vector.
+     * @param pattern The SamplingPattern.
      */
-    public Camera(final Point3 e, final Vector3 g, final Vector3 t) {
+    public Camera(final Point3 e, final Vector3 g, final Vector3 t, final SamplingPattern pattern) {
         if (e == null || g == null || t == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.e = e;
         this.g = g;
         this.t = t;
-        this.w = g.mul( -1 / g.magnitude );
-        this.u = t.x( w ).mul( 1 / t.x(w).magnitude );
+        this.w = g.mul(-1 / g.magnitude);
+        this.u = t.x(w).mul(1 / t.x(w).magnitude);
         this.v = w.x(u);
+        this.pattern = pattern;
     }
 
     /**
-     * This method calculates a Ray for this camera with the given dimensions of the image-plane and the given pixel.
+     * This method calculates a Set of Rays for this camera with the given dimensions of the image-plane and the given pixel.
+     *
      * @param w The width of the image-plane in pixels.
      * @param h The height of the image-plane in pixels.
      * @param x The x-coordinate of the pixel.
      * @param y The y-coordinate of the pixel.
-     * @return The Ray for the given Parameters.
+     * @return The Ray-Set for the given Parameters.
      */
-    public abstract Ray rayFor(final int w, final int h, final int x, final int y);
+    public abstract Set<Ray> rayFor(final int w, final int h, final int x, final int y);
 
     @Override
     public boolean equals(final Object o) {

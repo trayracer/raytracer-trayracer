@@ -10,6 +10,7 @@ import raytracer.material.ReflectiveMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.*;
 
 /**
@@ -19,7 +20,7 @@ import raytracer.texture.*;
  */
 public class Earth extends RtScene {
     public Earth() {
-        cam = new PerspectiveCamera(new Point3(0, -15, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(0, -15, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(8, 8, 8), false));

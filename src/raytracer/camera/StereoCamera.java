@@ -1,15 +1,20 @@
 package raytracer.camera;
 
+import raytracer.math.Point2;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Oliver Kniejski
- *
- * This class represents a stereoscopic perspective Camera.
+ *         <p>
+ *         This class represents a stereoscopic perspective Camera.
  */
-public class StereoCamera extends Camera{
+public class StereoCamera extends Camera {
     /**
      * The separation between the two eye points.
      */
@@ -33,25 +38,29 @@ public class StereoCamera extends Camera{
 
     /**
      * This constructor calculates and creates the 2 shifted perspective cameras.
-     * @param e The eye position.
-     * @param g The gaze direction.
-     * @param t The up-vector.
+     *
+     * @param e                The eye position.
+     * @param g                The gaze direction.
+     * @param t                The up-vector.
      * @param cameraSeparation The separation between the two eye points.
-     * @param angle The angle for the two perspective cameras. Must be larger than zero.
+     * @param angle            The angle for the two perspective cameras. Must be larger than zero.
+     * @param transverse
+     * @param pattern          The SamplingPattern.
      */
-    public StereoCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle, final int cameraSeparation, final boolean transverse) {
-        super(e, g, t);
+    public StereoCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle, final int cameraSeparation, final boolean transverse, final SamplingPattern pattern) {
+        super(e, g, t, pattern);
         if (angle <= 0) throw new IllegalArgumentException("Angle must be larger than zero.");
         if (e == null || g == null || t == null) throw new IllegalArgumentException("Parameters must not be null.");
         this.cameraSepatation = cameraSeparation;
         this.angle = angle;
-        this.transverse= transverse;
-        this.camL = new ShiftedPerspectiveCamera(e.add(u.normalized().mul(-cameraSeparation/2)),g,t,angle, -cameraSeparation/2);
-        this.camR = new ShiftedPerspectiveCamera(e.add(u.normalized().mul(cameraSeparation/2)),g,t,angle, cameraSeparation/2);
+        this.transverse = transverse;
+        this.camL = new ShiftedPerspectiveCamera(e.add(u.normalized().mul(-cameraSeparation / 2)), g, t, angle, -cameraSeparation / 2, pattern);
+        this.camR = new ShiftedPerspectiveCamera(e.add(u.normalized().mul(cameraSeparation / 2)), g, t, angle, cameraSeparation / 2, pattern);
     }
 
     /**
      * This method directs the call for rays to the corresponding cameras.
+     *
      * @param w The width of the image-plane in pixels.
      * @param h The height of the image-plane in pixels.
      * @param x The x-coordinate of the pixel.
@@ -59,15 +68,15 @@ public class StereoCamera extends Camera{
      * @return The Ray for the given Parameters.
      */
     @Override
-    public Ray rayFor(final int w, final int h, final int x, final int y) {
-        if (x<w/2){
-            if (transverse) return camR.rayFor(w/2,h,x,y);
-            else return camL.rayFor(w/2,h,x,y);
+    public Set<Ray> rayFor(final int w, final int h, final int x, final int y) {
+        if (x < w / 2) {
+            if (transverse) return camR.rayFor(w / 2, h, x, y);
+            else return camL.rayFor(w / 2, h, x, y);
+        } else {
+            if (transverse) return camL.rayFor(w / 2, h, x - w / 2, y);
+            else return camR.rayFor(w / 2, h, x - w / 2, y);
         }
-        else {
-            if (transverse) return camL.rayFor(w/2,h,x-w/2,y);
-            else return camR.rayFor(w/2,h,x-w/2,y);
-        }
+
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

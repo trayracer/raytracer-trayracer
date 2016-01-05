@@ -11,6 +11,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Transform;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class Ex5Smartie extends RtScene {
     public Ex5Smartie() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 5), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(0, 0, 5), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
         Sphere ball = new Sphere(new PhongMaterial(new SingleColorTexture(new Color(1, 0, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64));
         List<Geometry> geos = new LinkedList<>();

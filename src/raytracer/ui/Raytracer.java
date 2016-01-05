@@ -19,7 +19,9 @@ import raytracer.material.PhongMaterial;
 import raytracer.material.Tracer;
 import raytracer.math.Constants;
 import raytracer.math.Point3;
+import raytracer.math.Ray;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
@@ -110,7 +112,7 @@ public class Raytracer extends Application {
             System.exit(0);
         });
 
-        loadScene(new Ex5Box());
+        loadScene(new MirrorHall());
     }
 
     /**
@@ -184,13 +186,27 @@ public class Raytracer extends Application {
      */
     private Runnable pixelRenderer(final int x, final int y) {
         return () -> {
-            Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
-            Color c;
-            if (hit != null) {
-                c = hit.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER));
-            } else {
-                c = world.backgroundColor;
+            Color c = world.backgroundColor;
+            LinkedList<Color> colors = new LinkedList<>();
+            for(Ray ray : cam.rayFor(width, height, x, (height - 1) - y)) {
+                Hit hit = world.hit(ray);
+                if (hit != null) {
+                    colors.add(hit.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER)));
+                }
+                else colors.add(c);
             }
+            if (colors.size()>0){
+                double r = 0.0;
+                double g = 0.0;
+                double b = 0.0;
+                for (Color color : colors){
+                    r += color.r / colors.size();
+                    g += color.g / colors.size();
+                    b += color.b / colors.size();
+                }
+                c = new Color(r, g, b);
+            }
+
             pixelBuffer[y * width + x] = c.getRGB();
             counter++;
         };
@@ -279,7 +295,7 @@ public class Raytracer extends Application {
             ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new SingleColorTexture(new Color(1, 1, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64));
             Vector3 geoMiddle = new Vector3(objGeo.boundingBox.lbf.x, objGeo.boundingBox.lbf.y, objGeo.boundingBox.lbf.z).mul(0.5).add(new Vector3(objGeo.boundingBox.run.x, objGeo.boundingBox.run.y, objGeo.boundingBox.run.z).mul(0.5));
             double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
-            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4);
+            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
             world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
             world.addGeometry(objGeo);
             world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight, objHeight, objHeight / 2), false));

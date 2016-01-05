@@ -10,6 +10,7 @@ import raytracer.light.SpotLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -20,7 +21,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class OkCity extends RtScene {
     public OkCity() {
-        cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4);
+        cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
         world.addLight(new DirectionalLight(new Color(0.1, 0.1, 0.1), new Vector3(-1,2,-7), true));
         world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12), true));

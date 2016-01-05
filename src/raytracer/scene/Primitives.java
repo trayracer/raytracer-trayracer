@@ -8,6 +8,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.*;
 
 /**
@@ -17,7 +18,7 @@ import raytracer.texture.*;
  */
 public class Primitives extends RtScene {
     public Primitives() {
-        cam = new PerspectiveCamera(new Point3(10, 5, 10), new Vector3(-10, -5, -8), new Vector3(0, 0, 1), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(10, 5, 10), new Vector3(-10, -5, -8), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.4, 0.4, 0.4));
 
         world.addGeometry(new Plane(new Point3(0, 0, -0.5), new Normal3(0, 0, 1), new PhongMaterial(new InterpolatedImageTexture(TextureStock.LAWN),new SingleColorTexture( new Color(1, 1, 1)), 64), 4));

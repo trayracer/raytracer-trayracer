@@ -1,8 +1,13 @@
 package raytracer.camera;
 
+import raytracer.math.Point2;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This class represents a perspective camera.
@@ -19,14 +24,15 @@ public class PerspectiveCamera extends Camera {
     /**
      * This constructor creates a perspective camera with the given parameters.
      *
-     * @param e     point for the position
-     * @param g     for the gaze direction
-     * @param t     for the up-vector
-     * @param angle for the angle. must be larger than zero.
+     * @param e       point for the position
+     * @param g       for the gaze direction
+     * @param t       for the up-vector
+     * @param angle   for the angle. must be larger than zero.
+     * @param pattern the SamplingPattern.
      */
-    public PerspectiveCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle) {
-        super(e, g, t);
-        if(angle <= 0) throw new IllegalArgumentException("Angle must be greater than zero.");
+    public PerspectiveCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle, final SamplingPattern pattern) {
+        super(e, g, t, pattern);
+        if (angle <= 0) throw new IllegalArgumentException("Angle must be greater than zero.");
         this.angle = angle;
     }
 
@@ -38,16 +44,22 @@ public class PerspectiveCamera extends Camera {
      * @return a Ray for the pixel.
      */
     @Override
-    public Ray rayFor(final int width, final int height, final int x, final int y) {
-        if(width <= 0 || height <= 0){
+    public Set<Ray> rayFor(final int width, final int height, final int x, final int y) {
+        if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width or height must be greater than zero.");
         }
-        if(x < 0 || x >= width || y < 0 || y >= height){
+        if (x < 0 || x >= width || y < 0 || y >= height) {
             throw new IllegalArgumentException("Parameters must greater than zero and smaller than width or height respectively");
         }
-        Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x - ((width - 1) / 2))).add(v.mul(y - ((height - 1) / 2)));
-        Vector3 d = r.mul(1 / r.magnitude);
-        return new Ray(e, d);
+
+        Set<Ray> raySet = new LinkedHashSet<>();
+        for(Point2 point : pattern.points) {
+            Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x + point.x - ((width - 1) / 2))).add(v.mul(y + point.y - ((height - 1) / 2)));
+            Vector3 d = r.mul(1 / r.magnitude);
+            raySet.add(new Ray(e, d));
+        }
+
+        return raySet;
     }
 
     @Override

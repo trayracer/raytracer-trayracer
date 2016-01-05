@@ -8,6 +8,7 @@ import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -18,7 +19,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class Torus extends RtScene {
     public Torus() {
-        cam = new PerspectiveCamera(new Point3(10, 10, 10), new Vector3(-1, -1, -1), new Vector3(0, 0, 1), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(10, 10, 10), new Vector3(-1, -1, -1), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
 //        cam = new StereoCamera(new Point3(10, 10, 10), new Vector3(-1, -1, -1), new Vector3(0, 0, 1), Math.PI / 4, 2, true);
 
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));

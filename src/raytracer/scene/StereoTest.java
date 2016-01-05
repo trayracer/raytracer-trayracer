@@ -8,6 +8,7 @@ import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -18,7 +19,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class StereoTest extends RtScene {
     public StereoTest() {
-        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true);
+        cam = new StereoCamera(new Point3(25, 20, 40), new Vector3(-25, -17, -40), new Vector3(0, 1, 0), Math.PI / 3.3, 6, true, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
         world.addLight(new PointLight(new Color(0.6, 0.6, 0.6), new Point3(20, 40, 40), true));
 

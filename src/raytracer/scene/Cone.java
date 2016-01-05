@@ -8,6 +8,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.ImageTexture;
 import raytracer.texture.SingleColorTexture;
@@ -20,7 +21,7 @@ import raytracer.texture.TextureStock;
  */
 public class Cone extends RtScene {
     public Cone() {
-        cam = new PerspectiveCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
         // Planes
         world.addGeometry(new Plane(new Point3(0, 0, -1), new Normal3(0, 0, 1), new LambertMaterial(new ImageTexture(TextureStock.XMAS_CARPET)), 5));

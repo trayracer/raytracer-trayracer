@@ -12,6 +12,7 @@ import raytracer.material.SingleColorMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -22,7 +23,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class Ex4Box extends RtScene {
     public Ex4Box() {
-        cam = new PerspectiveCamera(new Point3(8, 8, 8), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(8, 8, 8), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0, 0, 0));
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(8, 8, 0), true));

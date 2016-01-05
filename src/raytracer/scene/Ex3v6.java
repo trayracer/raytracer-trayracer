@@ -7,6 +7,7 @@ import raytracer.material.PhongMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
@@ -17,7 +18,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class Ex3v6 extends RtScene {
     public Ex3v6() {
-        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(4, 4, 4), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(0.25, 0.25, 0.25));
 
         world.addLight(new SpotLight(new Color(1, 1, 1), new Point3(4, 4, 4), new Vector3(-1, -1, -1), Math.PI / 14, false));

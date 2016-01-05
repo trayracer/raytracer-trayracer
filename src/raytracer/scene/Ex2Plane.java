@@ -7,6 +7,7 @@ import raytracer.material.SingleColorMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
+import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 
 /**
@@ -16,7 +17,7 @@ import raytracer.texture.Color;
  */
 public class Ex2Plane extends RtScene{
     public Ex2Plane(){
-        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
         world = new World(new Color(0, 0, 0), new Color(1, 1, 1));
         world.addGeometry(new Plane(new Point3(0, -1, 0), new Normal3(0, 1, 0), new SingleColorMaterial(new Color(0, 1, 0))));
     }
