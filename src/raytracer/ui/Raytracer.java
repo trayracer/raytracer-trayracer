@@ -102,7 +102,7 @@ public class Raytracer extends Application {
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
-        primaryStage.setTitle("Tray Racer v0.20");
+        primaryStage.setTitle("Tray Racer v0.50");
 
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
@@ -143,25 +143,31 @@ public class Raytracer extends Application {
         int maxThreads = Runtime.getRuntime().availableProcessors();
         renderers = Executors.newFixedThreadPool(maxThreads - 2);
 
-        // randomly distributed pixel rendering
-        LinkedList<int[]> pixelsToDo = new LinkedList();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                pixelsToDo.add(new int[]{x, y});
+        boolean renderLinear = false;
+
+        if (renderLinear){
+            // Line by line rendering
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    renderers.execute(pixelRenderer(x, y));
+                }
             }
         }
-        Collections.shuffle(pixelsToDo);
-        while (!pixelsToDo.isEmpty()) {
-            int[] coords = pixelsToDo.remove(0);
-            renderers.execute(pixelRenderer(coords[0], coords[1]));
+        else {
+            // randomly distributed pixel rendering
+            LinkedList<int[]> pixelsToDo = new LinkedList();
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    pixelsToDo.add(new int[]{x, y});
+                }
+            }
+            Collections.shuffle(pixelsToDo);
+            while (!pixelsToDo.isEmpty()) {
+                int[] coords = pixelsToDo.remove(0);
+                renderers.execute(pixelRenderer(coords[0], coords[1]));
+            }
         }
 
-        // Line by line rendering
-//        for (int y = 0; y < height; y++) {
-//            for (int x = 0; x < width; x++) {
-//                renderers.execute(pixelRenderer(x, y));
-//            }
-//        }
 
         renderers.shutdown();
 
@@ -234,6 +240,11 @@ public class Raytracer extends Application {
         }
     }
 
+    /**
+     * This method is for converting a conventional stereoscopic image to a anaglyph image.
+     *
+     * @param stage  The stage.
+     */
     private void anaglyph(final Stage stage) {
         Image sourceImg = view.getImage();
         WritableImage targetImg = new WritableImage((int) (sourceImg.getWidth() / 2), (int) sourceImg.getHeight());

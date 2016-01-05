@@ -165,4 +165,91 @@ public class Mat4x4 {
     public Mat4x4 transposed() {
         return new Mat4x4(m11, m21, m31, m41, m12, m22, m32, m42, m13, m23, m33, m43, m14, m24, m34, m44);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Mat4x4 mat4x4 = (Mat4x4) o;
+
+        if (Double.compare(mat4x4.m11, m11) != 0) return false;
+        if (Double.compare(mat4x4.m12, m12) != 0) return false;
+        if (Double.compare(mat4x4.m13, m13) != 0) return false;
+        if (Double.compare(mat4x4.m14, m14) != 0) return false;
+        if (Double.compare(mat4x4.m21, m21) != 0) return false;
+        if (Double.compare(mat4x4.m22, m22) != 0) return false;
+        if (Double.compare(mat4x4.m23, m23) != 0) return false;
+        if (Double.compare(mat4x4.m24, m24) != 0) return false;
+        if (Double.compare(mat4x4.m31, m31) != 0) return false;
+        if (Double.compare(mat4x4.m32, m32) != 0) return false;
+        if (Double.compare(mat4x4.m33, m33) != 0) return false;
+        if (Double.compare(mat4x4.m34, m34) != 0) return false;
+        if (Double.compare(mat4x4.m41, m41) != 0) return false;
+        if (Double.compare(mat4x4.m42, m42) != 0) return false;
+        if (Double.compare(mat4x4.m43, m43) != 0) return false;
+        return Double.compare(mat4x4.m44, m44) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(m11);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m12);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m13);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m14);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m21);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m22);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m23);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m24);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m31);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m32);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m33);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m34);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m41);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m42);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m43);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(m44);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Mat4x4{" +
+                "m11=" + m11 +
+                ", m12=" + m12 +
+                ", m13=" + m13 +
+                ", m14=" + m14 +
+                ", m21=" + m21 +
+                ", m22=" + m22 +
+                ", m23=" + m23 +
+                ", m24=" + m24 +
+                ", m31=" + m31 +
+                ", m32=" + m32 +
+                ", m33=" + m33 +
+                ", m34=" + m34 +
+                ", m41=" + m41 +
+                ", m42=" + m42 +
+                ", m43=" + m43 +
+                ", m44=" + m44 +
+                '}';
+    }
 }
