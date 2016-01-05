@@ -21,7 +21,7 @@ import raytracer.texture.TextureStock;
  */
 public class Cone extends RtScene {
     public Cone() {
-        cam = new PerspectiveCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
+        cam = new PerspectiveCamera(new Point3(9, 0, 1.5), new Vector3(-1, 0, 0), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern().regularPattern(5, 5));
         world = new World(new Color(0, 0, 0), new Color(0.2, 0.2, 0.2));
         // Planes
         world.addGeometry(new Plane(new Point3(0, 0, -1), new Normal3(0, 0, 1), new LambertMaterial(new ImageTexture(TextureStock.XMAS_CARPET)), 5));
