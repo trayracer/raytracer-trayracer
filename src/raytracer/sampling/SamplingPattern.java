@@ -21,7 +21,7 @@ public class SamplingPattern {
     }
 
     private SamplingPattern(List<Point2> points){
-        if (points.size() == 0 || points == null) throw new IllegalArgumentException("Points must be valid");
+        if (points == null || points.size() == 0) throw new IllegalArgumentException("Points must be valid");
         this.points = points;
     }
 
