@@ -66,7 +66,7 @@ public class Disc extends Geometry {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
         double t = ((c.sub(ray.o)).dot(n)) / ((ray.d).dot(n));
         if (t > Constants.EPSILON && ray.at(t).sub(c).dot(ray.at(t).sub(c)) <= Math.pow(radius, 2)) {
-            return new Hit(t, ray, this, n, TextureUtils.getPlaneTexCoord(ray, t, n, textureScalar));
+            return new Hit(t, ray, this.material, n, TextureUtils.getPlaneTexCoord(ray, t, n, textureScalar));
         }
         return null;
     }

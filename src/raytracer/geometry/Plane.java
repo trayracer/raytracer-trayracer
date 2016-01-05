@@ -91,7 +91,7 @@ public class Plane extends Geometry {
             Normal3 normal = n.mul(1 / Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z));
 
 
-            return new Hit(t, r, this, normal, TextureUtils.getPlaneTexCoord(r, t, n, textureScalar));
+            return new Hit(t, r, this.material, normal, TextureUtils.getPlaneTexCoord(r, t, n, textureScalar));
         }
         return null;
     }

@@ -44,7 +44,7 @@ public class Tracer {
         Hit hit = world.hit(new Ray(origin, direction.normalized()));
 
         if (hit == null) return world.backgroundColor;
-        return hit.geo.material.colorFor(hit, world, this);
+        return hit.material.colorFor(hit, world, this);
     }
 
     @Override

@@ -110,7 +110,7 @@ public class Raytracer extends Application {
             System.exit(0);
         });
 
-        loadScene(new Ex5Smartie());
+        loadScene(new Ex5Box());
     }
 
     /**
@@ -181,7 +181,7 @@ public class Raytracer extends Application {
             Hit hit = world.hit(cam.rayFor(width, height, x, (height - 1) - y));
             Color c;
             if (hit != null) {
-                c = hit.geo.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER));
+                c = hit.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER));
             } else {
                 c = world.backgroundColor;
             }
@@ -383,9 +383,9 @@ public class Raytracer extends Application {
         ex5smartie.setOnAction(e -> loadScene(new Ex5Smartie()));
         ex5.getItems().add(ex5smartie);
 
-//        final MenuItem ex4box = new MenuItem("Box");
-//        ex4box.setOnAction(e -> loadScene(new Ex4Box()));
-//        ex4.getItems().add(ex4box);
+        final MenuItem ex5box = new MenuItem("Box");
+        ex5box.setOnAction(e -> loadScene(new Ex5Box()));
+        ex5.getItems().add(ex5box);
 
         scenemenu.getItems().add(ex5);
 

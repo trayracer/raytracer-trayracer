@@ -37,6 +37,17 @@ public class AxisAlignedBox extends Geometry {
      * This constructor creates the 6 Planes describing the Box out of the 2 Points with a default texture scalar.
      * Each value of the Point lbf has to be smaller than the corresponding value of the Point run.
      *
+     * @param material The material of the Box.
+     */
+    public AxisAlignedBox(final Material material) {
+
+        this(new Point3(-0.5, -0.5, -0.5), new Point3(0.5, 0.5, 0.5), material, 1);
+    }
+
+    /**
+     * This constructor creates the 6 Planes describing the Box out of the 2 Points with a default texture scalar.
+     * Each value of the Point lbf has to be smaller than the corresponding value of the Point run.
+     *
      * @param lbf      The left-bottom-far Point of the Box.
      * @param run      The right-up-near Point of the Box.
      * @param material The material of the Box.
@@ -62,21 +73,22 @@ public class AxisAlignedBox extends Geometry {
         this.lbf = lbf;
         this.run = run;
         this.textureScalar = textureScalar;
+
         List<Geometry> onePlane = new LinkedList<Geometry>(Arrays.asList(new Plane(material, textureScalar)));
 
-        planes[0] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(-Math.PI/2), onePlane, new NoMaterial());
-        planes[1] = new Node(new Transform().translation(run.x, run.y, run.z).rotateX(Math.PI/2), onePlane, new NoMaterial());
-        planes[2] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateZ(Math.PI/2), onePlane, new NoMaterial());
-        planes[3] = new Node(new Transform().translation(run.x, run.y, run.z).rotateZ(-Math.PI/2), onePlane, new NoMaterial());
-        planes[4] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(Math.PI), onePlane, new NoMaterial());
-        planes[5] = new Node(new Transform().translation(run.x, run.y, run.z), onePlane, new NoMaterial());
+        planes[0] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(-Math.PI/2), onePlane, new NoMaterial()); //bottom
+        planes[1] = new Node(new Transform().translation(run.x, run.y, run.z).rotateX(Math.PI/2), onePlane, new NoMaterial()); //top
+        planes[2] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateZ(Math.PI/2), onePlane, new NoMaterial()); //left
+        planes[3] = new Node(new Transform().translation(run.x, run.y, run.z).rotateZ(-Math.PI/2), onePlane, new NoMaterial()); //right
+        planes[4] = new Node(new Transform().translation(lbf.x, lbf.y, lbf.z).rotateX(Math.PI), onePlane, new NoMaterial()); //front
+        planes[5] = new Node(new Transform().translation(run.x, run.y, run.z), onePlane, new NoMaterial()); //back
     }
 
     @Override
     public Hit hit(final Ray ray) {
         if (ray == null) throw new IllegalArgumentException("Ray must not be null.");
-        for (Geometry p : planes) {
-            Hit hit = p.hit(ray);
+        for (Geometry plane : planes) {
+            Hit hit = plane.hit(ray);
             if (hit != null && hit.normal.dot(ray.d) / ray.d.magnitude <= Math.cos(Math.PI / 2)) {
                 Point3 hitPoint = ray.at(hit.t);
                 if (hit.t > Constants.EPSILON && lbf.x - Constants.EPSILON <= hitPoint.x && hitPoint.x <= run.x + Constants.EPSILON && lbf.y - Constants.EPSILON <= hitPoint.y && hitPoint.y <= run.y + Constants.EPSILON && lbf.z - Constants.EPSILON <= hitPoint.z && hitPoint.z <= run.z + Constants.EPSILON) {

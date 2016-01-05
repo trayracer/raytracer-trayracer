@@ -1,5 +1,6 @@
 package raytracer.geometry;
 
+import raytracer.material.Material;
 import raytracer.math.Normal3;
 import raytracer.math.Ray;
 import raytracer.texture.TexCoord2;
@@ -19,9 +20,9 @@ public class Hit {
      */
     public final Ray ray;
     /**
-     * The geometry.
+     * The material.
      */
-    public final Geometry geo;
+    public final Material material;
     /**
      * The normal.
      */
@@ -34,18 +35,18 @@ public class Hit {
     /**
      * This constructor creates a new hit of a ray with a geometry at a given t.
      *
-     * @param t      The t.
-     * @param ray    The hit.
-     * @param geo    The geometry.
-     * @param normal The normal.
-     * @param coord  The TextureCoordinates.
+     * @param t        The t.
+     * @param ray      The hit.
+     * @param material The material.
+     * @param normal   The normal.
+     * @param coord    The TextureCoordinates.
      */
-    public Hit(final double t, final Ray ray, final Geometry geo, final Normal3 normal, final TexCoord2 coord) {
-        if (ray == null || geo == null || normal == null)
+    public Hit(final double t, final Ray ray, final Material material, final Normal3 normal, final TexCoord2 coord) {
+        if (ray == null || material == null || normal == null)
             throw new IllegalArgumentException("Parameters must not be null.");
         this.t = t;
         this.ray = ray;
-        this.geo = geo;
+        this.material = material;
         this.normal = normal;
         this.coord = coord;
     }
@@ -59,7 +60,7 @@ public class Hit {
 
         if (Double.compare(hit.t, t) != 0) return false;
         if (!ray.equals(hit.ray)) return false;
-        if (!geo.equals(hit.geo)) return false;
+        if (!material.equals(hit.material)) return false;
         return normal.equals(hit.normal);
 
     }
@@ -71,7 +72,7 @@ public class Hit {
         temp = Double.doubleToLongBits(t);
         result = (int) (temp ^ (temp >>> 32));
         result = 31 * result + ray.hashCode();
-        result = 31 * result + geo.hashCode();
+        result = 31 * result + material.hashCode();
         result = 31 * result + normal.hashCode();
         return result;
     }
@@ -81,7 +82,7 @@ public class Hit {
         return "Hit{" +
                 "t=" + t +
                 ", ray=" + ray +
-                ", geo=" + geo +
+                ", material=" + material +
                 ", normal=" + normal +
                 '}';
     }

@@ -52,15 +52,15 @@ public class ZAxisAlignedCylinder extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && m.z < r.at(t).z && r.at(t).z < (m.z + h))
-                return new Hit(t, r, this, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, m, h));
+                return new Hit(t, r, this.material, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, m, h));
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
             boolean b1 = t1 > Constants.EPSILON && m.z <= r.at(t1).z && r.at(t1).z <= (m.z + h);
             boolean b2 = t2 > Constants.EPSILON && m.z <= r.at(t2).z && r.at(t2).z <= (m.z + h);
-            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, m, h));
-            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, m, h));
+            if ((b1 && !b2) || (b1 && b2 && t1 < t2)) return new Hit(t1, r, this.material, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, m, h));
+            if ((!b1 && b2) || (b1 && b2 && t1 > t2)) return new Hit(t2, r, this.material, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, m, h));
         }
         return null;
     }

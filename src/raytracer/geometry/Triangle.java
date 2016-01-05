@@ -127,7 +127,7 @@ public class Triangle extends Geometry {
             normal = normal.mul(1 / (Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z)));
             //TODO
             TexCoord2 coord2 = new TexCoord2(ta.u * alpha + tb.u * beta + tc.u * gamma, ta.v * alpha + tb.v * beta + tc.v * gamma);
-            return new Hit(t, ray, this, normal, coord2);
+            return new Hit(t, ray, this.material, normal, coord2);
         }
         return null;
     }

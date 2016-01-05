@@ -73,7 +73,7 @@ public class ZAxisAlignedCone extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON && zmin <= r.at(t).z && r.at(t).z <= zmax) {
-                return new Hit(t, r, this, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, basecenter, zheight));
+                return new Hit(t, r, this.material, normalAt(r, t), TextureUtils.getConeTexCoord(r, t, basecenter, zheight));
             }
         }
         if (d > 0) {
@@ -83,9 +83,9 @@ public class ZAxisAlignedCone extends Geometry {
             boolean b2 = t2 > Constants.EPSILON && zmin <= r.at(t2).z && r.at(t2).z <= zmax;
 
             if ((b1 && !b2) || (b1 && b2 && t1 < t2))
-                return new Hit(t1, r, this, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, basecenter, zheight));
+                return new Hit(t1, r, this.material, normalAt(r, t1), TextureUtils.getConeTexCoord(r, t1, basecenter, zheight));
             if ((!b1 && b2) || (b1 && b2 && t1 > t2))
-                return new Hit(t2, r, this, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, basecenter, zheight));
+                return new Hit(t2, r, this.material, normalAt(r, t2), TextureUtils.getConeTexCoord(r, t2, basecenter, zheight));
         }
         return null;
     }

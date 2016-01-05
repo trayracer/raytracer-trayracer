@@ -1,6 +1,7 @@
 package raytracer.geometry;
 
 import raytracer.material.Material;
+import raytracer.material.NoMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Ray;
 import raytracer.math.Transform;
@@ -48,9 +49,13 @@ public class Node extends Geometry {
         }
         Normal3 nBacktrans = transform.mul(smallestHit.normal);
 
-        //TODO: use this Material, if not NoMaterial
-        Hit hitBacktrans = new Hit(smallestHit.t, ray, smallestHit.geo, nBacktrans, smallestHit.coord);
-
+        Hit hitBacktrans;
+        if(this.material instanceof NoMaterial) {
+            hitBacktrans = new Hit(smallestHit.t, ray, smallestHit.material, nBacktrans, smallestHit.coord);
+        }
+        else{
+            hitBacktrans = new Hit(smallestHit.t, ray, this.material, nBacktrans, smallestHit.coord);
+        }
         return hitBacktrans;
     }
 }

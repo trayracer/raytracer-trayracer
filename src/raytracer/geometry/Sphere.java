@@ -65,17 +65,17 @@ public class Sphere extends Geometry {
         if (d == 0) {
             double t = (-b) / (2 * a);
             if (t > Constants.EPSILON) {
-                return new Hit(t, r, this, normalAt(r, t), calcTexCoord(r, t));
+                return new Hit(t, r, this.material, normalAt(r, t), calcTexCoord(r, t));
             }
         }
         if (d > 0) {
             double t1 = ((-b) + Math.sqrt(d)) / (2 * a);
             double t2 = ((-b) - Math.sqrt(d)) / (2 * a);
             if (t1 < t2 && t1 > Constants.EPSILON) {
-                return new Hit(t1, r, this, normalAt(r, t1), calcTexCoord(r, t1));
+                return new Hit(t1, r, this.material, normalAt(r, t1), calcTexCoord(r, t1));
             }
             if (t2 > Constants.EPSILON) {
-                return new Hit(t2, r, this, normalAt(r, t2), calcTexCoord(r, t2));
+                return new Hit(t2, r, this.material, normalAt(r, t2), calcTexCoord(r, t2));
             }
         }
         return null;

@@ -46,7 +46,7 @@ public class Torus extends Geometry {
 
         if (roots != null) {
             double t = roots[0];
-            return new Hit(t, r, this, normalAt(r, roots[0]), calcTexCoord(r, t));
+            return new Hit(t, r, this.material, normalAt(r, roots[0]), calcTexCoord(r, t));
         }
         return null;
     }

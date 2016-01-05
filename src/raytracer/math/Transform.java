@@ -22,7 +22,7 @@ public class Transform {
      */
     public Transform() {
         m = new Mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        i = m;
+        i = new Mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Transform {
     public Transform rotateX(final double alpha) {
         Mat4x4 rxm = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
         Mat4x4 rxi = new Mat4x4(1, 0, 0, 0, 0, Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1);
-        return new Transform(m.mul(rxm), i.mul(rxi));
+        return new Transform(m.mul(rxm), rxi.mul(i));
     }
 
     /**
@@ -85,7 +85,7 @@ public class Transform {
     public Transform rotateY(final double alpha) {
         Mat4x4 rym = new Mat4x4(Math.cos(alpha), 0, Math.sin(alpha), 0, 0, 1, 0, 0, -Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
         Mat4x4 ryi = new Mat4x4(Math.cos(alpha), 0, -Math.sin(alpha), 0, 0, 1, 0, 0, Math.sin(alpha), 0, Math.cos(alpha), 0, 0, 0, 0, 1);
-        return new Transform(m.mul(rym), i.mul(ryi));
+        return new Transform(m.mul(rym), ryi.mul(i));
     }
 
     /**
@@ -97,7 +97,7 @@ public class Transform {
     public Transform rotateZ(final double alpha) {
         Mat4x4 rzm = new Mat4x4(Math.cos(alpha), -Math.sin(alpha), 0, 0, Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         Mat4x4 rzi = new Mat4x4(Math.cos(alpha), Math.sin(alpha), 0, 0, -Math.sin(alpha), Math.cos(alpha), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        return new Transform(m.mul(rzm), i.mul(rzi));
+        return new Transform(m.mul(rzm), rzi.mul(i));
     }
 
     /**
@@ -107,7 +107,7 @@ public class Transform {
      * @return the transformed normal
      */
     public Normal3 mul(final Normal3 n) {
-        Vector3 v = i.transposed().mul(new Vector3(n.x, n.y, n.z)).normalized();
+        Vector3 v = i.transposed().mul(new Vector3(n.x, n.y, n.z));
         return v.asNormal();
     }
 
@@ -118,6 +118,7 @@ public class Transform {
      * @return the transformed ray
      */
     public Ray mul(final Ray ray) {
+
         return new Ray(i.mul(ray.o), i.mul(ray.d));
     }
 
