@@ -2,11 +2,13 @@ package raytracer.ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -17,7 +19,6 @@ import raytracer.geometry.*;
 import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.material.Tracer;
-import raytracer.math.Constants;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
@@ -66,11 +67,11 @@ public class Raytracer extends Application {
     /**
      * Pixels currently to render. Render helper.
      */
-    private int pixels;
+    private int pixelsTotal;
     /**
      * Pixels already rendered. Render helper.
      */
-    private int counter = 0;
+    private int pixelsDone = 0;
     /**
      * Executor service for multithreaded rendering.
      */
@@ -84,6 +85,10 @@ public class Raytracer extends Application {
      */
     private WritableImage wImage;
 
+    final BorderPane pane = new BorderPane();
+
+    private ProgressBar progressBar = new ProgressBar();
+
     /**
      * Main method calling javafx-application main
      *
@@ -96,11 +101,14 @@ public class Raytracer extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        final BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(primaryStage));
         pane.setCenter(view);
 
-        final Scene scene = new Scene(pane, width, height);
+        progressBar.setMinWidth(width);
+        pane.setBottom(progressBar);
+
+        Scene scene = new Scene(pane, width, height + 50);
+
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
@@ -126,56 +134,115 @@ public class Raytracer extends Application {
             pixelBuffer[pixel] = new java.awt.Color(0, 0, 0, 255).getRGB();
         }
 
-        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, 1);
-
+        refreshImage();
         view.setImage(wImage);
     }
 
     /**
-     * The raytracer.
-     * This method draws the world for the perspective of the given camera and saves it in a bufferedimage and converts the BufferedImage to a FXImage
+     * This method refreshes the View.
+     */
+    private void refreshImage() {
+        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
+    }
+
+    /**
+     * The RayTracer.
+     * This method draws the world for the perspective of the given camera and saves it in a BufferedImage and converts the BufferedImage to a FXImage
      * which will be placed in the ImageView.
      */
     private void raytrace() {
+        if (GlobalConfig.DEBUG_MODE){
+            System.out.println("# Threaded Rendering: " + GlobalConfig.THREADED_RENDERING);
+            System.out.println("# Render Threads: " + GlobalConfig.RENDER_THREADS);
+            System.out.println("# Linear rendering: " + GlobalConfig.LINEAR_RENDERING);
+            System.out.println("# Camera SamplingPattern: " + cam.pattern);
+            System.out.println("# Recursion Depth: " + GlobalConfig.RECURSION_DEPTH);
+        }
+
         if (renderers != null) renderers.shutdownNow();
-        counter = 0;
-        pixels = width * height;
+        pixelsDone = 0;
+        pixelsTotal = width * height;
         resetImage();
 
-        int maxThreads = Runtime.getRuntime().availableProcessors();
-        renderers = Executors.newFixedThreadPool(maxThreads - 2);
+        if (GlobalConfig.THREADED_RENDERING) {
+            renderers = Executors.newFixedThreadPool(GlobalConfig.RENDER_THREADS);
 
-        boolean renderLinear = false;
-
-        if (renderLinear){
-            // Line by line rendering
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    renderers.execute(pixelRenderer(x, y));
+            if (GlobalConfig.LINEAR_RENDERING) {
+                // Line by line rendering
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        renderers.execute(pixelRenderer(x, y));
+                    }
                 }
             }
-        }
-        else {
-            // randomly distributed pixel rendering
-            LinkedList<int[]> pixelsToDo = new LinkedList();
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    pixelsToDo.add(new int[]{x, y});
+
+            else {
+                // randomly distributed pixel rendering
+                LinkedList<int[]> pixelsToDo = new LinkedList<>();
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        pixelsToDo.add(new int[]{x, y});
+                    }
+                }
+                Collections.shuffle(pixelsToDo);
+                while (!pixelsToDo.isEmpty()) {
+                    int[] coordinates = pixelsToDo.remove(0);
+                    renderers.execute(pixelRenderer(coordinates[0], coordinates[1]));
                 }
             }
-            Collections.shuffle(pixelsToDo);
-            while (!pixelsToDo.isEmpty()) {
-                int[] coords = pixelsToDo.remove(0);
-                renderers.execute(pixelRenderer(coords[0], coords[1]));
-            }
+
+            renderers.shutdown();
+
+            Task<Void> refreshTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    if (GlobalConfig.DEBUG_MODE) System.out.print("UPDATER RUNNING... ");
+                    while (!renderers.isTerminated()) {
+                        if (isCancelled()) {
+                            if (GlobalConfig.DEBUG_MODE) System.out.println("CANCELED!");
+                            break;
+                        }
+                        updateProgress(pixelsDone, pixelsTotal);
+                        refreshImage();
+
+                    }
+                    updateProgress(100, 100);
+                    refreshImage();
+                    if (GlobalConfig.DEBUG_MODE) System.out.println("FINISHED!");
+                    return null;
+                }
+            };
+
+            Thread refreshThread = new Thread(refreshTask);
+            refreshThread.setDaemon(true);
+            progressBar.progressProperty().bind(refreshTask.progressProperty());
+            refreshThread.start();
+
+        } else { //Non-Threaded rendering
+            Task<Void> renderTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    if (GlobalConfig.DEBUG_MODE) System.out.print("UPDATER RUNNING... ");
+                    for (int y = 0; y < height; y++) {
+                        for (int x = 0; x < width; x++) {
+                            renderPixel(x, y);
+                            updateProgress(pixelsDone, pixelsTotal);
+                            refreshImage();
+                        }
+                    }
+                    updateProgress(100, 100);
+                    refreshImage();
+                    if (GlobalConfig.DEBUG_MODE) System.out.println("FINISHED!");
+                    return null;
+                }
+            };
+
+            Thread refreshThread = new Thread(renderTask);
+            progressBar.progressProperty().bind(renderTask.progressProperty());
+            refreshThread.start();
         }
-
-
-        renderers.shutdown();
-
-        Thread refreshThread = new Thread(refresher());
-        refreshThread.start();
     }
+
 
     /**
      * This method creates a Runnable for the renderer which calculates the specified pixel of the image.
@@ -185,53 +252,53 @@ public class Raytracer extends Application {
      * @return The Runnable.
      */
     private Runnable pixelRenderer(final int x, final int y) {
-        return () -> {
-            Color c = world.backgroundColor;
-            LinkedList<Color> colors = new LinkedList<>();
-            for(Ray ray : cam.rayFor(width, height, x, (height - 1) - y)) {
-                Hit hit = world.hit(ray);
-                if (hit != null) {
-                    colors.add(hit.material.colorFor(hit, world, new Tracer(Constants.RECOUNTER)));
-                }
-                else colors.add(c);
-            }
-            if (colors.size()>0){
-                double r = 0.0;
-                double g = 0.0;
-                double b = 0.0;
-                for (Color color : colors){
-                    r += color.r / colors.size();
-                    g += color.g / colors.size();
-                    b += color.b / colors.size();
-                }
-                c = new Color(r, g, b);
-            }
-
-            pixelBuffer[y * width + x] = c.getRGB();
-            counter++;
-        };
+        return () -> renderPixel(x, y);
     }
 
-
     /**
-     * This method creates a runnable that refreshes the UI while rendering.
+     * This method does the actual rendering. Writes directly into pixelBuffer.
      *
-     * @return The Runnable.
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
      */
-    private Runnable refresher() {
-        return () -> {
-            while (!renderers.isTerminated()) {
-                wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
+    private void renderPixel(final int x, final int y) {
+        Color c = world.backgroundColor;
+        LinkedList<Color> colors = new LinkedList<>();
+        for (Ray ray : cam.rayFor(width, height, x, (height - 1) - y)) {
+            Hit hit = world.hit(ray);
+            if (hit != null) {
+                colors.add(hit.material.colorFor(hit, world, new Tracer(GlobalConfig.RECURSION_DEPTH)));
+            } else colors.add(c);
+        }
+        if (colors.size() > 0) {
+            double r = 0.0;
+            double g = 0.0;
+            double b = 0.0;
+            for (Color color : colors) {
+                r += color.r / colors.size();
+                g += color.g / colors.size();
+                b += color.b / colors.size();
             }
-            wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
-        };
+            c = new Color(r, g, b);
+        }
+
+        pixelBuffer[y * width + x] = c.getRGB();
+        pixelsDone++;
     }
 
     /**
-     * This method refreshes the UI.
+     * Test for the stuck image problem. works while everything works and vice versa.
      */
-    private void refreshView() {
-        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
+    boolean goodImage = true;
+    WritableImage unusedWImage = new WritableImage(width, height);
+    private void toggleImage(){
+        if(goodImage){
+            goodImage = false;
+            view.setImage(unusedWImage);
+        } else{
+            goodImage = true;
+            view.setImage(wImage);
+        }
     }
 
     /**
@@ -259,7 +326,7 @@ public class Raytracer extends Application {
     /**
      * This method is for converting a conventional stereoscopic image to a anaglyph image.
      *
-     * @param stage  The stage.
+     * @param stage The stage.
      */
     private void anaglyph(final Stage stage) {
         Image sourceImg = view.getImage();
@@ -295,9 +362,11 @@ public class Raytracer extends Application {
             ShapeFromFile objGeo = new ShapeFromFile(objFile, new PhongMaterial(new SingleColorTexture(new Color(1, 1, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64));
             Vector3 geoMiddle = new Vector3(objGeo.boundingBox.lbf.x, objGeo.boundingBox.lbf.y, objGeo.boundingBox.lbf.z).mul(0.5).add(new Vector3(objGeo.boundingBox.run.x, objGeo.boundingBox.run.y, objGeo.boundingBox.run.z).mul(0.5));
             double objHeight = objGeo.boundingBox.lbf.sub(objGeo.boundingBox.run).magnitude;
-            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
+            //noinspection SuspiciousNameCombination
+            cam = new PerspectiveCamera(new Point3(objHeight, objHeight, objHeight), new Vector3(geoMiddle.x - objHeight, geoMiddle.y - objHeight, geoMiddle.z - objHeight), new Vector3(0, 1, 0), Math.PI / 4, GlobalConfig.CAMERA_SAMPLING_PATTERN);
             world = new World(new Color(0.1, 0.1, 0.1), new Color(0.3, 0.3, 0.3));
             world.addGeometry(objGeo);
+            //noinspection SuspiciousNameCombination
             world.addLight(new PointLight(new Color(0.5, 0.5, 0.5), new Point3(objHeight, objHeight, objHeight / 2), false));
             raytrace();
         }
@@ -313,28 +382,28 @@ public class Raytracer extends Application {
         final MenuBar menubar = new MenuBar();
 
         // File Menu
-        final Menu filemenu = new Menu("File");
+        final Menu fileMenu = new Menu("File");
 
         final MenuItem save = new MenuItem("Save...");
         save.setOnAction(e -> saveImage(primaryStage));
-        filemenu.getItems().add(save);
+        fileMenu.getItems().add(save);
 
-        final MenuItem refreshView = new MenuItem("Refresh view");
-        refreshView.setOnAction(e -> refreshView());
-        filemenu.getItems().add(refreshView);
+        final MenuItem refreshView = new MenuItem("toggle view");
+        refreshView.setOnAction(e -> toggleImage());
+        fileMenu.getItems().add(refreshView);
 
         final MenuItem open = new MenuItem("Open .obj");
         open.setOnAction(e -> renderObjFile(primaryStage));
-        filemenu.getItems().add(open);
+        fileMenu.getItems().add(open);
 
         final MenuItem anaglyph = new MenuItem("... anaglyph");
         anaglyph.setOnAction(e -> anaglyph(primaryStage));
-        filemenu.getItems().add(anaglyph);
+        fileMenu.getItems().add(anaglyph);
 
-        menubar.getMenus().add(filemenu);
+        menubar.getMenus().add(fileMenu);
 
         // Scene Menu
-        final Menu scenemenu = new Menu("Scene");
+        final Menu sceneMenu = new Menu("Scene");
 
         final Menu ex2 = new Menu("Exercise 2");
 
@@ -362,7 +431,7 @@ public class Raytracer extends Application {
         twoSpheresOrthographic.setOnAction(e -> loadScene(new Ex2SpheresOrthographic()));
         ex2.getItems().add(twoSpheresOrthographic);
 
-        scenemenu.getItems().add(ex2);
+        sceneMenu.getItems().add(ex2);
 
         final Menu ex3 = new Menu("Exercise 3");
 
@@ -390,7 +459,7 @@ public class Raytracer extends Application {
         ex3v6.setOnAction(e -> loadScene(new Ex3v6()));
         ex3.getItems().add(ex3v6);
 
-        scenemenu.getItems().add(ex3);
+        sceneMenu.getItems().add(ex3);
 
         final Menu ex4 = new Menu("Exercise 4");
 
@@ -402,7 +471,7 @@ public class Raytracer extends Application {
         ex4box.setOnAction(e -> loadScene(new Ex4Box()));
         ex4.getItems().add(ex4box);
 
-        scenemenu.getItems().add(ex4);
+        sceneMenu.getItems().add(ex4);
 
         final Menu ex5 = new Menu("Exercise 5");
 
@@ -414,7 +483,7 @@ public class Raytracer extends Application {
         ex5box.setOnAction(e -> loadScene(new Ex5Box()));
         ex5.getItems().add(ex5box);
 
-        scenemenu.getItems().add(ex5);
+        sceneMenu.getItems().add(ex5);
 
         final Menu extra = new Menu("Additional Scenes");
 
@@ -449,17 +518,17 @@ public class Raytracer extends Application {
         okCity.setOnAction(e -> loadScene(new OkCity()));
         extra.getItems().add(okCity);
 
-        final MenuItem mirrorhall = new MenuItem("MirrorMirror");
-        mirrorhall.setOnAction(e -> loadScene(new MirrorHall()));
-        extra.getItems().add(mirrorhall);
+        final MenuItem mirrorHall = new MenuItem("MirrorMirror");
+        mirrorHall.setOnAction(e -> loadScene(new MirrorHall()));
+        extra.getItems().add(mirrorHall);
 
         final MenuItem earth = new MenuItem("Earth");
         earth.setOnAction(e -> loadScene(new Earth()));
         extra.getItems().add(earth);
 
-        scenemenu.getItems().add(extra);
+        sceneMenu.getItems().add(extra);
 
-        menubar.getMenus().add(scenemenu);
+        menubar.getMenus().add(sceneMenu);
 
         // Dimension Menu
         final Menu dimensionsMenu = new Menu("Dimensions");
@@ -498,7 +567,6 @@ public class Raytracer extends Application {
         cam = scene.getCam();
         world = scene.getWorld();
         raytrace();
-
     }
 
     /**
@@ -513,6 +581,6 @@ public class Raytracer extends Application {
         this.height = height;
         raytrace();
         stage.setWidth(width);
-        stage.setHeight(height);
+        stage.setHeight(height + 50);
     }
 }

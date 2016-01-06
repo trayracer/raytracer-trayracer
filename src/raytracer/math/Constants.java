@@ -7,5 +7,4 @@ package raytracer.math;
  */
 public class Constants {
     public static final double EPSILON = 0.000000001;
-    public static final int RECOUNTER = 100;
 }

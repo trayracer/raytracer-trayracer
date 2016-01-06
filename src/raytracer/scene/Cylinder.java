@@ -6,9 +6,9 @@ import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
-import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
+import raytracer.ui.GlobalConfig;
 
 /**
  * This method creates a greek test scene with some cylinders n stuff.
@@ -17,8 +17,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class Cylinder extends RtScene {
     public Cylinder() {
-        cam = new PerspectiveCamera(new Point3(35, 0, 1), new Vector3(-30, 0, 1), new Vector3(0, 0, 1), Math.PI / 4, new SamplingPattern());
-//        cam = new PerspectiveCamera(new Point3(35, 20, 2), new Vector3(-35, -20, 0), new Vector3(0, 0, 1), Math.PI / 4);
+        cam = new PerspectiveCamera(new Point3(35, 0, 1), new Vector3(-30, 0, 1), new Vector3(0, 0, 1), Math.PI / 4, GlobalConfig.CAMERA_SAMPLING_PATTERN);
         world = new World(new Color(0.2, 0.2, 0.2), new Color(0.2, 0.2, 0.2));
 
         // Roof

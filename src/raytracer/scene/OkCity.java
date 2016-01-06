@@ -8,11 +8,12 @@ import raytracer.light.DirectionalLight;
 import raytracer.light.PointLight;
 import raytracer.light.SpotLight;
 import raytracer.material.PhongMaterial;
+import raytracer.material.ReflectiveMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
-import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
+import raytracer.ui.GlobalConfig;
 
 /**
  * This is a test scene with 400 evenly distributed boxes with ordered base height and random top height and a sphere.
@@ -21,13 +22,13 @@ import raytracer.texture.SingleColorTexture;
  */
 public class OkCity extends RtScene {
     public OkCity() {
-        cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4, new SamplingPattern());
+        cam = new PerspectiveCamera(new Point3(-9, -9, 15), new Vector3(15, 15, -10), new Vector3(0, 0, 1), Math.PI /4, GlobalConfig.CAMERA_SAMPLING_PATTERN);
         world = new World(new Color(0, 0, 0), new Color(0.1, 0.1, 0.1));
         world.addLight(new DirectionalLight(new Color(0.1, 0.1, 0.1), new Vector3(-1,2,-7), true));
         world.addLight(new PointLight(new Color(0.4, 0, 0), new Point3(-0.25, -0.25, 12), true));
         world.addLight(new SpotLight(new Color(0.3, 0, 0), new Point3(-0.25, -0.25, 0), new Vector3(0, 0, 1), Math.PI / 4, true));
 
-        world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new PhongMaterial(new SingleColorTexture(new Color(1, 0, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64)));
+        world.addGeometry(new Sphere(new Point3(-0.25, -0.25, 12), 2.5, new ReflectiveMaterial(new SingleColorTexture(new Color(0.1, 0, 0)), new SingleColorTexture(new Color(1, 1, 1)), 64, new SingleColorTexture(new Color(1, 1, 1)))));
 
         for (int y = -10; y < 10; y++){
             for (int x = -10; x < 10; x++){

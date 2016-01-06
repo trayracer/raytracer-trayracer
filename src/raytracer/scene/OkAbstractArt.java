@@ -8,9 +8,9 @@ import raytracer.light.PointLight;
 import raytracer.material.PhongMaterial;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
-import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
+import raytracer.ui.GlobalConfig;
 
 /**
  * This is a method creates abstract Art.
@@ -19,7 +19,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class OkAbstractArt extends RtScene{
     public OkAbstractArt() {
-        cam = new PerspectiveCamera(new Point3(0, 0, 160), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
+        cam = new PerspectiveCamera(new Point3(0, 0, 160), new Vector3(0, 0, -1), new Vector3(0, 1, 0), Math.PI / 4, GlobalConfig.CAMERA_SAMPLING_PATTERN);
         world = new World(new Color(0, 0, 0), new Color(0.5, 0.5, 0.5));
         world.addLight(new PointLight(new Color(0.8, 0.8, 0.8), new Point3(0, 0, 0), true));
         for (int i = 0; i < 100; i++) world.addGeometry(randomSphere());

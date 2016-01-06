@@ -40,7 +40,7 @@ public class ShiftedPerspectiveCamera extends PerspectiveCamera {
 
         Set<Ray> raySet = new LinkedHashSet<>();
         for(Point2 point : pattern.points) {
-            Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x - ((width - 1) / 2) - (shift * 10))).add(v.mul(y - ((height - 1) / 2)));
+            Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x + point.x - ((width - 1) / 2) - (shift * 10))).add(v.mul(y + point.y - ((height - 1) / 2)));
             Vector3 d = r.mul(1 / r.magnitude);
             raySet.add(new Ray(e, d));
         }

@@ -5,14 +5,13 @@ import raytracer.geometry.Plane;
 import raytracer.geometry.Sphere;
 import raytracer.geometry.World;
 import raytracer.light.PointLight;
-import raytracer.material.PhongMaterial;
 import raytracer.material.ReflectiveMaterial;
 import raytracer.math.Normal3;
 import raytracer.math.Point3;
 import raytracer.math.Vector3;
-import raytracer.sampling.SamplingPattern;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
+import raytracer.ui.GlobalConfig;
 
 /**
  * This class represents demo-scene No. 2 for exercise 4.
@@ -21,7 +20,7 @@ import raytracer.texture.SingleColorTexture;
  */
 public class Ex4Spheres extends RtScene {
     public Ex4Spheres() {
-        cam = new PerspectiveCamera(new Point3(8, 8, 8), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4, new SamplingPattern());
+        cam = new PerspectiveCamera(new Point3(8, 8, 8), new Vector3(-1, -1, -1), new Vector3(0, 1, 0), Math.PI / 4, GlobalConfig.CAMERA_SAMPLING_PATTERN);
         world = new World(new Color(0, 0, 0), new Color(0.25, 0.25, 0.25));
 
         world.addLight(new PointLight(new Color(1, 1, 1), new Point3(8, 8, 8), false));

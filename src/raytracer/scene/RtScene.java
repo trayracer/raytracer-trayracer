@@ -4,7 +4,7 @@ import raytracer.camera.Camera;
 import raytracer.geometry.World;
 
 /**
- * This is an abstract class for colleting scene properties.
+ * This is an abstract class for collecting scene properties.
  *
  * @author Oliver Kniejski
  */

@@ -58,4 +58,27 @@ public class SamplingPattern {
 //
 //        return null;
 //    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SamplingPattern that = (SamplingPattern) o;
+
+        return !(points != null ? !points.equals(that.points) : that.points != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return points != null ? points.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "SamplingPattern{" + points.size() +
+                " points=" + points +
+                '}';
+    }
 }
