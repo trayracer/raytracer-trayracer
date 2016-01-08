@@ -54,7 +54,7 @@ public class SamplingPattern {
         return new SamplingPattern(newPoints);
     }
 
-//    public SamplingPattern randomPattern(final int x, final int y){
+//    public SamplingPattern randomPattern(final int i){
 //
 //        return null;
 //    }

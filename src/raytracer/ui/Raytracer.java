@@ -5,10 +5,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -22,13 +19,13 @@ import raytracer.material.Tracer;
 import raytracer.math.Point3;
 import raytracer.math.Ray;
 import raytracer.math.Vector3;
-import raytracer.sampling.SamplingPattern;
 import raytracer.scene.*;
 import raytracer.scene.Torus;
 import raytracer.texture.Color;
 import raytracer.texture.SingleColorTexture;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -89,6 +86,9 @@ public class Raytracer extends Application {
 
     private ProgressBar progressBar = new ProgressBar();
 
+    // swt
+    BufferedImage rImage;
+
     /**
      * Main method calling javafx-application main
      *
@@ -102,6 +102,9 @@ public class Raytracer extends Application {
     public void start(final Stage primaryStage) {
 
         pane.setTop(createMenuBar(primaryStage));
+
+
+
         pane.setCenter(view);
 
         progressBar.setMinWidth(width);
@@ -112,7 +115,7 @@ public class Raytracer extends Application {
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
-        primaryStage.setTitle("Tray Racer v0.50");
+        primaryStage.setTitle("TrayRacer v0.60");
 
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
@@ -127,22 +130,45 @@ public class Raytracer extends Application {
      * This method resets the Image. Useful for size changes and setting it black.
      */
     private void resetImage() {
-        wImage = new WritableImage(width, height);
-        pixelBuffer = new int[width * height];
+        if(GlobalConfig.FX_IMAGE) {
+            if (GlobalConfig.DEBUG_MODE) System.out.println("# FX-Image");
+            wImage = new WritableImage(width, height);
+            pixelBuffer = new int[width * height];
 
-        for (int pixel = 0; pixel < pixelBuffer.length; pixel++) {
-            pixelBuffer[pixel] = new java.awt.Color(0, 0, 0, 255).getRGB();
+            for (int pixel = 0; pixel < pixelBuffer.length; pixel++) {
+                pixelBuffer[pixel] = GlobalConfig.TODO_COLOR;
+            }
+
+            refreshImage();
+            view.setImage(wImage);
+        }
+        else {
+            if (GlobalConfig.DEBUG_MODE) System.out.println("# SWT-Image");
+            rImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    rImage.setRGB(x, y, GlobalConfig.TODO_COLOR);
+                }
+            }
+
+
+
+            Image image = SwingFXUtils.toFXImage(rImage, null);
+            view.setImage(image);
         }
 
-        refreshImage();
-        view.setImage(wImage);
     }
 
     /**
      * This method refreshes the View.
      */
     private void refreshImage() {
-        wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
+        if (GlobalConfig.FX_IMAGE) {
+            wImage.getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixelBuffer, 0, width);
+        } else {
+            Image image = SwingFXUtils.toFXImage(rImage, null);
+            view.setImage(image);
+        }
     }
 
     /**
@@ -152,23 +178,22 @@ public class Raytracer extends Application {
      */
     private void raytrace() {
         if (GlobalConfig.DEBUG_MODE){
-            System.out.println("# Threaded Rendering: " + GlobalConfig.THREADED_RENDERING);
-            System.out.println("# Render Threads: " + GlobalConfig.RENDER_THREADS);
-            System.out.println("# Linear rendering: " + GlobalConfig.LINEAR_RENDERING);
+            System.out.println("\n########");
             System.out.println("# Camera SamplingPattern: " + cam.pattern);
             System.out.println("# Recursion Depth: " + GlobalConfig.RECURSION_DEPTH);
         }
 
-        if (renderers != null) renderers.shutdownNow();
+        killEmAll();
         pixelsDone = 0;
         pixelsTotal = width * height;
         resetImage();
 
         if (GlobalConfig.THREADED_RENDERING) {
+            if (GlobalConfig.DEBUG_MODE) System.out.println("# threaded rendering with " + GlobalConfig.RENDER_THREADS + " Threads");
             renderers = Executors.newFixedThreadPool(GlobalConfig.RENDER_THREADS);
 
             if (GlobalConfig.LINEAR_RENDERING) {
-                // Line by line rendering
+                if (GlobalConfig.DEBUG_MODE) System.out.println("# linear rendering");
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         renderers.execute(pixelRenderer(x, y));
@@ -177,7 +202,7 @@ public class Raytracer extends Application {
             }
 
             else {
-                // randomly distributed pixel rendering
+                if (GlobalConfig.DEBUG_MODE) System.out.println("# randomly distributed pixel rendering");
                 LinkedList<int[]> pixelsToDo = new LinkedList<>();
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
@@ -196,19 +221,28 @@ public class Raytracer extends Application {
             Task<Void> refreshTask = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    if (GlobalConfig.DEBUG_MODE) System.out.print("UPDATER RUNNING... ");
+                    if (GlobalConfig.DEBUG_MODE) System.out.print("# started updater...");
                     while (!renderers.isTerminated()) {
                         if (isCancelled()) {
-                            if (GlobalConfig.DEBUG_MODE) System.out.println("CANCELED!");
+                            if (GlobalConfig.DEBUG_MODE) System.out.println("! updater CANCELED!");
                             break;
                         }
                         updateProgress(pixelsDone, pixelsTotal);
                         refreshImage();
 
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException interrupted) {
+                            if (isCancelled()) {
+                                if (GlobalConfig.DEBUG_MODE) System.out.println("! updater CANCELED!");
+                                break;
+                            }
+                        }
+
                     }
                     updateProgress(100, 100);
                     refreshImage();
-                    if (GlobalConfig.DEBUG_MODE) System.out.println("FINISHED!");
+                    if (GlobalConfig.DEBUG_MODE) System.out.println(" finished");
                     return null;
                 }
             };
@@ -218,11 +252,12 @@ public class Raytracer extends Application {
             progressBar.progressProperty().bind(refreshTask.progressProperty());
             refreshThread.start();
 
-        } else { //Non-Threaded rendering
+        } else { // Non-Threaded rendering with updateTask
+            if (GlobalConfig.DEBUG_MODE) System.out.println("# non-threaded rendering");
             Task<Void> renderTask = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    if (GlobalConfig.DEBUG_MODE) System.out.print("UPDATER RUNNING... ");
+                    if (GlobalConfig.DEBUG_MODE) System.out.print("# started updater...");
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
                             renderPixel(x, y);
@@ -232,7 +267,7 @@ public class Raytracer extends Application {
                     }
                     updateProgress(100, 100);
                     refreshImage();
-                    if (GlobalConfig.DEBUG_MODE) System.out.println("FINISHED!");
+                    if (GlobalConfig.DEBUG_MODE) System.out.println(" finished");
                     return null;
                 }
             };
@@ -240,6 +275,14 @@ public class Raytracer extends Application {
             Thread refreshThread = new Thread(renderTask);
             progressBar.progressProperty().bind(renderTask.progressProperty());
             refreshThread.start();
+
+            // Non-Threaded rendering all in Main Thread
+//            for (int y = 0; y < height; y++) {
+//                for (int x = 0; x < width; x++) {
+//                    renderPixel(x, y);
+//                }
+//            }
+//            Platform.runLater(() -> refreshImage());
         }
     }
 
@@ -282,9 +325,21 @@ public class Raytracer extends Application {
             c = new Color(r, g, b);
         }
 
-        pixelBuffer[y * width + x] = c.getRGB();
+        if (GlobalConfig.FX_IMAGE) {
+            pixelBuffer[y * width + x] = c.getRGB();
+        } else {
+            rImage.setRGB(x, y, c.getRGB());
+        }
         pixelsDone++;
     }
+
+    /**
+     * Method for stopping all renderwork.
+     */
+    private void killEmAll(){
+        if (renderers != null && !renderers.isTerminated()) renderers.shutdownNow();
+    }
+
 
     /**
      * Test for the stuck image problem. works while everything works and vice versa.
@@ -297,6 +352,7 @@ public class Raytracer extends Application {
             view.setImage(unusedWImage);
         } else{
             goodImage = true;
+
             view.setImage(wImage);
         }
     }
@@ -388,13 +444,17 @@ public class Raytracer extends Application {
         save.setOnAction(e -> saveImage(primaryStage));
         fileMenu.getItems().add(save);
 
-        final MenuItem refreshView = new MenuItem("toggle view");
-        refreshView.setOnAction(e -> toggleImage());
-        fileMenu.getItems().add(refreshView);
-
         final MenuItem open = new MenuItem("Open .obj");
         open.setOnAction(e -> renderObjFile(primaryStage));
         fileMenu.getItems().add(open);
+
+        final MenuItem stop = new MenuItem("stop rendering");
+        stop.setOnAction(e -> killEmAll());
+        fileMenu.getItems().add(stop);
+
+        final MenuItem refreshView = new MenuItem("toggle view");
+        refreshView.setOnAction(e -> toggleImage());
+        fileMenu.getItems().add(refreshView);
 
         final MenuItem anaglyph = new MenuItem("... anaglyph");
         anaglyph.setOnAction(e -> anaglyph(primaryStage));
@@ -564,6 +624,7 @@ public class Raytracer extends Application {
      * @param scene The scene to load.
      */
     private void loadScene(RtScene scene) {
+        killEmAll();
         cam = scene.getCam();
         world = scene.getWorld();
         raytrace();
@@ -579,8 +640,6 @@ public class Raytracer extends Application {
     private void setDimensions(Stage stage, int width, int height) {
         this.width = width;
         this.height = height;
-        raytrace();
-        stage.setWidth(width);
-        stage.setHeight(height + 50);
+
     }
 }
