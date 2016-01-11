@@ -318,11 +318,11 @@ public class Raytracer extends Application {
             double g = 0.0;
             double b = 0.0;
             for (Color color : colors) {
-                r += color.r / colors.size();
-                g += color.g / colors.size();
-                b += color.b / colors.size();
+                r += color.r;
+                g += color.g;
+                b += color.b;
             }
-            c = new Color(r, g, b);
+            c = new Color(r / colors.size(), g / colors.size(), b / colors.size());
         }
 
         if (GlobalConfig.FX_IMAGE) {

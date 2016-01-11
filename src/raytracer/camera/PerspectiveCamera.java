@@ -53,7 +53,7 @@ public class PerspectiveCamera extends Camera {
         }
 
         Set<Ray> raySet = new LinkedHashSet<>();
-        for(Point2 point : pattern.points) {
+        for(Point2 point : pattern.getPoints()) {
             Vector3 r = this.w.invert().mul((height / 2) / Math.tan(angle / 2)).add(u.mul(x + point.x - ((width - 1) / 2))).add(v.mul(y + point.y - ((height - 1) / 2)));
             Vector3 d = r.mul(1 / r.magnitude);
             raySet.add(new Ray(e, d));

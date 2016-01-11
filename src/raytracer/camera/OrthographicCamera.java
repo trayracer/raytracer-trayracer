@@ -37,7 +37,7 @@ public class OrthographicCamera extends Camera {
     public Set<Ray> rayFor(final int w, final int h, final int x, final int y) {
         double a = (double) w / (double) h;
         Set<Ray> raySet = new LinkedHashSet<>();
-        for(Point2 point : pattern.points){
+        for(Point2 point : pattern.getPoints()){
             Point3 o = this.e.add(this.u.mul(a * this.s * (x + point.x - ((w - 1) / 2)) / (w - 1))).add(this.v.mul(this.s * (y + point.y - ((h - 1) / 2)) / (h - 1)));
             Vector3 d = this.w.invert();
             raySet.add(new Ray(o, d));
