@@ -31,6 +31,32 @@ public class SamplingPattern {
 
     public SamplingPattern regularPattern(final int x, final int y) {
         if (x < 1 || y < 1) throw new IllegalArgumentException("Number of Points must be positive.");
+        return new SamplingPattern(regularPoints(x, y));
+    }
+
+    public SamplingPattern randomPattern(final int i) {
+        isRandom = true;
+        numberOfPoints = i;
+        return this;
+    }
+
+    public SamplingPattern regularDisc(final int i){
+        int x = (int) Math.floor(Math.sqrt(i));
+        int y = (int) Math.ceil(Math.sqrt(i));
+        List<Point2> initialPoints = regularPoints(x, y);
+        List<Point2> discPoints = new LinkedList<>();
+        for (Point2 p : initialPoints){
+            discPoints.add(new Point2(p.x * 2 * Math.sqrt(1 - Math.pow(p.y * 2, 2)/2) / 2, p.y * 2 * Math.sqrt(1 - Math.pow(p.x * 2, 2)/2) / 2));
+        }
+        return new SamplingPattern(discPoints);
+    }
+
+    public List<Point2> getPoints() {
+        if (!isRandom) return points;
+        return randomPoints();
+    }
+
+    private List<Point2> regularPoints(final int x, final int y){
         double distX;
         double distY;
 
@@ -53,18 +79,7 @@ public class SamplingPattern {
             posX = distX / 2.0 - 0.5;
             posY += distY;
         }
-        return new SamplingPattern(newPoints);
-    }
-
-    public SamplingPattern randomPattern(final int i) {
-        isRandom = true;
-        numberOfPoints = i;
-        return this;
-    }
-
-    public List<Point2> getPoints() {
-        if (!isRandom) return points;
-        return randomPoints();
+        return newPoints;
     }
 
     private List<Point2> randomPoints() {

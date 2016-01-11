@@ -123,7 +123,7 @@ public class Raytracer extends Application {
             System.exit(0);
         });
 
-        loadScene(new Earth());
+        loadScene(new DOFSpheres());
     }
 
     /**
