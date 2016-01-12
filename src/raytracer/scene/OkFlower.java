@@ -11,7 +11,6 @@ import raytracer.math.Transform;
 import raytracer.math.Vector3;
 import raytracer.texture.Color;
 import raytracer.texture.ImageTexture;
-import raytracer.texture.SingleColorTexture;
 import raytracer.texture.TextureStock;
 import raytracer.ui.GlobalConfig;
 
@@ -20,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by ok on 12.01.16.
+ * @author Oliver Kniejski
  */
 public class OkFlower extends RtScene {
     public OkFlower() {

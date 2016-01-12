@@ -36,13 +36,6 @@ public class PerspectiveCamera extends Camera {
         this.angle = angle;
     }
 
-    /**
-     * @param width  of the picture.
-     * @param height of the picture.
-     * @param x      x-position of a pixel.
-     * @param y      y-position of a pixel.
-     * @return a Ray for the pixel.
-     */
     @Override
     public Set<Ray> rayFor(final int width, final int height, final int x, final int y) {
         if (width <= 0 || height <= 0) {

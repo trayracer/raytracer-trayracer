@@ -9,7 +9,7 @@ public class GlobalConfig {
     public static final boolean DEBUG_MODE = true;
 
     public static final boolean THREADED_RENDERING = true;
-    public static final int RENDER_THREADS = 4;//Runtime.getRuntime().availableProcessors() - 2;
+    public static final int RENDER_THREADS = Runtime.getRuntime().availableProcessors() - 2;
     public static final boolean LINEAR_RENDERING = false; //always true for non threaded rendering as of now
 
     // UI USE / true = FX Image; false = SWT Image

@@ -15,7 +15,6 @@ import java.util.Set;
  * @author TrayRacer Team
  */
 public class FocusCamera extends Camera {
-
     /**
      * The angle of the camera.
      */
@@ -24,21 +23,21 @@ public class FocusCamera extends Camera {
      * The distance between e and imagePlane.
      */
     public final double focusDistance;
-
-    public final double focusImageHeight;
-
+    /**
+     * The radius of the lens.
+     */
     public final double lensRadius;
 
     /**
-     * This constructor creates a perspective camera with the given parameters.
+     * This constructor creates a perspective focus camera with the given parameters.
      *
-     * @param e             point for the position
-     * @param g             for the gaze direction
-     * @param t             for the up-vector
-     * @param angle         for the angle. must be larger than zero.
-     * @param focusDistance The focus distance.
-     * @param lensRadius    The radius of the lens.
-     * @param pattern       the SamplingPattern.
+     * @param e             The position.
+     * @param g             The gaze direction.
+     * @param t             The up-vector.
+     * @param angle         The angle. Must be larger than zero.
+     * @param focusDistance The focus distance. Must be larger than zero.
+     * @param lensRadius    The radius of the lens. Must be larger than zero.
+     * @param pattern       The SamplingPattern.
      */
     public FocusCamera(final Point3 e, final Vector3 g, final Vector3 t, final double angle, final double focusDistance, final double lensRadius, final SamplingPattern pattern) {
         super(e, g, t, pattern);
@@ -47,17 +46,9 @@ public class FocusCamera extends Camera {
         if (lensRadius <= 0) throw new IllegalArgumentException("Lens radius must be greater than zero.");
         this.angle = angle;
         this.focusDistance = focusDistance;
-        this.focusImageHeight = 2 * focusDistance * Math.tan(angle / 2.0);
         this.lensRadius = lensRadius;
     }
 
-    /**
-     * @param width  of the picture.
-     * @param height of the picture.
-     * @param x      x-position of a pixel.
-     * @param y      y-position of a pixel.
-     * @return a Ray for the pixel.
-     */
     @Override
     public Set<Ray> rayFor(final int width, final int height, final int x, final int y) {
         if (width <= 0 || height <= 0) {
@@ -79,20 +70,16 @@ public class FocusCamera extends Camera {
                 raySet.add(new Ray(lensE, lensD));
             }
         }
-
         return raySet;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-
-        PerspectiveCamera that = (PerspectiveCamera) o;
-
-        return Double.compare(that.angle, angle) == 0;
-
+        FocusCamera that = (FocusCamera) o;
+        return Double.compare(that.angle, angle) == 0 && Double.compare(that.focusDistance, focusDistance) == 0 && Double.compare(that.lensRadius, lensRadius) == 0;
     }
 
     @Override
@@ -101,19 +88,19 @@ public class FocusCamera extends Camera {
         long temp;
         temp = Double.doubleToLongBits(angle);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(focusDistance);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lensRadius);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
     @Override
     public String toString() {
-        return "PerspectiveCamera{" +
+        return "FocusCamera{" +
                 "angle=" + angle +
-                "e=" + e +
-                ", g=" + g +
-                ", t=" + t +
-                ", u=" + u +
-                ", v=" + v +
-                ", w=" + w +
-                '}';
+                ", focusDistance=" + focusDistance +
+                ", lensRadius=" + lensRadius +
+                "} " + super.toString();
     }
 }

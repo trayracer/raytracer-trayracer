@@ -2,6 +2,8 @@ package raytracer.ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
@@ -81,13 +83,18 @@ public class Raytracer extends Application {
      * The image.
      */
     private WritableImage wImage;
-
-    final BorderPane pane = new BorderPane();
-
+    /**
+     * The borderPane for the user interface.
+     */
+    private BorderPane pane = new BorderPane();
+    /**
+     * The progress bar.
+     */
     private ProgressBar progressBar = new ProgressBar();
-
-    // swt
-    BufferedImage rImage;
+    /**
+     * A bufferedImage for rendering in SWT.
+     */
+    private BufferedImage rImage;
 
     /**
      * Main method calling javafx-application main
@@ -102,14 +109,10 @@ public class Raytracer extends Application {
     public void start(final Stage primaryStage) {
 
         pane.setTop(createMenuBar(primaryStage));
-
-
-
         pane.setCenter(view);
 
-        progressBar.setMinWidth(width);
+        progressBar.prefWidthProperty().bind(primaryStage.widthProperty());
         pane.setBottom(progressBar);
-
         Scene scene = new Scene(pane, width, height + 50);
 
         primaryStage.setScene(scene);
@@ -337,7 +340,14 @@ public class Raytracer extends Application {
      * Method for stopping all renderwork.
      */
     private void killEmAll(){
-        if (renderers != null && !renderers.isTerminated()) renderers.shutdownNow();
+        if (renderers != null && !renderers.isTerminated()){
+            renderers.shutdownNow();
+            //TODO: KILL EM DEAD!
+//            while (!renderers.isTerminated()){
+//                //warten
+//            }
+        }
+
     }
 
 
@@ -638,8 +648,11 @@ public class Raytracer extends Application {
      * @param height The height.
      */
     private void setDimensions(Stage stage, int width, int height) {
-        this.width = width;
+        killEmAll();
+        this.width= width;
         this.height = height;
-
+        stage.setWidth(this.width);
+        stage.setHeight(this.height + 70);
+        raytrace();
     }
 }
