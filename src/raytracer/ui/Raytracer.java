@@ -120,6 +120,9 @@ public class Raytracer extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("TrayRacer v0.60");
 
+        primaryStage.getIcons().add(
+                new Image(Raytracer.class
+                        .getResourceAsStream("../../icon.png")));
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
             Platform.exit();
