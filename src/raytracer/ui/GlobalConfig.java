@@ -16,6 +16,6 @@ public class GlobalConfig {
     public static final boolean FX_IMAGE = false;
 
     public static final int TODO_COLOR = new java.awt.Color(255, 0, 255, 255).getRGB();
-    public static final SamplingPattern CAMERA_SAMPLING_PATTERN = new SamplingPattern().randomPattern(5);
+    public static final SamplingPattern CAMERA_SAMPLING_PATTERN = new SamplingPattern().randomPattern(20);
     public static final int RECURSION_DEPTH = 100;
 }

@@ -22,6 +22,9 @@ public class TextureStock {
     public static final String EARTH_NN = System.getProperty("user.dir") + "/textures/earth_nearest_neighbour.jpg";
     public static final String EARTH_320 = System.getProperty("user.dir") + "/textures/earth_320.jpg";
 
+    public static final String DONUT = System.getProperty("user.dir") + "/textures/donut.png";
+    public static final String WAFFLE = System.getProperty("user.dir") + "/textures/waffle_marked.jpg";
+
     //for xmas scene
     public static final String FIR_BRANCHES = System.getProperty("user.dir") + "/textures/fir_branches.jpg";
     public static final String BARK = System.getProperty("user.dir") + "/textures/bark.jpg";
