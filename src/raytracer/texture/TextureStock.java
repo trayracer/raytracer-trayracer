@@ -24,6 +24,8 @@ public class TextureStock {
 
     public static final String DONUT = System.getProperty("user.dir") + "/textures/donut.png";
     public static final String WAFFLE = System.getProperty("user.dir") + "/textures/waffle_marked.jpg";
+    public static final String ICECREAM_V = System.getProperty("user.dir") + "/textures/icecream_vanille.jpg";
+    public static final String ICECREAM_S = System.getProperty("user.dir") + "/textures/icecream_strawberry.jpg";
 
     //for xmas scene
     public static final String FIR_BRANCHES = System.getProperty("user.dir") + "/textures/fir_branches.jpg";
