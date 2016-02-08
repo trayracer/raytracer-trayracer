@@ -1,13 +1,21 @@
 package raytracer.texture;
 
 /**
- * Created by Steve-O on 16.12.2015.
+ * a single color texture.
+ *
+ * @author Steven Sobkowski
  */
 public class SingleColorTexture implements Texture {
 
+    /**
+     * The color attribute.
+     */
     public final Color color;
 
-
+    /**
+     * The constructor for the Texture.
+     * @param color the given color.
+     */
     public SingleColorTexture( final Color color){
         this.color = color;
     }
